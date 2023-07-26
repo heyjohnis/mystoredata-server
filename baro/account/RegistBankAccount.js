@@ -14,7 +14,7 @@ import { config } from '../../config.js';
 	const collectCycle    = 'MINUTE10'
 	const bank            = 'HANA'
 	const bankAccountType = 'C'
-	const bankAccountNum  = '37691003113404'
+	const bankAccountNum  = '37691003114104'
 	const bankAccountPwd  = '2848'
 	const webId           = ''
 	const webPwd          = ''

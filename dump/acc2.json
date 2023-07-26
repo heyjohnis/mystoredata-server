@@ -1,0 +1,980 @@
+{
+    CorpNum: '6348702350',
+    BankAccountNum: '37691003114104',
+    Withdraw: '15000',
+    Deposit: '0',
+    Balance: '376265',
+    TransDT: '20230703122400',
+    TransType: '체크카드',
+    TransOffice: '자금결제부',
+    TransRemark: '삼성미래여성병원',
+    TransRefKey: '202307031224000011273383',
+    MgtRemark1: '',
+    MgtRemark2: ''
+  }
+  {
+    CorpNum: '6348702350',
+    BankAccountNum: '37691003114104',
+    Withdraw: '5400',
+    Deposit: '0',
+    Balance: '370865',
+    TransDT: '20230703122500',
+    TransType: '체크카드',
+    TransOffice: '자금결제부',
+    TransRemark: '미래인정약국',
+    TransRefKey: '202307031225000011273384',
+    MgtRemark1: '',
+    MgtRemark2: ''
+  }
+  {
+    CorpNum: '6348702350',
+    BankAccountNum: '37691003114104',
+    Withdraw: '10600',
+    Deposit: '0',
+    Balance: '360265',
+    TransDT: '20230703123100',
+    TransType: '체크카드',
+    TransOffice: '자금결제부',
+    TransRemark: '맘스터치오류동역',
+    TransRefKey: '202307031231000011273385',
+    MgtRemark1: '',
+    MgtRemark2: ''
+  }
+  {
+    CorpNum: '6348702350',
+    BankAccountNum: '37691003114104',
+    Withdraw: '30680',
+    Deposit: '0',
+    Balance: '329585',
+    TransDT: '20230703212900',
+    TransType: '체크카드',
+    TransOffice: '자금결제부',
+    TransRemark: '쿠팡전용_KCP',
+    TransRefKey: '202307032129000011273386',
+    MgtRemark1: '',
+    MgtRemark2: ''
+  }
+  {
+    CorpNum: '6348702350',
+    BankAccountNum: '37691003114104',
+    Withdraw: '6000',
+    Deposit: '0',
+    Balance: '323585',
+    TransDT: '20230704195600',
+    TransType: '체크카드',
+    TransOffice: '자금결제부',
+    TransRemark: '(주)다이소아성산',
+    TransRefKey: '202307041956000011273387',
+    MgtRemark1: '',
+    MgtRemark2: ''
+  }
+  {
+    CorpNum: '6348702350',
+    BankAccountNum: '37691003114104',
+    Withdraw: '17280',
+    Deposit: '0',
+    Balance: '306305',
+    TransDT: '20230704204100',
+    TransType: '체크카드',
+    TransOffice: '자금결제부',
+    TransRemark: '황비홍마라탕오류',
+    TransRefKey: '202307042041000011273388',
+    MgtRemark1: '',
+    MgtRemark2: ''
+  }
+  {
+    CorpNum: '6348702350',
+    BankAccountNum: '37691003114104',
+    Withdraw: '11900',
+    Deposit: '0',
+    Balance: '294405',
+    TransDT: '20230704204100',
+    TransType: '체크카드',
+    TransOffice: '자금결제부',
+    TransRemark: '황비홍마라탕오류',
+    TransRefKey: '202307042041000011273389',
+    MgtRemark1: '',
+    MgtRemark2: ''
+  }
+  {
+    CorpNum: '6348702350',
+    BankAccountNum: '37691003114104',
+    Withdraw: '140800',
+    Deposit: '0',
+    Balance: '153605',
+    TransDT: '20230705043700',
+    TransType: 'CMS',
+    TransOffice: '망역',
+    TransRemark: '호스트센터',
+    TransRefKey: '202307050437000011273390',
+    MgtRemark1: '',
+    MgtRemark2: ''
+  }
+  {
+    CorpNum: '6348702350',
+    BankAccountNum: '37691003114104',
+    Withdraw: '0',
+    Deposit: '400000',
+    Balance: '553605',
+    TransDT: '20230705133900',
+    TransType: '대체',
+    TransOffice: 'HanaCBS',
+    TransRemark: '주식회사비더린',
+    TransRefKey: '202307051339000011273391',
+    MgtRemark1: '',
+    MgtRemark2: ''
+  }
+  {
+    CorpNum: '6348702350',
+    BankAccountNum: '37691003114104',
+    Withdraw: '323700',
+    Deposit: '0',
+    Balance: '229905',
+    TransDT: '20230705203000',
+    TransType: '체크카드',
+    TransOffice: '자금결제부',
+    TransRemark: '온블랙94',
+    TransRefKey: '202307052030000011273392',
+    MgtRemark1: '',
+    MgtRemark2: ''
+  }
+  {
+    CorpNum: '6348702350',
+    BankAccountNum: '37691003114104',
+    Withdraw: '3000',
+    Deposit: '0',
+    Balance: '226905',
+    TransDT: '20230705205400',
+    TransType: '체크카드',
+    TransOffice: '자금결제부',
+    TransRemark: '한송이꽃이...',
+    TransRefKey: '202307052054000011273393',
+    MgtRemark1: '',
+    MgtRemark2: ''
+  }
+  {
+    CorpNum: '6348702350',
+    BankAccountNum: '37691003114104',
+    Withdraw: '4000',
+    Deposit: '0',
+    Balance: '222905',
+    TransDT: '20230705205700',
+    TransType: '체크카드',
+    TransOffice: '자금결제부',
+    TransRemark: '자판기(1)_코세스',
+    TransRefKey: '202307052057000011273394',
+    MgtRemark1: '',
+    MgtRemark2: ''
+  }
+  {
+    CorpNum: '6348702350',
+    BankAccountNum: '37691003114104',
+    Withdraw: '16000',
+    Deposit: '0',
+    Balance: '206905',
+    TransDT: '20230705211700',
+    TransType: '체크카드',
+    TransOffice: '자금결제부',
+    TransRemark: '맥도날드합정메세',
+    TransRefKey: '202307052117000011273395',
+    MgtRemark1: '',
+    MgtRemark2: ''
+  }
+  {
+    CorpNum: '6348702350',
+    BankAccountNum: '37691003114104',
+    Withdraw: '0',
+    Deposit: '300000',
+    Balance: '506905',
+    TransDT: '20230705232600',
+    TransType: '대체',
+    TransOffice: 'HanaCBS',
+    TransRemark: '주식회사비더린',
+    TransRefKey: '202307052326000011273396',
+    MgtRemark1: '',
+    MgtRemark2: ''
+  }
+  {
+    CorpNum: '6348702350',
+    BankAccountNum: '37691003114104',
+    Withdraw: '7800',
+    Deposit: '0',
+    Balance: '499105',
+    TransDT: '20230707122600',
+    TransType: '체크카드',
+    TransOffice: '자금결제부',
+    TransRemark: 'PAIKSCOFFEE(빽',
+    TransRefKey: '202307071226000011273397',
+    MgtRemark1: '',
+    MgtRemark2: ''
+  }
+  {
+    CorpNum: '6348702350',
+    BankAccountNum: '37691003114104',
+    Withdraw: '0',
+    Deposit: '3000000',
+    Balance: '3499105',
+    TransDT: '20230707173600',
+    TransType: '타행이체',
+    TransOffice: '신한은행(7715)',
+    TransRemark: '김희준',
+    TransRefKey: '202307071736000011273398',
+    MgtRemark1: '',
+    MgtRemark2: ''
+  }
+  {
+    CorpNum: '6348702350',
+    BankAccountNum: '37691003114104',
+    Withdraw: '2800000',
+    Deposit: '0',
+    Balance: '699105',
+    TransDT: '20230707180300',
+    TransType: '체크카드',
+    TransOffice: '자금결제부',
+    TransRemark: '롯데백화점잠실점',
+    TransRefKey: '202307071803000011273399',
+    MgtRemark1: '',
+    MgtRemark2: ''
+  }
+  {
+    CorpNum: '6348702350',
+    BankAccountNum: '37691003114104',
+    Withdraw: '39500',
+    Deposit: '0',
+    Balance: '659605',
+    TransDT: '20230709012600',
+    TransType: '체크카드',
+    TransOffice: '자금결제부',
+    TransRemark: '쿠팡_KICC',
+    TransRefKey: '202307090126000011273400',
+    MgtRemark1: '',
+    MgtRemark2: ''
+  }
+  {
+    CorpNum: '6348702350',
+    BankAccountNum: '37691003114104',
+    Withdraw: '19290',
+    Deposit: '0',
+    Balance: '640315',
+    TransDT: '20230709085600',
+    TransType: '체크카드',
+    TransOffice: '자금결제부',
+    TransRemark: '쿠팡_KICC',
+    TransRefKey: '202307090856000011273401',
+    MgtRemark1: '',
+    MgtRemark2: ''
+  }
+  {
+    CorpNum: '6348702350',
+    BankAccountNum: '37691003114104',
+    Withdraw: '46800',
+    Deposit: '0',
+    Balance: '593515',
+    TransDT: '20230709093600',
+    TransType: '체크카드',
+    TransOffice: '자금결제부',
+    TransRemark: '양주에너지봉양LP',
+    TransRefKey: '202307090936000011273402',
+    MgtRemark1: '',
+    MgtRemark2: ''
+  }
+  {
+    CorpNum: '6348702350',
+    BankAccountNum: '37691003114104',
+    Withdraw: '10391',
+    Deposit: '0',
+    Balance: '583124',
+    TransDT: '20230709162500',
+    TransType: '체크카드',
+    TransOffice: '자금결제부',
+    TransRemark: '양주에너지봉양LP',
+    TransRefKey: '202307091625000011273403',
+    MgtRemark1: '',
+    MgtRemark2: ''
+  }
+  {
+    CorpNum: '6348702350',
+    BankAccountNum: '37691003114104',
+    Withdraw: '15900',
+    Deposit: '0',
+    Balance: '567224',
+    TransDT: '20230709215000',
+    TransType: '체크카드',
+    TransOffice: '자금결제부',
+    TransRemark: '쿠팡_KICC',
+    TransRefKey: '202307092150000011273404',
+    MgtRemark1: '',
+    MgtRemark2: ''
+  }
+  {
+    CorpNum: '6348702350',
+    BankAccountNum: '37691003114104',
+    Withdraw: '3300',
+    Deposit: '0',
+    Balance: '563924',
+    TransDT: '20230710193300',
+    TransType: '체크통신',
+    TransOffice: '자금결제부',
+    TransRemark: 'LGU+통신요금자동',
+    TransRefKey: '202307101933000011273405',
+    MgtRemark1: '',
+    MgtRemark2: ''
+  }
+  {
+    CorpNum: '6348702350',
+    BankAccountNum: '37691003114104',
+    Withdraw: '3380',
+    Deposit: '0',
+    Balance: '560544',
+    TransDT: '20230710193300',
+    TransType: '체크통신',
+    TransOffice: '자금결제부',
+    TransRemark: 'LGU+통신요금자동',
+    TransRefKey: '202307101933000011273406',
+    MgtRemark1: '',
+    MgtRemark2: ''
+  }
+  {
+    CorpNum: '6348702350',
+    BankAccountNum: '37691003114104',
+    Withdraw: '34150',
+    Deposit: '0',
+    Balance: '526394',
+    TransDT: '20230710193300',
+    TransType: '체크통신',
+    TransOffice: '자금결제부',
+    TransRemark: 'LGU+통신요금자동',
+    TransRefKey: '202307101933000011273407',
+    MgtRemark1: '',
+    MgtRemark2: ''
+  }
+  {
+    CorpNum: '6348702350',
+    BankAccountNum: '37691003114104',
+    Withdraw: '15770',
+    Deposit: '0',
+    Balance: '510624',
+    TransDT: '20230711190500',
+    TransType: '체크카드',
+    TransOffice: '자금결제부',
+    TransRemark: '홈플러스익스프레',
+    TransRefKey: '202307111905000011273408',
+    MgtRemark1: '',
+    MgtRemark2: ''
+  }
+  {
+    CorpNum: '6348702350',
+    BankAccountNum: '37691003114104',
+    Withdraw: '4840',
+    Deposit: '0',
+    Balance: '505784',
+    TransDT: '20230713113200',
+    TransType: '체크카드',
+    TransOffice: '자금결제부',
+    TransRemark: '홈플러스익스프레',
+    TransRefKey: '202307131132000011273409',
+    MgtRemark1: '',
+    MgtRemark2: ''
+  }
+  {
+    CorpNum: '6348702350',
+    BankAccountNum: '37691003114104',
+    Withdraw: '50850',
+    Deposit: '0',
+    Balance: '454934',
+    TransDT: '20230713124400',
+    TransType: '체크카드',
+    TransOffice: '자금결제부',
+    TransRemark: '미래인정약국',
+    TransRefKey: '202307131244000011273410',
+    MgtRemark1: '',
+    MgtRemark2: ''
+  }
+  {
+    CorpNum: '6348702350',
+    BankAccountNum: '37691003114104',
+    Withdraw: '6000',
+    Deposit: '0',
+    Balance: '448934',
+    TransDT: '20230713132000',
+    TransType: '체크카드',
+    TransOffice: '자금결제부',
+    TransRemark: '콩심오류동역점',
+    TransRefKey: '202307131320000011273411',
+    MgtRemark1: '',
+    MgtRemark2: ''
+  }
+  {
+    CorpNum: '6348702350',
+    BankAccountNum: '37691003114104',
+    Withdraw: '5500',
+    Deposit: '0',
+    Balance: '443434',
+    TransDT: '20230713133300',
+    TransType: '체크카드',
+    TransOffice: '자금결제부',
+    TransRemark: '(주)다이소아성산',
+    TransRefKey: '202307131333000011273412',
+    MgtRemark1: '',
+    MgtRemark2: ''
+  }
+  {
+    CorpNum: '6348702350',
+    BankAccountNum: '37691003114104',
+    Withdraw: '16000',
+    Deposit: '0',
+    Balance: '427434',
+    TransDT: '20230714125500',
+    TransType: '체크카드',
+    TransOffice: '자금결제부',
+    TransRemark: '명일정',
+    TransRefKey: '202307141255000011273413',
+    MgtRemark1: '',
+    MgtRemark2: ''
+  }
+  {
+    CorpNum: '6348702350',
+    BankAccountNum: '37691003114104',
+    Withdraw: '43800',
+    Deposit: '0',
+    Balance: '383634',
+    TransDT: '20230714133200',
+    TransType: '체크카드',
+    TransOffice: '자금결제부',
+    TransRemark: '쿠우쿠우계양',
+    TransRefKey: '202307141332000011273414',
+    MgtRemark1: '',
+    MgtRemark2: ''
+  }
+  {
+    CorpNum: '6348702350',
+    BankAccountNum: '37691003114104',
+    Withdraw: '7000',
+    Deposit: '0',
+    Balance: '376634',
+    TransDT: '20230714133600',
+    TransType: '체크카드',
+    TransOffice: '자금결제부',
+    TransRemark: '달콤왕가탕후루계',
+    TransRefKey: '202307141336000011273415',
+    MgtRemark1: '',
+    MgtRemark2: ''
+  }
+  {
+    CorpNum: '6348702350',
+    BankAccountNum: '37691003114104',
+    Withdraw: '0',
+    Deposit: '1000000',
+    Balance: '1376634',
+    TransDT: '20230714162500',
+    TransType: '타행이체',
+    TransOffice: '신한은행(7715)',
+    TransRemark: '김희준',
+    TransRefKey: '202307141625000011273416',
+    MgtRemark1: '',
+    MgtRemark2: ''
+  }
+  {
+    CorpNum: '6348702350',
+    BankAccountNum: '37691003114104',
+    Withdraw: '13800',
+    Deposit: '0',
+    Balance: '1362834',
+    TransDT: '20230715135900',
+    TransType: '체크카드',
+    TransOffice: '자금결제부',
+    TransRemark: '쿠팡_KICC',
+    TransRefKey: '202307151359000011273417',
+    MgtRemark1: '',
+    MgtRemark2: ''
+  }
+  {
+    CorpNum: '6348702350',
+    BankAccountNum: '37691003114104',
+    Withdraw: '175000',
+    Deposit: '0',
+    Balance: '1187834',
+    TransDT: '20230715195500',
+    TransType: '체크카드',
+    TransOffice: '자금결제부',
+    TransRemark: '선녀풍',
+    TransRefKey: '202307151955000011273418',
+    MgtRemark1: '',
+    MgtRemark2: ''
+  }
+  {
+    CorpNum: '6348702350',
+    BankAccountNum: '37691003114104',
+    Withdraw: '65700',
+    Deposit: '0',
+    Balance: '1122134',
+    TransDT: '20230715201100',
+    TransType: '체크카드',
+    TransOffice: '자금결제부',
+    TransRemark: '포게스트커피',
+    TransRefKey: '202307152011000011273419',
+    MgtRemark1: '',
+    MgtRemark2: ''
+  }
+  {
+    CorpNum: '6348702350',
+    BankAccountNum: '37691003114104',
+    Withdraw: '11600',
+    Deposit: '0',
+    Balance: '1110534',
+    TransDT: '20230717145200',
+    TransType: '체크카드',
+    TransOffice: '자금결제부',
+    TransRemark: '쿠팡전용_KCP',
+    TransRefKey: '202307171452000011273150',
+    MgtRemark1: '',
+    MgtRemark2: ''
+  }
+  {
+    CorpNum: '6348702350',
+    BankAccountNum: '37691003114104',
+    Withdraw: '18500',
+    Deposit: '0',
+    Balance: '1092034',
+    TransDT: '20230717204500',
+    TransType: '체크카드',
+    TransOffice: '자금결제부',
+    TransRemark: '잉치킨',
+    TransRefKey: '202307172045000011273151',
+    MgtRemark1: '',
+    MgtRemark2: ''
+  }
+  {
+    CorpNum: '6348702350',
+    BankAccountNum: '37691003114104',
+    Withdraw: '40060',
+    Deposit: '0',
+    Balance: '1051974',
+    TransDT: '20230718190300',
+    TransType: '체크카드',
+    TransOffice: '자금결제부',
+    TransRemark: '홈플러스익스프레',
+    TransRefKey: '202307181903000011273152',
+    MgtRemark1: '',
+    MgtRemark2: ''
+  }
+  {
+    CorpNum: '6348702350',
+    BankAccountNum: '37691003114104',
+    Withdraw: '7600',
+    Deposit: '0',
+    Balance: '1044374',
+    TransDT: '20230718191200',
+    TransType: '체크카드',
+    TransOffice: '자금결제부',
+    TransRemark: '쏘자토스트',
+    TransRefKey: '202307181912000011273153',
+    MgtRemark1: '',
+    MgtRemark2: ''
+  }
+  {
+    CorpNum: '6348702350',
+    BankAccountNum: '37691003114104',
+    Withdraw: '14000',
+    Deposit: '0',
+    Balance: '1030374',
+    TransDT: '20230718223000',
+    TransType: '체크카드',
+    TransOffice: '자금결제부',
+    TransRemark: '카카오페이(택시)',
+    TransRefKey: '202307182230000011273154',
+    MgtRemark1: '',
+    MgtRemark2: ''
+  }
+  {
+    CorpNum: '6348702350',
+    BankAccountNum: '37691003114104',
+    Withdraw: '0',
+    Deposit: '14000',
+    Balance: '1044374',
+    TransDT: '20230718223100',
+    TransType: '체크카드',
+    TransOffice: '자금결제부',
+    TransRemark: '카카오페이(택시)',
+    TransRefKey: '202307182231000011273155',
+    MgtRemark1: '',
+    MgtRemark2: ''
+  }
+  {
+    CorpNum: '6348702350',
+    BankAccountNum: '37691003114104',
+    Withdraw: '14000',
+    Deposit: '0',
+    Balance: '1030374',
+    TransDT: '20230718225000',
+    TransType: '체크카드',
+    TransOffice: '자금결제부',
+    TransRemark: '카카오페이(택시)',
+    TransRefKey: '202307182250000011273156',
+    MgtRemark1: '',
+    MgtRemark2: ''
+  }
+  {
+    CorpNum: '6348702350',
+    BankAccountNum: '37691003114104',
+    Withdraw: '18500',
+    Deposit: '0',
+    Balance: '1011874',
+    TransDT: '20230719132400',
+    TransType: '체크카드',
+    TransOffice: '자금결제부',
+    TransRemark: '육수당오류역점',
+    TransRefKey: '202307191324000011273157',
+    MgtRemark1: '',
+    MgtRemark2: ''
+  }
+  {
+    CorpNum: '6348702350',
+    BankAccountNum: '37691003114104',
+    Withdraw: '2700',
+    Deposit: '0',
+    Balance: '1009174',
+    TransDT: '20230719133200',
+    TransType: '체크카드',
+    TransOffice: '자금결제부',
+    TransRemark: '지에스25오류다숲',
+    TransRefKey: '202307191332000011273158',
+    MgtRemark1: '',
+    MgtRemark2: ''
+  }
+  {
+    CorpNum: '6348702350',
+    BankAccountNum: '37691003114104',
+    Withdraw: '44960',
+    Deposit: '0',
+    Balance: '964214',
+    TransDT: '20230719140300',
+    TransType: '체크카드',
+    TransOffice: '자금결제부',
+    TransRemark: '삼성미래여성병원',
+    TransRefKey: '202307191403000011273159',
+    MgtRemark1: '',
+    MgtRemark2: ''
+  }
+  {
+    CorpNum: '6348702350',
+    BankAccountNum: '37691003114104',
+    Withdraw: '3940',
+    Deposit: '0',
+    Balance: '960274',
+    TransDT: '20230719140600',
+    TransType: '체크카드',
+    TransOffice: '자금결제부',
+    TransRemark: '삼성미래여성병원',
+    TransRefKey: '202307191406000011273160',
+    MgtRemark1: '',
+    MgtRemark2: ''
+  }
+  {
+    CorpNum: '6348702350',
+    BankAccountNum: '37691003114104',
+    Withdraw: '31500',
+    Deposit: '0',
+    Balance: '928774',
+    TransDT: '20230719150000',
+    TransType: '체크카드',
+    TransOffice: '자금결제부',
+    TransRemark: '엄마손닭한마리칼',
+    TransRefKey: '202307191500000011273161',
+    MgtRemark1: '',
+    MgtRemark2: ''
+  }
+  {
+    CorpNum: '6348702350',
+    BankAccountNum: '37691003114104',
+    Withdraw: '579000',
+    Deposit: '0',
+    Balance: '349774',
+    TransDT: '20230719161800',
+    TransType: '체크카드',
+    TransOffice: '자금결제부',
+    TransRemark: '쿠팡_KICC',
+    TransRefKey: '202307191618000011273162',
+    MgtRemark1: '',
+    MgtRemark2: ''
+  }
+  {
+    CorpNum: '6348702350',
+    BankAccountNum: '37691003114104',
+    Withdraw: '76000',
+    Deposit: '0',
+    Balance: '273774',
+    TransDT: '20230719194400',
+    TransType: '체크카드',
+    TransOffice: '자금결제부',
+    TransRemark: '쿠팡전용_KCP',
+    TransRefKey: '202307191944000011273163',
+    MgtRemark1: '',
+    MgtRemark2: ''
+  }
+  {
+    CorpNum: '6348702350',
+    BankAccountNum: '37691003114104',
+    Withdraw: '0',
+    Deposit: '1000000',
+    Balance: '1273774',
+    TransDT: '20230719194600',
+    TransType: '타행이체',
+    TransOffice: '신한은행(7715)',
+    TransRemark: '김희준',
+    TransRefKey: '202307191946000011273164',
+    MgtRemark1: '',
+    MgtRemark2: ''
+  }
+  {
+    CorpNum: '6348702350',
+    BankAccountNum: '37691003114104',
+    Withdraw: '16900',
+    Deposit: '0',
+    Balance: '1256874',
+    TransDT: '20230719201300',
+    TransType: '체크카드',
+    TransOffice: '자금결제부',
+    TransRemark: '쿠팡_KICC',
+    TransRefKey: '202307192013000011273165',
+    MgtRemark1: '',
+    MgtRemark2: ''
+  }
+  {
+    CorpNum: '6348702350',
+    BankAccountNum: '37691003114104',
+    Withdraw: '89000',
+    Deposit: '0',
+    Balance: '1167874',
+    TransDT: '20230720200800',
+    TransType: '체크카드',
+    TransOffice: '자금결제부',
+    TransRemark: '(주)새벽집',
+    TransRefKey: '202307202008000011273166',
+    MgtRemark1: '',
+    MgtRemark2: ''
+  }
+  {
+    CorpNum: '6348702350',
+    BankAccountNum: '37691003114104',
+    Withdraw: '61600',
+    Deposit: '0',
+    Balance: '1106274',
+    TransDT: '20230720234100',
+    TransType: '체크카드',
+    TransOffice: '자금결제부',
+    TransRemark: '인터넷상거래_TOS',
+    TransRefKey: '202307202341000011273167',
+    MgtRemark1: '',
+    MgtRemark2: ''
+  }
+  {
+    CorpNum: '6348702350',
+    BankAccountNum: '37691003114104',
+    Withdraw: '400',
+    Deposit: '0',
+    Balance: '1105874',
+    TransDT: '20230721152000',
+    TransType: '체크카드',
+    TransOffice: '자금결제부',
+    TransRemark: '민원발급수수료_',
+    TransRefKey: '202307211520000011273168',
+    MgtRemark1: '',
+    MgtRemark2: ''
+  }
+  {
+    CorpNum: '6348702350',
+    BankAccountNum: '37691003114104',
+    Withdraw: '1200',
+    Deposit: '0',
+    Balance: '1104674',
+    TransDT: '20230721152700',
+    TransType: '체크카드',
+    TransOffice: '자금결제부',
+    TransRemark: '세외수입_KICC(창',
+    TransRefKey: '202307211527000011273169',
+    MgtRemark1: '',
+    MgtRemark2: ''
+  }
+  {
+    CorpNum: '6348702350',
+    BankAccountNum: '37691003114104',
+    Withdraw: '5600',
+    Deposit: '0',
+    Balance: '1099074',
+    TransDT: '20230722161000',
+    TransType: '체크카드',
+    TransOffice: '자금결제부',
+    TransRemark: '미니스톱동작대방',
+    TransRefKey: '202307221610000011273170',
+    MgtRemark1: '',
+    MgtRemark2: ''
+  }
+  {
+    CorpNum: '6348702350',
+    BankAccountNum: '37691003114104',
+    Withdraw: '29000',
+    Deposit: '0',
+    Balance: '1070074',
+    TransDT: '20230723155000',
+    TransType: '체크카드',
+    TransOffice: '자금결제부',
+    TransRemark: '명동칼국수',
+    TransRefKey: '202307231550000011273171',
+    MgtRemark1: '',
+    MgtRemark2: ''
+  }
+  {
+    CorpNum: '6348702350',
+    BankAccountNum: '37691003114104',
+    Withdraw: '6000',
+    Deposit: '0',
+    Balance: '1064074',
+    TransDT: '20230723180900',
+    TransType: '체크카드',
+    TransOffice: '자금결제부',
+    TransRemark: '자만추만두',
+    TransRefKey: '202307231809000011273172',
+    MgtRemark1: '',
+    MgtRemark2: ''
+  }
+  {
+    CorpNum: '6348702350',
+    BankAccountNum: '37691003114104',
+    Withdraw: '60000',
+    Deposit: '0',
+    Balance: '1004074',
+    TransDT: '20230724202900',
+    TransType: '체크카드',
+    TransOffice: '자금결제부',
+    TransRemark: '마임헤어',
+    TransRefKey: '202307242029000011273173',
+    MgtRemark1: '',
+    MgtRemark2: ''
+  }
+  {
+    CorpNum: '6348702350',
+    BankAccountNum: '37691003114104',
+    Withdraw: '61410',
+    Deposit: '0',
+    Balance: '942664',
+    TransDT: '20230724204600',
+    TransType: '체크카드',
+    TransOffice: '자금결제부',
+    TransRemark: '쇼핑몰(4)_이니시',
+    TransRefKey: '202307242046000011273174',
+    MgtRemark1: '',
+    MgtRemark2: ''
+  }
+  {
+    CorpNum: '6348702350',
+    BankAccountNum: '37691003114104',
+    Withdraw: '33860',
+    Deposit: '0',
+    Balance: '908804',
+    TransDT: '20230724224300',
+    TransType: '체크카드',
+    TransOffice: '자금결제부',
+    TransRemark: '쿠팡전용_KCP',
+    TransRefKey: '202307242243000011273175',
+    MgtRemark1: '',
+    MgtRemark2: ''
+  }
+  {
+    CorpNum: '6348702350',
+    BankAccountNum: '37691003114104',
+    Withdraw: '14230',
+    Deposit: '0',
+    Balance: '894574',
+    TransDT: '20230724224600',
+    TransType: '체크카드',
+    TransOffice: '자금결제부',
+    TransRemark: '쿠팡_KICC',
+    TransRefKey: '202307242246000011273176',
+    MgtRemark1: '',
+    MgtRemark2: ''
+  }
+  {
+    CorpNum: '6348702350',
+    BankAccountNum: '37691003114104',
+    Withdraw: '800',
+    Deposit: '0',
+    Balance: '893774',
+    TransDT: '20230725044700',
+    TransType: '하나카드',
+    TransOffice: '망역',
+    TransRemark: '하나카드기업',
+    TransRefKey: '202307250447000011273177',
+    MgtRemark1: '',
+    MgtRemark2: ''
+  }
+  {
+    CorpNum: '6348702350',
+    BankAccountNum: '37691003114104',
+    Withdraw: '2000',
+    Deposit: '0',
+    Balance: '891774',
+    TransDT: '20230725095700',
+    TransType: '체크카드',
+    TransOffice: '자금결제부',
+    TransRemark: '공공기관_KPN',
+    TransRefKey: '202307250957000011273178',
+    MgtRemark1: '',
+    MgtRemark2: ''
+  }
+  {
+    CorpNum: '6348702350',
+    BankAccountNum: '37691003114104',
+    Withdraw: '72000',
+    Deposit: '0',
+    Balance: '819774',
+    TransDT: '20230725211400',
+    TransType: '체크카드',
+    TransOffice: '자금결제부',
+    TransRemark: '(주)지에스이앤알',
+    TransRefKey: '202307252114000011273179',
+    MgtRemark1: '',
+    MgtRemark2: ''
+  }
+  {
+    CorpNum: '6348702350',
+    BankAccountNum: '37691003114104',
+    Withdraw: '20000',
+    Deposit: '0',
+    Balance: '799774',
+    TransDT: '20230726112900',
+    TransType: '체크카드',
+    TransOffice: '자금결제부',
+    TransRemark: 'ARS(1)_다우데이',
+    TransRefKey: '202307261129000011273180',
+    MgtRemark1: '',
+    MgtRemark2: ''
+  }
+  {
+    CorpNum: '6348702350',
+    BankAccountNum: '37691003114104',
+    Withdraw: '3000',
+    Deposit: '0',
+    Balance: '796774',
+    TransDT: '20230726121100',
+    TransType: '체크카드',
+    TransOffice: '자금결제부',
+    TransRemark: '(주)다이소아성산',
+    TransRefKey: '202307261211000011273181',
+    MgtRemark1: '',
+    MgtRemark2: ''
+  }
+  {
+    CorpNum: '6348702350',
+    BankAccountNum: '37691003114104',
+    Withdraw: '5000',
+    Deposit: '0',
+    Balance: '791774',
+    TransDT: '20230726121800',
+    TransType: '체크카드',
+    TransOffice: '자금결제부',
+    TransRemark: '컴포즈오류북부점',
+    TransRefKey: '202307261218000011273182',
+    MgtRemark1: '',
+    MgtRemark2: ''
+  }

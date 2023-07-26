@@ -1,0 +1,238 @@
+{
+    CorpNum: '6348702350',
+    BankAccountNum: '37691003113404',
+    Withdraw: '400000',
+    Deposit: '0',
+    Balance: '1004729',
+    TransDT: '20230705133900',
+    TransType: '당행송금',
+    TransOffice: 'HanaCBS',
+    TransRemark: '주식회사비더린',
+    TransRefKey: '202307051339000011272901',
+    MgtRemark1: '',
+    MgtRemark2: ''
+  }
+  {
+    CorpNum: '6348702350',
+    BankAccountNum: '37691003113404',
+    Withdraw: '300000',
+    Deposit: '0',
+    Balance: '704729',
+    TransDT: '20230705232600',
+    TransType: '당행송금',
+    TransOffice: 'HanaCBS',
+    TransRemark: '주식회사비더린',
+    TransRefKey: '202307052326000011272902',
+    MgtRemark1: '',
+    MgtRemark2: ''
+  }
+  {
+    CorpNum: '6348702350',
+    BankAccountNum: '37691003113404',
+    Withdraw: '90000',
+    Deposit: '0',
+    Balance: '614729',
+    TransDT: '20230706153100',
+    TransType: '공과금',
+    TransOffice: 'HanaCBS',
+    TransRemark: '사업소득세',
+    TransRefKey: '202307061531000011272903',
+    MgtRemark1: '',
+    MgtRemark2: ''
+  }
+  {
+    CorpNum: '6348702350',
+    BankAccountNum: '37691003113404',
+    Withdraw: '112780',
+    Deposit: '0',
+    Balance: '501949',
+    TransDT: '20230706153200',
+    TransType: '공과금',
+    TransOffice: 'HanaCBS',
+    TransRemark: '근로소득세(갑)',
+    TransRefKey: '202307061532000011272904',
+    MgtRemark1: '',
+    MgtRemark2: ''
+  }
+  {
+    CorpNum: '6348702350',
+    BankAccountNum: '37691003113404',
+    Withdraw: '20260',
+    Deposit: '0',
+    Balance: '481689',
+    TransDT: '20230706153300',
+    TransType: '공과금',
+    TransOffice: 'HanaCBS',
+    TransRemark: '서울시지방세',
+    TransRefKey: '202307061533000011272905',
+    MgtRemark1: '',
+    MgtRemark2: ''
+  }
+  {
+    CorpNum: '6348702350',
+    BankAccountNum: '37691003113404',
+    Withdraw: '0',
+    Deposit: '440000',
+    Balance: '921689',
+    TransDT: '20230706154200',
+    TransType: '타행이체',
+    TransOffice: '신한은행(3473)',
+    TransRemark: '서울법인재무설',
+    TransRefKey: '202307061542000011272906',
+    MgtRemark1: '',
+    MgtRemark2: ''
+  }
+  {
+    CorpNum: '6348702350',
+    BankAccountNum: '37691003113404',
+    Withdraw: '78040',
+    Deposit: '0',
+    Balance: '843649',
+    TransDT: '20230710050100',
+    TransType: '지로요금',
+    TransOffice: '망역',
+    TransRemark: '2306국민건강',
+    TransRefKey: '202307100501000011272907',
+    MgtRemark1: '',
+    MgtRemark2: ''
+  }
+  {
+    CorpNum: '6348702350',
+    BankAccountNum: '37691003113404',
+    Withdraw: '161800',
+    Deposit: '0',
+    Balance: '681849',
+    TransDT: '20230710050400',
+    TransType: '국민연금',
+    TransOffice: '망역',
+    TransRemark: '2306국민연금',
+    TransRefKey: '202307100504000011272908',
+    MgtRemark1: '',
+    MgtRemark2: ''
+  }
+  {
+    CorpNum: '6348702350',
+    BankAccountNum: '37691003113404',
+    Withdraw: '8770',
+    Deposit: '0',
+    Balance: '673079',
+    TransDT: '20230710050400',
+    TransType: '지로요금',
+    TransOffice: '망역',
+    TransRemark: '2306고용보험',
+    TransRefKey: '202307100504000011272909',
+    MgtRemark1: '',
+    MgtRemark2: ''
+  }
+  {
+    CorpNum: '6348702350',
+    BankAccountNum: '37691003113404',
+    Withdraw: '16470',
+    Deposit: '0',
+    Balance: '656609',
+    TransDT: '20230710050500',
+    TransType: '지로요금',
+    TransOffice: '망역',
+    TransRemark: '2306산재보험',
+    TransRefKey: '202307100505000011272910',
+    MgtRemark1: '',
+    MgtRemark2: ''
+  }
+  {
+    CorpNum: '6348702350',
+    BankAccountNum: '37691003113404',
+    Withdraw: '0',
+    Deposit: '7700000',
+    Balance: '8356609',
+    TransDT: '20230710165700',
+    TransType: '타행이체',
+    TransOffice: '국민은행(0811)',
+    TransRemark: '(주)갤러리케이',
+    TransRefKey: '202307101657000011272911',
+    MgtRemark1: '',
+    MgtRemark2: ''
+  }
+  {
+    CorpNum: '6348702350',
+    BankAccountNum: '37691003113404',
+    Withdraw: '8000000',
+    Deposit: '0',
+    Balance: '356609',
+    TransDT: '20230710172000',
+    TransType: '당행송금',
+    TransOffice: 'HanaCBS',
+    TransRemark: '김희준',
+    TransRefKey: '202307101720000011272912',
+    MgtRemark1: '',
+    MgtRemark2: ''
+  }
+  {
+    CorpNum: '6348702350',
+    BankAccountNum: '37691003113404',
+    Withdraw: '0',
+    Deposit: '7000000',
+    Balance: '7356609',
+    TransDT: '20230724182500',
+    TransType: '타행이체',
+    TransOffice: '신한은행(7715)',
+    TransRemark: '김희준',
+    TransRefKey: '202307241825000011272834',
+    MgtRemark1: '',
+    MgtRemark2: ''
+  }
+  {
+    CorpNum: '6348702350',
+    BankAccountNum: '37691003113404',
+    Withdraw: '6957570',
+    Deposit: '0',
+    Balance: '399039',
+    TransDT: '20230724182600',
+    TransType: '공과금',
+    TransOffice: 'HanaCBS',
+    TransRemark: '부가가치세',
+    TransRefKey: '202307241826000011272835',
+    MgtRemark1: '',
+    MgtRemark2: ''
+  }
+  {
+    CorpNum: '6348702350',
+    BankAccountNum: '37691003113404',
+    Withdraw: '10920',
+    Deposit: '0',
+    Balance: '388119',
+    TransDT: '20230724182700',
+    TransType: '공과금',
+    TransOffice: 'HanaCBS',
+    TransRemark: '근로소득세(갑)',
+    TransRefKey: '202307241827000011272836',
+    MgtRemark1: '',
+    MgtRemark2: ''
+  }
+  {
+    CorpNum: '6348702350',
+    BankAccountNum: '37691003113404',
+    Withdraw: '78240',
+    Deposit: '0',
+    Balance: '309879',
+    TransDT: '20230724182800',
+    TransType: '공과금',
+    TransOffice: 'HanaCBS',
+    TransRemark: '사업소득세',
+    TransRefKey: '202307241828000011272837',
+    MgtRemark1: '',
+    MgtRemark2: ''
+  }
+  {
+    CorpNum: '6348702350',
+    BankAccountNum: '37691003113404',
+    Withdraw: '126917',
+    Deposit: '0',
+    Balance: '182962',
+    TransDT: '20230725044700',
+    TransType: '하나카드',
+    TransOffice: '망역',
+    TransRemark: '하나카드기업',
+    TransRefKey: '202307250447000011272838',
+    MgtRemark1: '',
+    MgtRemark2: ''
+  }

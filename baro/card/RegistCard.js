@@ -1,5 +1,5 @@
-const soap = require('soap'); // https://www.npmjs.com/package/soap
-
+import soap from 'soap'; // https://www.npmjs.com/package/soap
+import { config } from '../../config.js';
 (async () => {
 
 	const client = await soap.createClientAsync('https://testws.baroservice.com/CARD.asmx?WSDL') // 테스트서버
@@ -8,13 +8,13 @@ const soap = require('soap'); // https://www.npmjs.com/package/soap
 	// ---------------------------------------------------------------------------------------------------
 	// API 레퍼런스 : https://dev.barobill.co.kr/docs/references/카드조회-API#RegistCard
 	// ---------------------------------------------------------------------------------------------------
-	const certKey     = ''
-	const corpNum     = ''
-	const cardCompany = ''
-	const cardType    = ''
-	const cardNum     = ''
-	const webId       = ''
-	const webPwd      = ''
+	const certKey     = config.baro.certKey
+	const corpNum     = config.baro.corpNum
+	const cardCompany = 'HANA'
+	const cardType    = 'C'
+	const cardNum     = '9440819003506534'
+	const webId       = 'BETHELEAN'
+	const webPwd      = 'hj@28480404'
 	const alias       = ''
 	const usage       = ''
 

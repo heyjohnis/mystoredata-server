@@ -1,4 +1,5 @@
-const soap = require('soap'); // https://www.npmjs.com/package/soap
+import soap from 'soap'; // https://www.npmjs.com/package/soap
+import { config } from '../../config.js';
 
 (async () => {
 
@@ -8,12 +9,12 @@ const soap = require('soap'); // https://www.npmjs.com/package/soap
 	// ---------------------------------------------------------------------------------------------------
 	// API 레퍼런스 : https://dev.barobill.co.kr/docs/references/계좌조회-API#GetMonthlyBankAccountLogEx
 	// ---------------------------------------------------------------------------------------------------
-	const certKey        = ''
-	const corpNum        = ''
-	const id             = ''
-	const bankAccountNum = ''
-	const baseMonth      = ''
-	const countPerPage   = 10
+	const certKey        = config.baro.certKey
+	const corpNum        = config.baro.corpNum
+	const id             = 'BETHELEAN'
+	const bankAccountNum = '37691003114104'
+	const baseMonth      = '202307'
+	const countPerPage   = 100
 	const currentPage    = 1
 	const orderDirection = 1
 

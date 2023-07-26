@@ -1,4 +1,5 @@
-const soap = require('soap'); // https://www.npmjs.com/package/soap
+import soap from 'soap'; // https://www.npmjs.com/package/soap
+import { config } from '../../config.js';
 
 (async () => {
 
@@ -8,8 +9,8 @@ const soap = require('soap'); // https://www.npmjs.com/package/soap
 	// ---------------------------------------------------------------------------------------------------
 	// API 레퍼런스 : https://dev.barobill.co.kr/docs/references/카드조회-API#GetCardEx
 	// ---------------------------------------------------------------------------------------------------
-	const certKey   = ''
-	const corpNum   = ''
+	const certKey   = config.baro.certKey
+	const corpNum   = config.baro.corpNumnode
 	const availOnly = 1
 
 	const response = await client.GetCardExAsync({

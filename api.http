@@ -14,3 +14,15 @@ Content-Type: application/json; charset=UTF-8
 ### 사용자 불러오기
 GET {{baseUrl}}/user/ HTTP/1.1
 Content-Type: application/json; charset=UTF-8
+
+### 카드내역불러오기
+GET {{baseUrl}}/card/log HTTP/1.1
+Content-Type: application/json; charset=UTF-8
+
+### 통장내역불러오기
+GET {{baseUrl}}/account/log HTTP/1.1
+Content-Type: application/json; charset=UTF-8
+
+### 통장목록
+GET {{baseUrl}}/account/list HTTP/1.1
+Content-Type: application/json; charset=UTF-8
