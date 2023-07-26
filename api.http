@@ -1,0 +1,16 @@
+@baseUrl = https://localhost:8089
+### HTML to PDF
+POST {{baseUrl}}/auth/signup HTTP/1.1
+Content-Type: application/json; charset=UTF-8
+
+{
+    "username": "juni0226", 
+    "password": "121234",
+    "name": "김희준",
+    "email": "juni0227@nate.com",
+    "url": "bethelean.co.kr"
+}
+
+### 사용자 불러오기
+GET {{baseUrl}}/user/ HTTP/1.1
+Content-Type: application/json; charset=UTF-8
