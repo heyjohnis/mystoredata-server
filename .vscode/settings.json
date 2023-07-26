@@ -1,4 +1,13 @@
 {
-    "explorer.compactFolders": false,
-    "prettier.printWidth": 80
+  "explorer.compactFolders": false,
+  "prettier.printWidth": 80,
+  "editor.defaultColorDecorators": true,
+  "editor.formatOnSave": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": true
+  },
+  "eslint.enable": true,
+  "eslint.validate": ["javascript", "javascriptreact"],
+  "files.autoSave": "off",
+  "javascript.format.enable": false
 }
