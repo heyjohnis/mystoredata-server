@@ -5,4 +5,10 @@ const router = express.Router();
 
 router.get('/log', controller.getCardLog);
 
-export default router;ß
+router.post('/reg', controller.regCard);
+
+router.post('/stop', controller.stopCard);
+
+router.get('/list', controller.getCardList);
+
+export default router;
