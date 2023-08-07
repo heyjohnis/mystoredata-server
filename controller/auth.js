@@ -5,21 +5,22 @@ import * as userRepository from '../data/auth.js';
 import { config } from '../config.js';
 
 export async function signup(req, res) {
-  const { username, password, name, email, url } = req.body;
-  const found = await userRepository.findByUsername(username);
+  const { login_id, corp_name, password, name, email, url } = req.body;
+  const found = await userRepository.findByLoginId(login_id);
   if (found) {
-    return res.status(409).json({ message: `${username} already exists` });
+    return res.status(409).json({ message: `${login_id} 이미 존재하는 아이디입니다` });
   }
   const hashed = await bcrypt.hash(password, config.bcrypt.saltRounds);
   const userId = await userRepository.createUser({
-    username,
+    login_id,
+    corp_name,
     password: hashed,
     name,
     email,
     url,
   });
   const token = createJwtToken(userId);
-  res.status(201).json({ token, username });
+  res.status(201).json({ token, login_id });
 }
 
 export async function login(req, res) {

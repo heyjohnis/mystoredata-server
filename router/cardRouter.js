@@ -3,7 +3,7 @@ import * as controller from '../controller/cardController.js';
 
 const router = express.Router();
 
-router.get('/log', controller.getCardLog);
+router.post('/log', controller.getCardLog);
 
 router.post('/reg', controller.regCard);
 

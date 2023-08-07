@@ -2,10 +2,12 @@ import Mongoose from 'mongoose';
 import { useVirtualId } from '../database/database.js';
 
 const userSchema = new Mongoose.Schema({
-  username: { type: String, required: true },
+  login_id: { type: String, required: true },
   name: { type: String, required: true },
   email: { type: String, required: true },
   password: { type: String, required: true },
+  corp_num: { type: String }, 
+  corp_name: { type: String },
   url: String,
 });
 
@@ -14,6 +16,10 @@ const User = Mongoose.model('User', userSchema);
 
 export async function findByUsername(username) {
   return User.findOne({ username });
+}
+
+export async function findByLoginId(login_id) {
+  return User.findOne({ login_id });
 }
 
 export async function findById(id) {

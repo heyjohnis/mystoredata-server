@@ -5,13 +5,10 @@ const client = await soap.createClientAsync('https://testws.baroservice.com/CARD
 // const client = await soap.createClientAsync("https://ws.baroservice.com/CARD.asmx?WSDL") // 운영서버
 
 
-export async function getDailyCardLog () {
+export async function getDailyCardLog (req) {
 
 	const certKey        = config.baro.certKey
-	const corpNum        = config.baro.corpNum
-	const id             = 'bethelean'
-	const cardNum        = '9440819003506534'
-	const baseDate       = '20230725'
+	const { corpNum, id, cardNum, baseDate } = req.body;
 	const countPerPage   = 10
 	const currentPage    = 1
 	const orderDirection = 1
@@ -53,12 +50,11 @@ export async function regCard (req, res) {
 		cardType,
 		cardNum,
 		webId,
-		webPwd
+		webPwd,
+		corpNum
 	} = req.body;
-	console.log("reg body: ", req.body);
 
 	const certKey     = config.baro.certKey
-	const corpNum     = config.baro.corpNum
 	const alias       = ''
 	const usage       = ''
 
@@ -85,11 +81,11 @@ export async function regCard (req, res) {
 
 export async function stopCard ( req, res ) {
 
-	const { cardNum } = req.body;
+	const { cardNum, corpNum } = req.body;
 
 	const response = await client.StopCardAsync({
 		CERTKEY: config.baro.certKey,
-		CorpNum: config.baro.corpNum,
+		CorpNum: corpNum,
 		CardNum: cardNum,
 	})
 
@@ -105,7 +101,7 @@ export async function stopCard ( req, res ) {
 export async function getCardList ( req, res ) {
 
 	const certKey   = config.baro.certKey
-	const corpNum   = config.baro.corpNum
+	const corpNum   = req.query.corpNum;
 	const availOnly = 1
 
 	const response = await client.GetCardExAsync({
@@ -130,11 +126,11 @@ export async function getCardList ( req, res ) {
 
 export async function updateCardInfo ( req, res ) {
 	
-	const { cardNum, webId, webPwd } = req.body;
+	const { cardNum, webId, webPwd, corpNum} = req.body;
 
 	const response = await client.UpdateCardAsync({
 		CERTKEY: config.baro.certKey,
-		CorpNum: config.baro.corpNum,
+		CorpNum: corpNum,
 		CardNum: cardNum,
 		WebId  : webId,
 		WebPwd : webPwd,

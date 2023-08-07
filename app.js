@@ -8,11 +8,12 @@ import moment from 'moment-timezone';
 
 import morgan from 'morgan';
 import helmet from 'helmet';
-import authRouter from './router/auth.js';
+import authRouter from './router/authRouter.js';
 import blogRouter from './router/blogRouter.js';
 import userRouter from './router/userRouter.js';
 import cardRouter from './router/cardRouter.js';
 import accountRouter from './router/accountRouter.js';
+import corpRouter from './router/corpRouter.js';
 
 import { config } from './config.js';
 import { initSocket } from './connection/socket.js';
@@ -34,6 +35,7 @@ app.use('/user', userRouter);
 app.use('/blog', blogRouter);
 app.use('/card', cardRouter);
 app.use('/account', accountRouter);
+app.use('/corp', corpRouter);
 
 app.use((req, res, next) => {
   res.sendStatus(404);
