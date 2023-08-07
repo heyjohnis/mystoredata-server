@@ -1,16 +1,26 @@
 @baseUrl = https://localhost:8089
 
+### 로그인
+POST {{baseUrl}}/auth/login HTTP/1.1
+Content-Type: application/json; charset=UTF-8
+
+{
+    "loginId": "joon0227", 
+    "password": "12345678"
+}
+
+
 ### 회원가입
 POST {{baseUrl}}/auth/signup HTTP/1.1
 Content-Type: application/json; charset=UTF-8
 
 {
-    "login_id": "joon0227", 
+    "loginId": "bethelean", 
     "password": "12345678",
     "name": "김희준",
-    "email": "juni0227@nate.com",
-    "corp_name": "아이셋코리아",
-    "corp_ㅜㅕ": "아이셋코리아",
+    "email": "bethelean.com@gmail.com",
+    "corpNum": "6348702350",
+    "corpName": "비더린",
     "url": "bethelean.co.kr"
 }
 

@@ -2,13 +2,13 @@ import express from 'express';
 import {} from 'express-async-errors';
 import { body } from 'express-validator';
 import { validate } from '../middleware/validator.js';
-import * as authController from '../controller/auth.js';
+import * as authController from '../controller/authController.js';
 import { isAuth } from '../middleware/auth.js';
 
 const router = express.Router();
 
 const validateCredential = [
-  body('login_id')
+  body('loginId')
     .trim()
     .notEmpty()
     .withMessage('로그인ID를 입력하세요'),
