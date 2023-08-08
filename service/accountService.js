@@ -1,9 +1,14 @@
 import soap from 'soap'; // https://www.npmjs.com/package/soap
 import { config } from '../config.js';
+import errorCase from '../middleware/baroError.js';
 
+const client = await soap.createClientAsync('https://testws.baroservice.com/BANKACCOUNT.asmx?WSDL') // 테스트서버
+// const client = await soap.createClientAsync("https://ws.baroservice.com/BANKACCOUNT.asmx?WSDL") // 운영서버
+
+
+// 계좌조회 : https://dev.barobill.co.kr/docs/references/계좌조회-API#GetBankAccountEx
 export async function getAccounts () {
 
-	const client = await soap.createClientAsync('https://testws.baroservice.com/BANKACCOUNT.asmx?WSDL') // 테스트서버
 	const certKey   = config.baro.certKey
 	const corpNum   = config.baro.corpNum
 	const availOnly = 1
@@ -25,6 +30,46 @@ export async function getAccounts () {
 		}
         return bankAccounts;
 	}
+}
+
+ 
+// 계좌등록 : https://dev.barobill.co.kr/docs/references/계좌조회-API#RegistBankAccount
+
+export async function regAccount ( req ) {
+
+	const { corpNum, bank, bankAccountType, bankAccountNum, bankAccountPwd} = req.body;
+	const certKey         = config.baro.certKey
+	const collectCycle    = 'MINUTE10'
+	const webId           = ''
+	const webPwd          = ''
+	const identityNum     = corpNum
+	const alias           = ''
+	const usage           = ''
+
+	const response = await client.RegistBankAccountAsync({
+		CERTKEY        : certKey,
+		CorpNum        : corpNum,
+		CollectCycle   : collectCycle,
+		Bank           : bank,
+		BankAccountType: bankAccountType,
+		BankAccountNum : bankAccountNum,
+		BankAccountPwd : bankAccountPwd,
+		WebId          : webId,
+		WebPwd         : webPwd,
+		IdentityNum    : identityNum,
+		Alias          : alias,
+		Usage          : usage,
+	})
+
+	const result = response[0].RegistBankAccountResult
+
+	if (result < 0) { // 호출 실패
+		throw new Error(errorCase( result ));
+	} else { // 호출 성공
+		console.log("계좌등록: ", result);
+		return { success: { } }
+	}
+
 }
 
 
@@ -75,3 +120,4 @@ export async function getAccountLog () {
 	}
 
 }
+

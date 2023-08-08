@@ -8,7 +8,7 @@ import { isAuth } from '../middleware/auth.js';
 const router = express.Router();
 
 const validateCredential = [
-  body('loginId')
+  body('userId')
     .trim()
     .notEmpty()
     .withMessage('로그인ID를 입력하세요'),

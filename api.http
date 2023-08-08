@@ -5,23 +5,24 @@ POST {{baseUrl}}/auth/login HTTP/1.1
 Content-Type: application/json; charset=UTF-8
 
 {
-    "loginId": "joon0227", 
+    "userId": "bethelean", 
     "password": "12345678"
 }
-
 
 ### 회원가입
 POST {{baseUrl}}/auth/signup HTTP/1.1
 Content-Type: application/json; charset=UTF-8
 
 {
-    "loginId": "bethelean", 
+    "userId": "bethelean", 
     "password": "12345678",
     "name": "김희준",
     "email": "bethelean.com@gmail.com",
     "corpNum": "6348702350",
     "corpName": "비더린",
-    "url": "bethelean.co.kr"
+    "url": "bethelean.co.kr",
+    "ceoName": "이혜영",
+    "addr1": "마포구 성산동"
 }
 
 ### 사용자 불러오기
@@ -39,7 +40,7 @@ Content-Type: application/json; charset=UTF-8
 {
     "cardCompany": "HANA",
     "cardType": "C",
-    "cardNum": "4336920003113475",
+    "cardNum": "4336920003113475", 
     "webId": "BETHELEAN",
     "webPwd": "hj@28480404"
 }
@@ -73,6 +74,18 @@ Content-Type: application/json; charset=UTF-8
 GET {{baseUrl}}/account/list HTTP/1.1
 Content-Type: application/json; charset=UTF-8
 
+### 통장등록
+POST {{baseUrl}}/account/reg HTTP/1.1
+Content-Type: application/json; charset=UTF-8
+
+{
+    "corpNum": "6348702350",
+    "bankAccountType": "C",
+    "bank": "HANA",
+    "bankAccountNum": "37691003114104",
+    "bankAccountPwd": "2848"
+}
+
 
 ### 통장목록
 GET {{baseUrl}}/account/list HTTP/1.1
@@ -84,21 +97,21 @@ GET {{baseUrl}}/corp/check?checkCorpNum=6348702350 HTTP/1.1
 Content-Type: application/json; charset=UTF-8
 
 
-### 회사등록
-POST {{baseUrl}}/corp/reg HTTP/1.1
-Content-Type: application/json; charset=UTF-8
+# ### 회사등록
+# POST {{baseUrl}}/corp/reg HTTP/1.1
+# Content-Type: application/json; charset=UTF-8
 
-{
-    "corpNum": "1073270598",
-    "corpName": "아이셋",
-    "ceoName": "김희준",
-    "bizType": "서비스",
-    "bizClass": "프로그래밍",
-    "addr1": "서울특별시 마포구 성산동",
-    "addr2": "214-18",
-    "memberName": "iset",
-    "id": "iset12",
-    "pwd": "hj@284804",
-    "tel": "01020070227",
-    "email":"joon0227@gmail.com"
-}
+# {
+#     "corpNum": "1073270598",
+#     "corpName": "아이셋",
+#     "ceoName": "김희준",
+#     "bizType": "서비스",
+#     "bizClass": "프로그래밍",
+#     "addr1": "서울특별시 마포구 성산동",
+#     "addr2": "214-18",
+#     "memberName": "iset",
+#     "id": "iset12",
+#     "pwd": "hj@284804",
+#     "tel": "01020070227",
+#     "email":"joon0227@gmail.com"
+# }
