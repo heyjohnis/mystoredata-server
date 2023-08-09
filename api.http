@@ -66,9 +66,15 @@ Content-Type: application/json; charset=UTF-8
 
 
 ### 통장내역불러오기
-GET {{baseUrl}}/account/log HTTP/1.1
+POST {{baseUrl}}/account/log HTTP/1.1
 Content-Type: application/json; charset=UTF-8
 
+{
+    "corpNum": "6348702350",
+    "id": "BETHELEAN",
+    "bankAccountNum": "37691003114104",
+    "baseMonth": "202307"
+}
 
 ### 통장목록
 GET {{baseUrl}}/account/list HTTP/1.1

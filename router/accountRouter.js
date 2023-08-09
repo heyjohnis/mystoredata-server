@@ -7,6 +7,6 @@ router.get('/list', controller.getAccounts);
 
 router.post('/reg', controller.regAccount)
 
-router.get('/log', controller.getAccountLog);
+router.post('/log', controller.getAccountLog);
 
 export default router;

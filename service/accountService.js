@@ -61,31 +61,15 @@ export async function regAccount ( req ) {
 		Usage          : usage,
 	})
 
-	const result = response[0].RegistBankAccountResult
-
-	if (result < 0) { // 호출 실패
-		throw new Error(errorCase( result ));
-	} else { // 호출 성공
-		console.log("계좌등록: ", result);
-		return { success: { } }
-	}
-
+	return response[0].RegistBankAccountResult
 }
 
+// 계좌내역조회 : https://dev.barobill.co.kr/docs/references/계좌조회-API#GetMonthlyBankAccountLogEx
+export async function getAccountLog (req) {
+	console.log("body: ", req.body)
+	const { corpNum, id, bankAccountNum, baseMonth } = req.body;
 
-export async function getAccountLog () {
-
-	const client = await soap.createClientAsync('https://testws.baroservice.com/BANKACCOUNT.asmx?WSDL') // 테스트서버
-	// const client = await soap.createClientAsync("https://ws.baroservice.com/BANKACCOUNT.asmx?WSDL") // 운영서버
-
-	// ---------------------------------------------------------------------------------------------------
-	// API 레퍼런스 : https://dev.barobill.co.kr/docs/references/계좌조회-API#GetMonthlyBankAccountLogEx
-	// ---------------------------------------------------------------------------------------------------
 	const certKey        = config.baro.certKey
-	const corpNum        = config.baro.corpNum
-	const id             = 'BETHELEAN'
-	const bankAccountNum = '37691003114104'
-	const baseMonth      = '202307'
 	const countPerPage   = 100
 	const currentPage    = 1
 	const orderDirection = 1
@@ -96,13 +80,13 @@ export async function getAccountLog () {
 		ID            : id,
 		BankAccountNum: bankAccountNum,
 		BaseMonth     : baseMonth,
-		CountPerPage  : countPerPage,
+		CountPerPage  : countPerPage, 
 		CurrentPage   : currentPage,
 		OrderDirection: orderDirection,
 	})
 
-	const result = response[0].GetMonthlyBankAccountLogExResult
-
+	const result = response[0].GetMonthlyBankAccountLogExResult 
+	console.log("result: ", result);
 	if (result.CurrentPage < 0) { // 호출 실패
         return {error: result.CurrentPage}
 	} else { // 호출 성공
@@ -112,7 +96,7 @@ export async function getAccountLog () {
 		console.log(result.MaxIndex)
 
 		const bankAccountLogs = !result.BankAccountLogList ? [] : result.BankAccountLogList.BankAccountLogEx
-
+		console.log(bankAccountLogs)
 		for (const bankAccountLog of bankAccountLogs) {
 			// 필드정보는 레퍼런스를 참고해주세요.
 			console.log(bankAccountLog)
