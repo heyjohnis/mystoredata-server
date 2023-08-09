@@ -19,6 +19,11 @@ const schema = new Mongoose.Schema({
 useVirtualId(schema);
 const User = Mongoose.model('user', schema);
 
+export async function getUserList(req) {
+  return User.find();
+}
+
+
 export async function findByUserId(userId) {
   return User.findOne({ userId });
 }

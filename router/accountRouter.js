@@ -1,12 +1,13 @@
 import express from 'express';
 import * as controller from '../controller/accountController.js';
+import { isAuth } from '../middleware/auth.js';
 
 const router = express.Router();
 
-router.get('/list', controller.getAccounts);
+router.get('/list', isAuth, controller.getAccounts);
 
-router.post('/reg', controller.regAccount)
+router.post('/reg', isAuth, controller.regAccount)
 
-router.post('/log', controller.getAccountLog);
+router.post('/log', isAuth, controller.getAccountLog);
 
 export default router;

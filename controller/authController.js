@@ -26,14 +26,13 @@ export async function login(req, res) {
   if (!isValidPassword) {
     return res.status(401).json({ message: 'Invalid user or password' });
   }
+  console.log("user.id: ", user.id);
   const token = createJwtToken(user.id);
-  res.status(200).json({ token, userId });
+  res.status(200).json({ token, userId, id: user.id });
 }
 
-function createJwtToken(userId) {
-  return jwt.sign({ userId }, config.jwt.secretKey, {
-    expiresIn: config.jwt.expiresInSec,
-  });
+function createJwtToken(id) {
+  return jwt.sign({ id }, config.jwt.secretKey, { expiresIn: config.jwt.expiresInSec });
 }
 
 export async function me(req, res, next) {

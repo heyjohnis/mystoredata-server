@@ -1,17 +1,12 @@
 import express from 'express';
 import * as data from '../data/userData.js';
+import * as controller from '../controller/userController.js'
+import { isAuth } from '../middleware/auth.js';
+
 
 const router = express.Router();
 
-// router.get('/', async (req, res) => {
-//     try {
-//       const result = await data.find({});
-//       res.status(200).json(result);
-//     } catch (error) {
-//       console.error(error);
-//       res.status(500).send({err: error.message});
-//     }
-//   });
+router.get('/list', controller.getUserList);
   
 //   router.get('/:blogId', async (req, res) => {
 //     try {

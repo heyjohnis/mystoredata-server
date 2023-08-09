@@ -1,14 +1,15 @@
 import express from 'express';
 import * as controller from '../controller/cardController.js';
+import { isAuth } from '../middleware/auth.js';
 
 const router = express.Router();
 
-router.post('/log', controller.getCardLog);
+router.post('/log', isAuth, controller.getCardLog);
 
-router.post('/reg', controller.regCard);
+router.post('/reg', isAuth, controller.regCard);
 
-router.post('/stop', controller.stopCard);
+router.post('/stop', isAuth, controller.stopCard);
 
-router.get('/list', controller.getCardList);
+router.get('/list', isAuth, controller.getCardList);
 
 export default router;

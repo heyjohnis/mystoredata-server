@@ -1,6 +1,5 @@
 import soap from 'soap'; // https://www.npmjs.com/package/soap
 import { config } from '../config.js';
-import errorCase from '../middleware/baroError.js';
 
 const client = await soap.createClientAsync('https://testws.baroservice.com/BANKACCOUNT.asmx?WSDL') // 테스트서버
 // const client = await soap.createClientAsync("https://ws.baroservice.com/BANKACCOUNT.asmx?WSDL") // 운영서버
@@ -67,7 +66,7 @@ export async function regAccount ( req ) {
 // 계좌내역조회 : https://dev.barobill.co.kr/docs/references/계좌조회-API#GetMonthlyBankAccountLogEx
 export async function getAccountLog (req) {
 	console.log("body: ", req.body)
-	const { corpNum, id, bankAccountNum, baseMonth } = req.body;
+	const { user, corpNum, id, bankAccountNum, baseMonth } = req.body;
 
 	const certKey        = config.baro.certKey
 	const countPerPage   = 100
@@ -86,7 +85,6 @@ export async function getAccountLog (req) {
 	})
 
 	const result = response[0].GetMonthlyBankAccountLogExResult 
-	console.log("result: ", result);
 	if (result.CurrentPage < 0) { // 호출 실패
         return {error: result.CurrentPage}
 	} else { // 호출 성공
@@ -102,6 +100,5 @@ export async function getAccountLog (req) {
 			console.log(bankAccountLog)
 		}
 	}
-
 }
 
