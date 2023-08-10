@@ -22,5 +22,5 @@ useVirtualId(schema);
 const Corp = Mongoose.model('crop', schema);
 
 export async function createCorp(data) {
-  return new Corp(data).save().then( res => res.id);
+  return new Corp(data).save().then( res => res._id);
 }

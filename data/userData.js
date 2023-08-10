@@ -28,30 +28,14 @@ export async function findById(_id) {
 }
 
 export async function findByUserId(userId) {
-  return User.findOne({ userId });
+  const user = await User.findOne({ userId });
+  console.log("user: ", user);
+  return user;
 }
 
 export async function createUser(data) {
-  const user = await new User(data).save().then((res) => res.id)
+  const user = await new User(data).save().then((res) => res._id);
   return createCorp({...data, user})
-}
-
-export async function regAccount(_id, newAccount ) {
-  
-  const userInfo = await User.findOne({_id});
-  const accounts = userInfo.accounts;
-  console.log("accouts: ", accounts);
-  
-  const hasAccout = accounts.find( accont => accont.corpNum === newAccount.corpNum);
-  console.log("hasAccout", hasAccout);
-  if(!hasAccout) {
-   return User.findByIdAndUpdate(_id, { $push: { accounts: newAccount }}, { returnOriginal: false });
-  }
-}
-
-export async function deleteAccout ( _id, accountNum ) {
-
-  return await User.findByIdAndUpdate( _id, { $pull: { accounts: { corpNum: accountNum} }});
 }
 
 export default User;

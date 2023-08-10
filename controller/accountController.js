@@ -3,7 +3,7 @@ import errorCase from '../middleware/baroError.js';
 
 export async function getAccounts (req, res) {
     try {
-        const data = await service.getAccounts();
+        const data = await service.getAccounts( req );
         res.status(200).json(data);
     } catch (error) {
         console.error(error);

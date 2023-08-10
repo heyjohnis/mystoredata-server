@@ -21,6 +21,7 @@ export const isAuth = async (req, res, next) => {
     }
     req.userId = user.userId;
     req._id = user._id;
+    req.corpNum = user.corpNum;
     next();
   });
 };

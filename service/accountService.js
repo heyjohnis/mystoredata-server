@@ -1,6 +1,6 @@
 import soap from 'soap';
 import { config } from '../config.js';
-import * as data from '../data/userData.js';
+import * as accountData from '../data/accountData.js';
 
 const certKey = config.baro.certKey;
 const client = await soap.createClientAsync('https://testws.baroservice.com/BANKACCOUNT.asmx?WSDL') // 테스트서버
@@ -8,16 +8,18 @@ const client = await soap.createClientAsync('https://testws.baroservice.com/BANK
 
 
 // 계좌조회 : https://dev.barobill.co.kr/docs/references/계좌조회-API#GetBankAccountEx
-export async function getAccounts () {
+export async function getAccounts ( req ) {
 
-	const corpNum   = config.baro.corpNum
+	const { accounts } = await accountData.getAccounts( req._id );
+	console.log(accounts);
+	
 	const availOnly = 1
 
 	const response = await client.GetBankAccountExAsync({
 		CERTKEY  : certKey,
-		CorpNum  : corpNum,
+		CorpNum  : req.corpNum,
 		AvailOnly: availOnly,
-	})
+	});
 
 	const result = response[0].GetBankAccountExResult
 
@@ -38,13 +40,13 @@ export async function regUserAccount ( req ) {
 	const collectCycle    = 'MINUTE10'
 	const webId           = ''
 	const webPwd          = ''
-	const identityNum     = corpNum
+	const identityNum     = req.corpNum;
 	const alias           = ''
 	const usage           = ''
 
 	const newAccount =  { corpNum, bank, bankAccountType, bankAccountNum, bankAccountPwd };
 
-	const result = await data.regAccount(req._id, newAccount);
+	const result = await accountData.regAccount(req._id, newAccount);
 
 	const response = await client.RegistBankAccountAsync({
 		CERTKEY        : certKey,
@@ -61,6 +63,28 @@ export async function regUserAccount ( req ) {
 		Usage          : usage,
 	})
 
+	const response2 = await client.ReRegistBankAccountAsync({
+		CERTKEY       : certKey,
+		CorpNum  	  : req.corpNum,
+		BankAccountNum: bankAccountNum,
+	})
+
+	console.log("response[0].ReRegistBankAccountResult: ", response2[0].ReRegistBankAccountResult);
+
+	const response3 = await client.CancelStopBankAccountAsync({
+		CERTKEY       : certKey,
+		CorpNum       : req.corpNum,
+		BankAccountNum: bankAccountNum,
+	})
+
+	console.log("response3[0].CancelStopBankAccountResult: ", response3[0].CancelStopBankAccountResult);
+
+	if (result < 0) { // 호출 실패
+		console.log(result);
+	} else { // 호출 성공
+		console.log(result);
+	}
+
 	return response[0].RegistBankAccountResult
 }
 
@@ -73,7 +97,7 @@ export async function getAccountLog (req) {
 
 	const response = await client.GetMonthlyBankAccountLogExAsync({
 		CERTKEY       : certKey,
-		CorpNum       : corpNum,
+		CorpNum       : req.corpNum,
 		ID            : id,
 		BankAccountNum: bankAccountNum,
 		BaseMonth     : baseMonth,
@@ -106,11 +130,11 @@ export async function deleteAccount ( req ) {
 
 	const response = await client.StopBankAccountAsync({
 		CERTKEY       : certKey,
-		CorpNum       : corpNum,
+		CorpNum       : req.corpNum,
 		BankAccountNum: bankAccountNum,
 	});
 	const resultCode = response[0].StopBankAccountResult
-	const result = await data.deleteAccout(req._id, bankAccountNum);
+	const result = await accountData.deleteAccout( bankAccountNum );
 	console.log("delete account: ", result);
 	
 	if (resultCode < 0) { // 호출 실패

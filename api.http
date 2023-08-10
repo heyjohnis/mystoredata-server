@@ -1,12 +1,17 @@
 @baseUrl = https://localhost:8089
-@jwt = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NGQxZDhiNGEyY2RhODg4MWU5NzkzNTYiLCJpYXQiOjE2OTE2NDU4MDAsImV4cCI6MTY5NDIzNzgwMH0.QgwqcPjegOHSvmSwcNdNaB25tChnMbqHlEEeI0VgnnU
+@jwt = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NGQ0ZmNmZmZkNjdmZWYyMGE1MGZmYWQiLCJpYXQiOjE2OTE2ODAxNTQsImV4cCI6MTY5MTg1Mjk1NH0.ClJW2wcMfPqXIzBatPkGz4Bl4EU-dto_vn25N0QyB9I
 
 ### 로그인
 POST {{baseUrl}}/auth/login HTTP/1.1
 Content-Type: application/json; charset=UTF-8
 
+# {
+#     "userId": "bethelean", 
+#     "password": "12345678"
+# }
+
 {
-    "userId": "bethelean", 
+    "userId": "iset12", 
     "password": "12345678"
 }
 
@@ -14,15 +19,27 @@ Content-Type: application/json; charset=UTF-8
 POST {{baseUrl}}/auth/signup HTTP/1.1
 Content-Type: application/json; charset=UTF-8
 
+# {
+#     "userId": "bethelean", 
+#     "password": "12345678",
+#     "name": "김희준",
+#     "email": "bethelean.com@gmail.com",
+#     "corpNum": "6348702350",
+#     "corpName": "비더린",
+#     "url": "bethelean.co.kr",
+#     "ceoName": "이혜영",
+#     "addr1": "마포구 성산동"
+# }
+
 {
-    "userId": "bethelean", 
+    "userId": "iset12", 
     "password": "12345678",
     "name": "김희준",
-    "email": "bethelean.com@gmail.com",
-    "corpNum": "6348702350",
+    "email": "iset@iiiset.com",
+    "corpNum": "1073270598",
     "corpName": "비더린",
-    "url": "bethelean.co.kr",
-    "ceoName": "이혜영",
+    "url": "iiiset.com",
+    "ceoName": "김희준",
     "addr1": "마포구 성산동"
 }
 
@@ -76,7 +93,6 @@ Content-Type: application/json; charset=UTF-8
 Authorization: Bearer {{jwt}}
 
 {
-    "corpNum": "6348702350",
     "id": "BETHELEAN",
     "bankAccountNum": "37691003114104",
     "baseMonth": "202307"
@@ -86,6 +102,14 @@ Authorization: Bearer {{jwt}}
 GET {{baseUrl}}/account/list HTTP/1.1
 Content-Type: application/json; charset=UTF-8
 Authorization: Bearer {{jwt}}
+
+{
+    "corpNum": "6348702350",
+    "id": "BETHELEAN",
+    "bankAccountNum": "37691003114104",
+    "baseMonth": "202307"
+}
+
 
 ### 통장등록
 POST {{baseUrl}}/account/reg HTTP/1.1
@@ -113,7 +137,6 @@ Content-Type: application/json; charset=UTF-8
 Authorization: Bearer {{jwt}}
 
 {
-    "corpNum": "6348702350",
     "bankAccountNum": "37691003114104"
 }
 
@@ -124,21 +147,21 @@ GET {{baseUrl}}/corp/check?checkCorpNum=6348702350 HTTP/1.1
 Content-Type: application/json; charset=UTF-8
 
 
-# ### 회사등록
-# POST {{baseUrl}}/corp/reg HTTP/1.1
-# Content-Type: application/json; charset=UTF-8
+### 회사등록
+POST {{baseUrl}}/corp/reg HTTP/1.1
+Content-Type: application/json; charset=UTF-8
 
-# {
-#     "corpNum": "1073270598",
-#     "corpName": "아이셋",
-#     "ceoName": "김희준",
-#     "bizType": "서비스",
-#     "bizClass": "프로그래밍",
-#     "addr1": "서울특별시 마포구 성산동",
-#     "addr2": "214-18",
-#     "memberName": "iset",
-#     "id": "iset12",
-#     "pwd": "hj@284804",
-#     "tel": "01020070227",
-#     "email":"joon0227@gmail.com"
-# }
+{
+    "corpNum": "1073270598",
+    "corpName": "아이셋",
+    "ceoName": "김희준",
+    "bizType": "서비스",
+    "bizClass": "프로그래밍",
+    "addr1": "서울특별시 마포구 성산동",
+    "addr2": "214-18",
+    "memberName": "iset",
+    "id": "iset12",
+    "pwd": "hj@284804",
+    "tel": "01020070227",
+    "email":"joon0227@gmail.com"
+}
