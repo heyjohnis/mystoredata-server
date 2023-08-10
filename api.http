@@ -1,5 +1,5 @@
 @baseUrl = https://localhost:8089
-@jwt = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0ZDFkOGI0YTJjZGE4ODgxZTk3OTM1NiIsImlhdCI6MTY5MTU2Mjc4MiwiZXhwIjoxNjkxNTYyNzg0fQ.isFafKiHrW1qmskc5YFfreVzChywdUbzxF_DRDkI3EQ
+@jwt = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NGQxZDhiNGEyY2RhODg4MWU5NzkzNTYiLCJpYXQiOjE2OTE2NDU4MDAsImV4cCI6MTY5NDIzNzgwMH0.QgwqcPjegOHSvmSwcNdNaB25tChnMbqHlEEeI0VgnnU
 
 ### 로그인
 POST {{baseUrl}}/auth/login HTTP/1.1
@@ -29,9 +29,10 @@ Content-Type: application/json; charset=UTF-8
 ### 사용자 불러오기
 GET {{baseUrl}}/user/list HTTP/1.1
 Content-Type: application/json; charset=UTF-8
+Authorization: Bearer {{jwt}}
 
 ### 카드목록
-GET {{baseUrl}}/card/list?corpNum=1073270598 HTTP/1.1
+GET {{baseUrl}}/card/list? =1073270598 HTTP/1.1
 Content-Type: application/json; charset=UTF-8
 Authorization: Bearer {{jwt}}
 
@@ -39,6 +40,7 @@ Authorization: Bearer {{jwt}}
 ### 카드등록
 POST {{baseUrl}}/card/reg HTTP/1.1
 Content-Type: application/json; charset=UTF-8
+Authorization: Bearer {{jwt}}
 
 {
     "cardCompany": "HANA",
@@ -103,6 +105,18 @@ Authorization: Bearer {{jwt}}
 GET {{baseUrl}}/account/list HTTP/1.1
 Content-Type: application/json; charset=UTF-8
 Authorization: Bearer {{jwt}}
+
+
+### 통장삭제
+DELETE  {{baseUrl}}/account/delete HTTP/1.1
+Content-Type: application/json; charset=UTF-8
+Authorization: Bearer {{jwt}}
+
+{
+    "corpNum": "6348702350",
+    "bankAccountNum": "37691003114104"
+}
+
 
 
 ### 회사등록여부 확인

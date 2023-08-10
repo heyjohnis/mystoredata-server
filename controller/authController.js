@@ -31,8 +31,8 @@ export async function login(req, res) {
   res.status(200).json({ token, userId, id: user.id });
 }
 
-function createJwtToken(id) {
-  return jwt.sign({ id }, config.jwt.secretKey, { expiresIn: config.jwt.expiresInSec });
+function createJwtToken(_id) {
+  return jwt.sign({ _id }, config.jwt.secretKey, { expiresIn: config.jwt.expiresInSec });
 }
 
 export async function me(req, res, next) {

@@ -17,7 +17,7 @@ useVirtualId(tweetSchema);
 const Tweet = Mongoose.model('Tweet', tweetSchema);
 
 export async function getAll() {
-  return Tweet.find().sort({ createdAt: -1 });
+  return await Tweet.find().sort({ createdAt: -1 });
 }
 
 export async function getAllByUsername(username) {

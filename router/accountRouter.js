@@ -10,4 +10,6 @@ router.post('/reg', isAuth, controller.regAccount)
 
 router.post('/log', isAuth, controller.getAccountLog);
 
+router.delete('/delete', isAuth, controller.deleteAccount);
+
 export default router;

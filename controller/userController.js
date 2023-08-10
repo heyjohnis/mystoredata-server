@@ -1,6 +1,7 @@
-import data from '../data/userData.js';
+import * as data from '../data/userData.js';
 
 export async function getUserList(req, res) {
-  
-  res.status(200).json(data.getUserList());
+  const users = await data.getUserList(req);
+  console.log("users: ", users);
+  res.status(200).json({ users });
 }

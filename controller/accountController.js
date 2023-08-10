@@ -26,7 +26,20 @@ export async function getAccountLog (req, res) {
 
 export async function regAccount ( req, res) {
     try {
-        const code = await service.regAccount(req);
+        const code = await service.regUserAccount(req);
+        if(code > 0) {
+            res.status(200).json({success: true});    
+        } else {
+            res.status(400).json(errorCase(code));
+        }        
+    } catch (error) {
+        res.sendStatus(500).json(error);
+    }
+}
+
+export async function deleteAccount ( req, res) {
+    try {
+        const code = await service.deleteAccount(req);
         if(code > 0) {
             res.status(200).json({success: true});    
         } else {

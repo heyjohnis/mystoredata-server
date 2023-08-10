@@ -1,6 +1,8 @@
-import soap from 'soap'; // https://www.npmjs.com/package/soap
+import soap from 'soap';
 import { config } from '../config.js';
+import * as data from '../data/userData.js';
 
+const certKey = config.baro.certKey;
 const client = await soap.createClientAsync('https://testws.baroservice.com/BANKACCOUNT.asmx?WSDL') // 테스트서버
 // const client = await soap.createClientAsync("https://ws.baroservice.com/BANKACCOUNT.asmx?WSDL") // 운영서버
 
@@ -8,7 +10,6 @@ const client = await soap.createClientAsync('https://testws.baroservice.com/BANK
 // 계좌조회 : https://dev.barobill.co.kr/docs/references/계좌조회-API#GetBankAccountEx
 export async function getAccounts () {
 
-	const certKey   = config.baro.certKey
 	const corpNum   = config.baro.corpNum
 	const availOnly = 1
 
@@ -31,19 +32,19 @@ export async function getAccounts () {
 	}
 }
 
- 
-// 계좌등록 : https://dev.barobill.co.kr/docs/references/계좌조회-API#RegistBankAccount
-
-export async function regAccount ( req ) {
+export async function regUserAccount ( req ) {
 
 	const { corpNum, bank, bankAccountType, bankAccountNum, bankAccountPwd} = req.body;
-	const certKey         = config.baro.certKey
 	const collectCycle    = 'MINUTE10'
 	const webId           = ''
 	const webPwd          = ''
 	const identityNum     = corpNum
 	const alias           = ''
 	const usage           = ''
+
+	const newAccount =  { corpNum, bank, bankAccountType, bankAccountNum, bankAccountPwd };
+
+	const result = await data.regAccount(req._id, newAccount);
 
 	const response = await client.RegistBankAccountAsync({
 		CERTKEY        : certKey,
@@ -63,12 +64,9 @@ export async function regAccount ( req ) {
 	return response[0].RegistBankAccountResult
 }
 
-// 계좌내역조회 : https://dev.barobill.co.kr/docs/references/계좌조회-API#GetMonthlyBankAccountLogEx
 export async function getAccountLog (req) {
 	console.log("body: ", req.body)
 	const { user, corpNum, id, bankAccountNum, baseMonth } = req.body;
-
-	const certKey        = config.baro.certKey
 	const countPerPage   = 100
 	const currentPage    = 1
 	const orderDirection = 1
@@ -102,3 +100,22 @@ export async function getAccountLog (req) {
 	}
 }
 
+export async function deleteAccount ( req ) {
+
+	const { corpNum, bankAccountNum } = req.body;
+
+	const response = await client.StopBankAccountAsync({
+		CERTKEY       : certKey,
+		CorpNum       : corpNum,
+		BankAccountNum: bankAccountNum,
+	});
+	const resultCode = response[0].StopBankAccountResult
+	const result = await data.deleteAccout(req._id, bankAccountNum);
+	console.log("delete account: ", result);
+	
+	if (resultCode < 0) { // 호출 실패
+		return resultCode;
+	} else { // 호출 성공
+		
+	}
+}
