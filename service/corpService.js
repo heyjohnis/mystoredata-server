@@ -1,13 +1,13 @@
 import soap from 'soap';
 import { config } from '../config.js';
 
+const certKey = config.baro.certKey
+
 const client = await soap.createClientAsync('https://testws.baroservice.com/TI.asmx?WSDL') // 테스트서버
 // const client = await soap.createClientAsync("https://ws.baroservice.com/TI.asmx?WSDL") // 운영서버
 
 export async function checkCorpIsMember (req) {
 
-	console.log("checkCorpNum: ", req.query)
-	const certKey      = config.baro.certKey
 	const corpNum      = config.baro.corpNum
 	const checkCorpNum = req.query.checkCorpNum
 
@@ -28,7 +28,6 @@ export async function checkCorpIsMember (req) {
 
 export async function registCorp (req) {
 	
-	const certKey    = config.baro.certKey
 	const { corpNum, corpName, ceoName, bizType, bizClass, 
 		addr1, addr2, memberName, id, pwd, tel,  email } = req.body;
 

@@ -3,6 +3,7 @@ import bcrypt from 'bcrypt';
 import {} from 'express-async-errors';
 import * as data from '../data/userData.js';
 import { config } from '../config.js';
+import { checkCorpIsMember } from '../service/userService.js';
 
 export async function signup(req, res) {
   const { userId, corpName, password, name, email, url } = req.body;
@@ -11,7 +12,8 @@ export async function signup(req, res) {
     return res.status(409).json({ message: `${userId} 이미 존재하는 아이디입니다` });
   }
   const hashed = await bcrypt.hash(password, parseInt(config.bcrypt.saltRounds));
-  console.log("hashed: ", hashed);
+  const resultCode = await checkCorpIsMember(req);
+  console.log("resultCode: ", resultCode);
   const _id = await data.createUser({ ...req.body, password: hashed });
   const token = createJwtToken(_id);
   res.status(201).json({ token, _id });

@@ -36,16 +36,11 @@ export async function getAccounts ( req ) {
 
 export async function regUserAccount ( req ) {
 
-	const { corpNum, bank, bankAccountType, bankAccountNum, bankAccountPwd} = req.body;
+	const { bank, bankAccountType, bankAccountNum, bankAccountPwd, webId, webPwd, identityNum } = req.body;
 	const collectCycle    = 'MINUTE10'
-	const webId           = ''
-	const webPwd          = ''
-	const identityNum     = req.corpNum;
-	const alias           = ''
-	const usage           = ''
+	const corpNum         = req.corpNum;
 
-	const newAccount =  { corpNum, bank, bankAccountType, bankAccountNum, bankAccountPwd };
-
+	const newAccount =  { corpNum, bank, bankAccountType, bankAccountNum, bankAccountPwd, webId, webPwd };
 	const result = await accountData.regAccount(req._id, newAccount);
 
 	const response = await client.RegistBankAccountAsync({
@@ -59,25 +54,25 @@ export async function regUserAccount ( req ) {
 		WebId          : webId,
 		WebPwd         : webPwd,
 		IdentityNum    : identityNum,
-		Alias          : alias,
-		Usage          : usage,
+		Alias          : '',
+		Usage          : '',
 	})
 
-	const response2 = await client.ReRegistBankAccountAsync({
-		CERTKEY       : certKey,
-		CorpNum  	  : req.corpNum,
-		BankAccountNum: bankAccountNum,
-	})
+	// const response2 = await client.ReRegistBankAccountAsync({
+	// 	CERTKEY       : certKey,
+	// 	CorpNum  	  : req.corpNum,
+	// 	BankAccountNum: bankAccountNum,
+	// })
 
-	console.log("response[0].ReRegistBankAccountResult: ", response2[0].ReRegistBankAccountResult);
+	// console.log("response[0].ReRegistBankAccountResult: ", response2[0].ReRegistBankAccountResult);
 
-	const response3 = await client.CancelStopBankAccountAsync({
-		CERTKEY       : certKey,
-		CorpNum       : req.corpNum,
-		BankAccountNum: bankAccountNum,
-	})
+	// const response3 = await client.CancelStopBankAccountAsync({
+	// 	CERTKEY       : certKey,
+	// 	CorpNum       : req.corpNum,
+	// 	BankAccountNum: bankAccountNum,
+	// })
 
-	console.log("response3[0].CancelStopBankAccountResult: ", response3[0].CancelStopBankAccountResult);
+	// console.log("response3[0].CancelStopBankAccountResult: ", response3[0].CancelStopBankAccountResult);
 
 	if (result < 0) { // 호출 실패
 		console.log(result);
@@ -90,7 +85,7 @@ export async function regUserAccount ( req ) {
 
 export async function getAccountLog (req) {
 	console.log("body: ", req.body)
-	const { user, corpNum, id, bankAccountNum, baseMonth } = req.body;
+	const { bankAccountNum, baseMonth } = req.body;
 	const countPerPage   = 100
 	const currentPage    = 1
 	const orderDirection = 1
@@ -98,7 +93,7 @@ export async function getAccountLog (req) {
 	const response = await client.GetMonthlyBankAccountLogExAsync({
 		CERTKEY       : certKey,
 		CorpNum       : req.corpNum,
-		ID            : id,
+		ID            : req.userId,
 		BankAccountNum: bankAccountNum,
 		BaseMonth     : baseMonth,
 		CountPerPage  : countPerPage, 
@@ -136,7 +131,7 @@ export async function deleteAccount ( req ) {
 	const resultCode = response[0].StopBankAccountResult
 	const result = await accountData.deleteAccout( bankAccountNum );
 	console.log("delete account: ", result);
-	
+
 	if (resultCode < 0) { // 호출 실패
 		return resultCode;
 	} else { // 호출 성공

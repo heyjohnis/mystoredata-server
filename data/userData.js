@@ -38,4 +38,5 @@ export async function createUser(data) {
   return createCorp({...data, user})
 }
 
+
 export default User;

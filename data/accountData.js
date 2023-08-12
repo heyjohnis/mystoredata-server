@@ -35,8 +35,7 @@ export async function getAccounts ( _id ) {
 export async function regAccount(_id, newAccount ) {
   const userInfo = await User.findOne({_id});
   const accounts = userInfo.accounts;  
-  const hasAccout = accounts.find( accont => accont.corpNum === newAccount.corpNum);
-
+  const hasAccout = accounts.find( account => account.bankAccountNum === newAccount.bankAccountNum);
   if(!hasAccout) {
    return User.findByIdAndUpdate(_id, { $push: { accounts: newAccount }}, { returnOriginal: false });
   }
