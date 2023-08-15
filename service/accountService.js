@@ -109,12 +109,9 @@ export async function getAccountLog (req) {
 		// console.log(result.CountPerPage)
 		// console.log(result.MaxPageNum)
 		// console.log(result.MaxIndex)
-		const bankAccountLogs = !result.BankAccountLogList ? [] : result.BankAccountLogList.BankAccountLogEx
-		for (const bankAccountLog of bankAccountLogs) {
-			console.log({bankAccountLog})
-			const result = await accountData.regAccountLog({user: req._id, ...bankAccountLog})
-			// 필드정보는 레퍼런스를 참고해주세요.
-			console.log({result});
+		const logs = !result.BankAccountLogList ? [] : result.BankAccountLogList.BankAccountLogEx;
+		for(let i = 0; i < logs.length; i++) {
+			await accountData.regAccountLog({user: req._id, ...logs[i]})
 		}
 	}
 }

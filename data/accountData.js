@@ -56,12 +56,20 @@ export async function regAccountLog ( data ) {
     TransType, TransOffice, TransRemark, TransRefKey, MgtRemark1, MgtRemark2 } = data;
 
   try {
-    const result = await User.findOneAndUpdate(
-      { user, BankAccountNum, Withdraw, TransDT, TransRefKey },
-      { user, CorpNum, BankAccountNum, Deposit, Balance, TransDT, 
-        TransType, TransOffice, TransRemark, TransRefKey, MgtRemark1, MgtRemark2 },
-      { upsert: true, new: true, setDefaultsOnInsert: true }
-    );
+    const existingData = await Account.findOne({
+      user,
+      BankAccountNum,
+      Withdraw,
+      TransDT,
+      TransRefKey,
+    });
+    
+    console.log("existingData: ", existingData);
+    if (existingData) {
+      return existingData;
+    }
+
+    return new Account(data).save().then((res) => res._id);
     return result;
   } catch (error) {
     throw error;
