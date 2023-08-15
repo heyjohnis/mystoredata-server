@@ -15,10 +15,13 @@ const schema = new Mongoose.Schema(
     TransType: { type: String, required: false },
     TransOffice: { type: String, required: false },
     TransRemark: { type: String, required: false },
-    TransRefKey: { type: String, required: false },
+    TransRefKey: { type: String, required: true },
     MgtRemark1: { type: String, required: false },
     MgtRemark2: { type: String, required: false },
-  }, { timestamps: true }
+  }, 
+  { timestamps: true },
+  { strict: false }
+
 );
 
 useVirtualId(schema);
@@ -46,4 +49,21 @@ export async function deleteAccout ( accountNum ) {
     { 'accouts.corpNum': accountNum }, 
     { $pull: { accounts: { corpNum: accountNum} } }
   );
+}
+
+export async function regAccountLog ( data ) {
+  const { user, CorpNum, Withdraw, BankAccountNum, Deposit, Balance, TransDT, 
+    TransType, TransOffice, TransRemark, TransRefKey, MgtRemark1, MgtRemark2 } = data;
+
+  try {
+    const result = await User.findOneAndUpdate(
+      { user, BankAccountNum, Withdraw, TransDT, TransRefKey },
+      { user, CorpNum, BankAccountNum, Deposit, Balance, TransDT, 
+        TransType, TransOffice, TransRemark, TransRefKey, MgtRemark1, MgtRemark2 },
+      { upsert: true, new: true, setDefaultsOnInsert: true }
+    );
+    return result;
+  } catch (error) {
+    throw error;
+  }
 }

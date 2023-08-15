@@ -38,5 +38,9 @@ export async function createUser(data) {
   return createCorp({...data, user})
 }
 
+export async function updateUser(req) {
+  const { _id, name, email, corpNum, corpName } = req.body;
+  return await User.updateOne( { _id }, { $set: { name, email, corpNum, corpName }});
+}
 
 export default User;

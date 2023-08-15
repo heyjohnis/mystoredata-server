@@ -9,7 +9,7 @@ export async function signup(req, res) {
   const { userId, corpName, password, name, email, url } = req.body;
   const found = await data.findByUserId(userId);
   if (found) {
-    return res.status(409).json({ message: `${userId} 이미 존재하는 아이디입니다` });
+    return res.status(409).json({ error: { message: `${userId} 이미 존재하는 아이디입니다` } });
   }
   const hashed = await bcrypt.hash(password, parseInt(config.bcrypt.saltRounds));
   const resultCode = await checkCorpIsMember(req);
@@ -23,13 +23,12 @@ export async function login(req, res) {
   const { userId, password } = req.body;
   const user = await data.findByUserId(userId);
   if (!user) {
-    return res.status(401).json({ message: 'Invalid user or password' });
+    return res.status(401).json({ error: { code: 'Invalid', message: 'Invalid user or password' }});
   }
   const isValidPassword = await bcrypt.compare(password, user.password);
   if (!isValidPassword) {
-    return res.status(401).json({ message: 'Invalid user or password' });
+    return res.status(401).json({ error: { code: 'Invalid', message: 'Invalid user or password' }});
   }
-  console.log("user.id: ", user.id);
   const token = createJwtToken(user.id);
   res.status(200).json({ token, userId, id: user.id });
 }

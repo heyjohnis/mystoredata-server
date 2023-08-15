@@ -105,16 +105,16 @@ export async function getAccountLog (req) {
 	if (result.CurrentPage < 0) { // 호출 실패
         return {error: result.CurrentPage}
 	} else { // 호출 성공
-		console.log(result.CurrentPage)
-		console.log(result.CountPerPage)
-		console.log(result.MaxPageNum)
-		console.log(result.MaxIndex)
-
+		// console.log(result.CurrentPage)
+		// console.log(result.CountPerPage)
+		// console.log(result.MaxPageNum)
+		// console.log(result.MaxIndex)
 		const bankAccountLogs = !result.BankAccountLogList ? [] : result.BankAccountLogList.BankAccountLogEx
-		console.log(bankAccountLogs)
 		for (const bankAccountLog of bankAccountLogs) {
+			console.log({bankAccountLog})
+			const result = await accountData.regAccountLog({user: req._id, ...bankAccountLog})
 			// 필드정보는 레퍼런스를 참고해주세요.
-			console.log(bankAccountLog)
+			console.log({result});
 		}
 	}
 }
