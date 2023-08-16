@@ -1,6 +1,7 @@
 import soap from 'soap';
 import { config } from '../config.js';
 import * as accountData from '../data/accountData.js';
+import * as accountLogData from '../data/accountLogData.js';
 
 const certKey = config.baro.certKey;
 const client = await soap.createClientAsync('https://testws.baroservice.com/BANKACCOUNT.asmx?WSDL') // 테스트서버
@@ -83,6 +84,8 @@ export async function regUserAccount ( req ) {
 	return response[0].RegistBankAccountResult
 }
 
+
+
 export async function regAcountLog (req) {
 	console.log("body: ", req.body)
 	const { bankAccountNum, baseMonth } = req.body;
@@ -109,16 +112,22 @@ export async function regAcountLog (req) {
 		// console.log(result.CountPerPage)
 		// console.log(result.MaxPageNum)
 		// console.log(result.MaxIndex)
+		const account = await accountData.getAccount(bankAccountNum);
 		const logs = !result.BankAccountLogList ? [] : result.BankAccountLogList.BankAccountLogEx;
 		for(let i = 0; i < logs.length; i++) {
-			await accountData.regAccountLog({user: req._id, ...logs[i]})
+			await accountLogData.regAccountLog({
+				...logs[i], 
+				user: account.user, 
+				bank: account.bank, 	
+				CorpName: account.corpName
+			});
 		}
 	}
 }
 
 export async function deleteAccount ( req ) {
 
-	const { corpNum, bankAccountNum } = req.body;
+	const { bankAccountNum } = req.body;
 
 	const response = await client.StopBankAccountAsync({
 		CERTKEY       : certKey,
@@ -126,7 +135,7 @@ export async function deleteAccount ( req ) {
 		BankAccountNum: bankAccountNum,
 	});
 	const resultCode = response[0].StopBankAccountResult
-	const result = await accountData.deleteAccout( bankAccountNum );
+	const result = await accountData.deleteAccout(req._id, bankAccountNum );
 	console.log("delete account: ", result);
 
 	if (resultCode < 0) { // 호출 실패

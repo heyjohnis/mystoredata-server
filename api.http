@@ -1,5 +1,5 @@
 @baseUrl = http://localhost:8089
-@jwt = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NGQ1ODA0M2MxZDczZjZjZTY0MjdkZGMiLCJpYXQiOjE2OTE3MTQyNjUsImV4cCI6MTY5NDMwNjI2NX0.3o98il64V-qM3mb1tm9xzggI32CvEpdishLtuI2oXCo
+@jwt = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NGQ1ODA0M2MxZDczZjZjZTY0MjdkZGMiLCJpYXQiOjE2OTIxNjgyMDcsImV4cCI6MTY5NDc2MDIwN30.wME_fWkIGi5lpXIYGEWOYWD3NQbUvXYTXxXUJVku0rU
 
 ### 로그인
 POST {{baseUrl}}/auth/login HTTP/1.1
@@ -117,11 +117,6 @@ GET {{baseUrl}}/account/list HTTP/1.1
 Content-Type: application/json; charset=UTF-8
 Authorization: Bearer {{jwt}}
 
-{
-    "bankAccountNum": "110335376921",
-    "baseMonth": "202307"
-}
-
 ### 통장등록
 POST {{baseUrl}}/account/reg HTTP/1.1
 Content-Type: application/json; charset=UTF-8
@@ -157,10 +152,8 @@ Content-Type: application/json; charset=UTF-8
 Authorization: Bearer {{jwt}}
 
 {
-    "bankAccountNum": "37691003114104"
+    "bankAccountNum": "110335376921"
 }
-
-
 
 ### 회사등록여부 확인
 GET {{baseUrl}}/corp/check?checkCorpNum=6348702350 HTTP/1.1

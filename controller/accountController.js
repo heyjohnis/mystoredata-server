@@ -1,6 +1,6 @@
 import * as service from '../service/accountService.js';
 import errorCase from '../middleware/baroError.js';
-import * as accountData from '../data/accountData.js';
+import * as accountLogData from '../data/accountLogData.js';
 export async function getAccounts (req, res) {
     try {
         const data = await service.getAccounts( req );
@@ -26,7 +26,7 @@ export async function regAcountLog (req, res) {
 
 export async function getAccountLogs (req, res) {
     try {
-        const logs = await accountData.getAccountLogs(req)
+        const logs = await accountLogData.getAccountLogs(req)
         res.status(200).json({ logs });
     } catch (error) {
         res.sendStatus(500).json(error);
