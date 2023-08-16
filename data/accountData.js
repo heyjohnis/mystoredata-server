@@ -20,8 +20,6 @@ const schema = new Mongoose.Schema(
     MgtRemark2: { type: String, required: false },
   }, 
   { timestamps: true },
-  { strict: false }
-
 );
 
 useVirtualId(schema);
@@ -70,8 +68,13 @@ export async function regAccountLog ( data ) {
     }
 
     return new Account(data).save().then((res) => res._id);
-    return result;
   } catch (error) {
     throw error;
   }
 }
+
+export async function getAccountLogs ( data ) {
+  return Account.find().sort({ createdAt: -1 });
+}
+
+

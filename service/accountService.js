@@ -83,7 +83,7 @@ export async function regUserAccount ( req ) {
 	return response[0].RegistBankAccountResult
 }
 
-export async function getAccountLog (req) {
+export async function regAcountLog (req) {
 	console.log("body: ", req.body)
 	const { bankAccountNum, baseMonth } = req.body;
 	const countPerPage   = 100

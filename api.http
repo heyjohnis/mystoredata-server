@@ -93,14 +93,23 @@ Content-Type: application/json; charset=UTF-8
 }
 
 
-### 통장내역불러오기
-POST {{baseUrl}}/account/log HTTP/1.1
+### 통장내역불러오기와 저장
+POST {{baseUrl}}/account/regLog HTTP/1.1
 Content-Type: application/json; charset=UTF-8
 Authorization: Bearer {{jwt}}
 
 {
     "bankAccountNum": "110335376921",
     "baseMonth": "202307"
+}
+
+### 통장내역불러오기
+POST {{baseUrl}}/account/log HTTP/1.1
+Content-Type: application/json; charset=UTF-8
+Authorization: Bearer {{jwt}}
+
+{
+    "bankAccountNum": "110335376921"
 }
 
 ### 통장목록

@@ -8,7 +8,9 @@ router.get('/list', isAuth, controller.getAccounts);
 
 router.post('/reg', isAuth, controller.regAccount)
 
-router.post('/regLog', isAuth, controller.getAccountLog);
+router.post('/regLog', isAuth, controller.regAcountLog);
+
+router.get('/log', isAuth, controller.getAccountLogs);
 
 router.delete('/delete', isAuth, controller.deleteAccount);
 
