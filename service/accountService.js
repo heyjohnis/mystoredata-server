@@ -11,7 +11,7 @@ const client = await soap.createClientAsync('https://testws.baroservice.com/BANK
 // 계좌조회 : https://dev.barobill.co.kr/docs/references/계좌조회-API#GetBankAccountEx
 export async function getAccounts ( req ) {
 
-	const { accounts } = await accountData.getAccounts( req._id );
+	const { accounts } = await accountData.getAccountList( req._id );
 	console.log(accounts);
 	
 	const availOnly = 1
@@ -42,7 +42,8 @@ export async function regUserAccount ( req ) {
 	const corpNum         = req.corpNum;
 
 	const newAccount =  { corpNum, bank, bankAccountType, bankAccountNum, bankAccountPwd, webId, webPwd };
-	const result = await accountData.regAccount(req._id, newAccount);
+	const user = req.body.user || req._id;
+	const result = await accountData.regAccount(user, newAccount);
 
 	const response = await client.RegistBankAccountAsync({
 		CERTKEY        : certKey,

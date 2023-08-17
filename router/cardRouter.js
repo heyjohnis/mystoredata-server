@@ -12,4 +12,6 @@ router.post('/stop', isAuth, controller.stopCard);
 
 router.get('/list', isAuth, controller.getCardList);
 
+router.delete('/delete', isAuth, controller.deleteCard);
+
 export default router;

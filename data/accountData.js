@@ -2,11 +2,7 @@ import UserModel from '../model/userModel.js';
 import AccountLogModel from '../model/accountLogModel.js';
 import AccountModel from '../model/accountModel.js';
 
-export async function saveAccountLog(data) {
-  return new AccountLogModel(data).save().then( res => res.id);
-}
-
-export async function getAccounts ( _id ) {
+export async function getAccountList ( _id ) {
   return UserModel.findOne({ _id });
 }
 
@@ -14,12 +10,11 @@ export async function getAccount ( bankAccountNum ) {
   return AccountModel.findOne({ bankAccountNum });
 }
 
-
 export async function regAccount(_id, newAccount ) {
   const userInfo = await UserModel.findOne({_id});
   const accounts = userInfo.accounts;  
-  const hasAccout = accounts.find( account => account.bankAccountNum === newAccount.bankAccountNum);
-  if(!hasAccout) {
+  const hasAccount = accounts.find( account => account.bankAccountNum === newAccount.bankAccountNum);
+  if(!hasAccount) {
     await new AccountModel({...newAccount, user: userInfo._id, corpName: userInfo.corpName, userId: userInfo.userId}).save();
     return  await UserModel.findByIdAndUpdate(_id, { $push: { accounts: newAccount }}, { returnOriginal: false });
   }

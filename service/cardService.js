@@ -1,11 +1,10 @@
 import soap from 'soap'; // https://www.npmjs.com/package/soap
+import * as cardData from '../data/cardData.js';
 import { config } from '../config.js';
-
 const certKey        = config.baro.certKey
 
 const client = await soap.createClientAsync('https://testws.baroservice.com/CARD.asmx?WSDL') // 테스트서버
 // const client = await soap.createClientAsync("https://ws.baroservice.com/CARD.asmx?WSDL") // 운영서버
-
 
 export async function getDailyCardLog (req) {
 
@@ -45,18 +44,17 @@ export async function getDailyCardLog (req) {
 	}
 }
 
-export async function regCard (req, res) {
+export async function regCard (req) {
 
 	const { 
 		cardCompany,
 		cardType,
 		cardNum,
 		webId,
-		webPwd,
-		corpNum
+		webPwd
 	} = req.body;
+	const corpNum = req.body.corpNum || req.corpNum;
 
-	const certKey     = config.baro.certKey
 	const alias       = ''
 	const usage       = ''
 
@@ -70,9 +68,13 @@ export async function regCard (req, res) {
 		WebPwd     : webPwd,
 		Alias      : alias,
 		Usage      : usage,
-	})
+	});
 
-	const result = response[0].RegistCardResult
+	const result = response[0].RegistCardResult;
+	const newCard =  { corpNum, cardCompany, cardType, cardNum, webId, webPwd };
+	const user = req.body.user || req._id;
+	const regCardResult = cardData.regCard(user, newCard);
+	console.log("regCardResult: ", regCardResult);
 
 	if (result < 0) { // 호출 실패
 		console.log(result);
@@ -102,7 +104,6 @@ export async function stopCard ( req, res ) {
 
 export async function getCardList ( req, res ) {
 
-	const certKey   = config.baro.certKey
 	const corpNum   = req.corpNum;
 	const availOnly = 1
 
@@ -149,3 +150,21 @@ export async function updateCardInfo ( req, res ) {
 		console.log(result);
 	}
 }
+
+export async function deleteCard ( req ) {
+
+	const { cardNum, corpNum } = req.body;
+
+	const response = await client.StopCardAsync({
+		CorpNum: corpNum,
+		CardNum: cardNum,
+	})
+	
+	await cardData.deleteCard(req._id, cardNum);
+
+	console.log("StopCardAsync: ", response);
+	return result = response[0].StopCardResult
+
+}
+
+
