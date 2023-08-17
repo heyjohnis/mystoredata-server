@@ -1,8 +1,9 @@
 import * as service from '../service/cardService.js';
 
-export async function getCardLog (req, res) {
+export async function regCardLog (req, res) {
     try {
-        const data = await service.getDailyCardLog();
+        //const data = await service.getDailyCardLog();
+        const data = await service.regCardLog(req);
         res.status(200).json(data);
     } catch (error) {
         console.error(error);
@@ -25,11 +26,14 @@ export async function regCard (req, res) {
 
 export async function stopCard (req, res) {
     try {
-        const data = await service.stopCard(req, res);
-        res.status(200).json(data);
+        const code = await service.stopCard(req, res);
+        if(code > 0) {
+            res.status(200).json({success: true});    
+        } else {
+            res.status(400).json(errorCase(code));
+        } 
     } catch (error) {
-        console.error(error);
-        res.sendStatus(500);
+        res.status(500).json(error);
     }
 } 
 

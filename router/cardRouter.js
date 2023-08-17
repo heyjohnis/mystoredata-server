@@ -4,7 +4,7 @@ import { isAuth } from '../middleware/auth.js';
 
 const router = express.Router();
 
-router.post('/log', isAuth, controller.getCardLog);
+router.post('/regLog', controller.regCardLog);
 
 router.post('/reg', isAuth, controller.regCard);
 

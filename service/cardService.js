@@ -1,10 +1,11 @@
 import soap from 'soap'; // https://www.npmjs.com/package/soap
 import * as cardData from '../data/cardData.js';
+import * as cardLogData from '../data/cardLogData.js'
 import { config } from '../config.js';
 const certKey        = config.baro.certKey
 
-const client = await soap.createClientAsync('https://testws.baroservice.com/CARD.asmx?WSDL') // 테스트서버
-// const client = await soap.createClientAsync("https://ws.baroservice.com/CARD.asmx?WSDL") // 운영서버
+//const client = await soap.createClientAsync('https://testws.baroservice.com/CARD.asmx?WSDL') // 테스트서버
+const client = await soap.createClientAsync("https://ws.baroservice.com/CARD.asmx?WSDL") // 운영서버
 
 export async function getDailyCardLog (req) {
 
@@ -85,15 +86,15 @@ export async function regCard (req) {
 
 export async function stopCard ( req, res ) {
 
-	const corpKey = rhk
 	const { cardNum, corpNum } = req.body;
 
 	const response = await client.StopCardAsync({
+		CERTKEY: certKey,
 		CorpNum: corpNum,
 		CardNum: cardNum,
 	})
 
-	const result = response[0].StopCardResult
+	return response[0].StopCardResult
 
 	if (result < 0) { // 호출 실패
 		console.log(result);
@@ -154,6 +155,7 @@ export async function updateCardInfo ( req, res ) {
 export async function deleteCard ( req ) {
 
 	const { cardNum, corpNum } = req.body;
+	//const corpNum = req.corpNum;
 
 	const response = await client.StopCardAsync({
 		CorpNum: corpNum,
@@ -161,10 +163,58 @@ export async function deleteCard ( req ) {
 	})
 	
 	await cardData.deleteCard(req._id, cardNum);
-
-	console.log("StopCardAsync: ", response);
 	return result = response[0].StopCardResult
-
 }
 
 
+export async function regCardLog (req ) {
+
+	const corpNum = req.body.corpNum;
+	const { id, cardNum } = req.body;
+	const startDate      = '20230701'
+	const endDate        = '20230830'
+	const countPerPage   = 10
+	const currentPage    = 1
+	const orderDirection = 1
+
+	const response = await client.GetPeriodCardLogEx2Async({
+		CERTKEY       : certKey,
+		CorpNum       : corpNum,
+		ID            : id,
+		CardNum       : cardNum,
+		StartDate     : startDate,
+		EndDate       : endDate,
+		CountPerPage  : countPerPage,
+		CurrentPage   : currentPage,
+		OrderDirection: orderDirection,
+	})
+
+	const result = response[0].GetPeriodCardLogEx2Result
+
+	if (result.CurrentPage < 0) { // 호출 실패
+		console.log(result.CurrentPage)
+	} else { // 호출 성공
+		console.log(result.CurrentPage)
+		console.log(result.CountPerPage)
+		console.log(result.MaxPageNum)
+		console.log(result.MaxIndex)
+
+		const cardLogs = !result.CardLogList ? [] : result.CardLogList.CardLogEx2
+
+		for (const cardLog of cardLogs) {
+			// 필드정보는 레퍼런스를 참고해주세요.
+			console.log(cardLog)
+
+			// for(let i = 0; i < logs.length; i++) {
+			// 	await cardLogData.regAccountLog({
+			// 		...logs[i], 
+			// 		user: account.user, 
+			// 		bank: account.bank, 	
+			// 		CorpName: account.corpName
+			// 	});
+			// }
+
+		}
+	}
+
+}

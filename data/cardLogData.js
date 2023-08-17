@@ -1,14 +1,14 @@
 import UserModel from '../model/userModel.js';
-import AccountLogModel from '../model/accountLogModel.js';
+import CardLogModel from '../model/cardLogModel.js';
 
-export async function regAccountLog ( data ) {
+export async function regCardLog ( data ) {
   const { user, CorpNum, Withdraw, BankAccountNum, Deposit, Balance, TransDT, 
     TransType, TransOffice, TransRemark, TransRefKey, MgtRemark1, MgtRemark2 } = data;
 
   try {
-    const existingData = await AccountLogModel.findOne({
+    const existingData = await CardLogModel.findOne({
       user,
-      BankAccountNum,
+      CardNum,
       Withdraw,
       TransDT,
       TransRefKey,
