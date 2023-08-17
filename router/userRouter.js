@@ -9,7 +9,5 @@ const router = express.Router();
 router.get('/list', isAuth, controller.getUserList);
 
 router.put('/update', isAuth, controller.updateUser);
-
-router.post('/baro/reg', isAuth, controller.regBaroUser);
   
 export default router;

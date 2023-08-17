@@ -124,6 +124,7 @@ Content-Type: application/json; charset=UTF-8
 Authorization: Bearer {{jwt}}
 
 {
+    "corpNum": "1073270598",
     "bankAccountType": "P",
     "bank": "SHINHAN",
     "bankAccountNum": "110335376921",

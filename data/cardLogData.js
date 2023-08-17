@@ -1,31 +1,28 @@
-import UserModel from '../model/userModel.js';
 import CardLogModel from '../model/cardLogModel.js';
 
 export async function regCardLog ( data ) {
-  const { user, CorpNum, Withdraw, BankAccountNum, Deposit, Balance, TransDT, 
-    TransType, TransOffice, TransRemark, TransRefKey, MgtRemark1, MgtRemark2 } = data;
-
+  const { CorpNum, CardNum, CardApprovalCost, UseStoreNum, UseDT } = data;
   try {
     const existingData = await CardLogModel.findOne({
-      user,
+      CorpNum,
       CardNum,
-      Withdraw,
-      TransDT,
-      TransRefKey,
+      CardApprovalCost,
+      UseStoreNum,
+      UseDT,
     });
-    console.log("existingData", existingData);
-    if (existingData) {
-      return existingData;
-    }
 
-    return await new AccountLogModel(data).save().then((res) => res._id);
+    console.log("existingData", existingData);
+
+    if (!existingData) {
+      await new CardLogModel(data).save();
+    }
   } catch (error) {
     throw error;
   }
 }
 
-export async function getAccountLogs ( data ) {
-  return AccountLogModel.find().sort({ createdAt: -1 });
+export async function getCardLogs ( data ) {
+  return CardLogModel.find().sort({ createdAt: -1 });
 }
 
 

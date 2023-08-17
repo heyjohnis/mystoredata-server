@@ -25,5 +25,6 @@ export const config = {
   baro : {
     certKey: process.env.CERT_KEY,
     corpNum: process.env.CORP_NUM,
+    password: process.env.USER_PASSWORD,
   }
 };

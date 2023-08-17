@@ -21,7 +21,7 @@ const validateCredential = [
 
 const validateSignup = [
   ...validateCredential,
-  body('name').notEmpty().withMessage('name is missing'),
+  body('userName').notEmpty().withMessage('name is missing'),
   body('email').isEmail().normalizeEmail().withMessage('invalid email'),
   body('url')
     .isURL()
@@ -32,7 +32,5 @@ const validateSignup = [
 router.post('/signup', validateSignup, authController.signup);
 
 router.post('/login', validateCredential, authController.login);
-
-router.get('/me', isAuth, authController.me);
 
 export default router;

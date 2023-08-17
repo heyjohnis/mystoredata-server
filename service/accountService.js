@@ -37,13 +37,9 @@ export async function getAccounts ( req ) {
 
 export async function regUserAccount ( req ) {
 
-	const { bank, bankAccountType, bankAccountNum, bankAccountPwd, webId, webPwd, identityNum } = req.body;
+	const { bank, bankAccountType, bankAccountNum, bankAccountPwd, webId, webPwd } = req.body;
 	const collectCycle    = 'MINUTE10'
-	const corpNum         = req.corpNum;
-
-	const newAccount =  { corpNum, bank, bankAccountType, bankAccountNum, bankAccountPwd, webId, webPwd };
-	const user = req.body.user || req._id;
-	const result = await accountData.regAccount(user, newAccount);
+	const corpNum = req.body.corpNum || req.corpNum;
 
 	const response = await client.RegistBankAccountAsync({
 		CERTKEY        : certKey,
@@ -55,11 +51,16 @@ export async function regUserAccount ( req ) {
 		BankAccountPwd : bankAccountPwd,
 		WebId          : webId,
 		WebPwd         : webPwd,
-		IdentityNum    : identityNum,
+		IdentityNum    : bankAccountType === 'C' ? corpNum : '',
 		Alias          : '',
 		Usage          : '',
 	})
+	
+	return response[0].RegistBankAccountResult;
 
+	const result = await accountData.regAccount(user, newAccount);
+	console.log("result: ", code, result);
+	return code;
 	// const response2 = await client.ReRegistBankAccountAsync({
 	// 	CERTKEY       : certKey,
 	// 	CorpNum  	  : req.corpNum,
@@ -76,13 +77,6 @@ export async function regUserAccount ( req ) {
 
 	// console.log("response3[0].CancelStopBankAccountResult: ", response3[0].CancelStopBankAccountResult);
 
-	if (result < 0) { // 호출 실패
-		console.log(result);
-	} else { // 호출 성공
-		console.log(result);
-	}
-
-	return response[0].RegistBankAccountResult
 }
 
 

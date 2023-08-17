@@ -37,16 +37,19 @@ export async function getDailyCardLog (req) {
 		console.log(result.MaxIndex)
 
 		const cardLogs = !result.CardLogList ? [] : result.CardLogList.CardLogEx2
+		const card = await cardData.getCard(cardNum);
 
 		for (const cardLog of cardLogs) {
 			// 필드정보는 레퍼런스를 참고해주세요.
 			console.log(cardLog)
+			await cardLogData.regCardLog({...cardLog, user: card.user, card: card.cardCompany, corpName: card.corpName});
 		}
 	}
 }
 
 export async function regCard (req) {
 
+	const corpNum = req.body.corpNum || req.corpNum;
 	const { 
 		cardCompany,
 		cardType,
@@ -54,8 +57,6 @@ export async function regCard (req) {
 		webId,
 		webPwd
 	} = req.body;
-	const corpNum = req.body.corpNum || req.corpNum;
-
 	const alias       = ''
 	const usage       = ''
 
@@ -71,17 +72,8 @@ export async function regCard (req) {
 		Usage      : usage,
 	});
 
-	const result = response[0].RegistCardResult;
-	const newCard =  { corpNum, cardCompany, cardType, cardNum, webId, webPwd };
-	const user = req.body.user || req._id;
-	const regCardResult = cardData.regCard(user, newCard);
-	console.log("regCardResult: ", regCardResult);
+	return response[0].RegistCardResult;
 
-	if (result < 0) { // 호출 실패
-		console.log(result);
-	} else { // 호출 성공
-		console.log(result);
-	}
 }
 
 export async function stopCard ( req, res ) {
@@ -95,12 +87,6 @@ export async function stopCard ( req, res ) {
 	})
 
 	return response[0].StopCardResult
-
-	if (result < 0) { // 호출 실패
-		console.log(result);
-	} else { // 호출 성공
-		console.log(result);
-	}
 }
 
 export async function getCardList ( req, res ) {
@@ -154,23 +140,20 @@ export async function updateCardInfo ( req, res ) {
 
 export async function deleteCard ( req ) {
 
-	const { cardNum, corpNum } = req.body;
-	//const corpNum = req.corpNum;
-
 	const response = await client.StopCardAsync({
-		CorpNum: corpNum,
-		CardNum: cardNum,
-	})
-	
-	await cardData.deleteCard(req._id, cardNum);
-	return result = response[0].StopCardResult
+		CERTKEY: certKey,
+		CorpNum: req.body.corpNum || req.corpNum,
+		CardNum: req.body.cardNum,
+	});
+
+	return response[0].StopCardResult;
 }
 
 
 export async function regCardLog (req ) {
 
-	const corpNum = req.body.corpNum;
-	const { id, cardNum } = req.body;
+	const corpNum = req.body.corpNum || req.corpNum;
+	const cardNum = req.body.cardNum;
 	const startDate      = '20230701'
 	const endDate        = '20230830'
 	const countPerPage   = 10
@@ -180,7 +163,7 @@ export async function regCardLog (req ) {
 	const response = await client.GetPeriodCardLogEx2Async({
 		CERTKEY       : certKey,
 		CorpNum       : corpNum,
-		ID            : id,
+		ID            : req.body.webId,
 		CardNum       : cardNum,
 		StartDate     : startDate,
 		EndDate       : endDate,
@@ -194,27 +177,20 @@ export async function regCardLog (req ) {
 	if (result.CurrentPage < 0) { // 호출 실패
 		console.log(result.CurrentPage)
 	} else { // 호출 성공
-		console.log(result.CurrentPage)
-		console.log(result.CountPerPage)
-		console.log(result.MaxPageNum)
-		console.log(result.MaxIndex)
+		// console.log(result.CurrentPage)
+		// console.log(result.CountPerPage)
+		// console.log(result.MaxPageNum)
+		// console.log(result.MaxIndex)
 
+		const card = await cardData.getCard(cardNum);
 		const cardLogs = !result.CardLogList ? [] : result.CardLogList.CardLogEx2
-
-		for (const cardLog of cardLogs) {
+		for ( let i = 0; i < cardLogs.length; i++ ) {
 			// 필드정보는 레퍼런스를 참고해주세요.
-			console.log(cardLog)
-
-			// for(let i = 0; i < logs.length; i++) {
-			// 	await cardLogData.regAccountLog({
-			// 		...logs[i], 
-			// 		user: account.user, 
-			// 		bank: account.bank, 	
-			// 		CorpName: account.corpName
-			// 	});
-			// }
-
+			console.log(cardLogs[i]);
+			await cardLogData.regCardLog({...cardLogs[i], user: card.user, cardCompany: card.cardCompany, CorpName: card.corpName});
 		}
 	}
+	return response[0].GetPeriodCardLogEx2Result;
+
 
 }

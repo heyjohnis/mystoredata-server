@@ -1,4 +1,5 @@
 import * as service from '../service/corpService.js';
+import errorCase from '../middleware/baroError.js';
 
 export async function checkCorpIsMember (req, res) {
     try {

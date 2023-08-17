@@ -1,6 +1,8 @@
 import * as service from '../service/accountService.js';
 import errorCase from '../middleware/baroError.js';
 import * as accountLogData from '../data/accountLogData.js';
+import * as accountData from '../data/accountData.js';
+
 export async function getAccounts (req, res) {
     try {
         const data = await service.getAccounts( req );
@@ -37,6 +39,9 @@ export async function regAccount ( req, res) {
     try {
         const code = await service.regUserAccount(req);
         if(code > 0) {
+            const corpNum = req.body.corpNum || req.corpNum;
+            const user = req.body.user || req._id;
+            await accountData.regAccount(user, {...req.body, corpNum});
             res.status(200).json({success: true});    
         } else {
             res.status(400).json(errorCase(code));

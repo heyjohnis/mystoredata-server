@@ -10,9 +10,7 @@ export async function findById(_id) {
 }
 
 export async function findByUserId(userId) {
-  const user = await UserModel.findOne({ userId });
-  console.log("user: ", user);
-  return user;
+  return await UserModel.findOne({ userId });
 }
 
 export async function createUser(data) {
@@ -21,6 +19,6 @@ export async function createUser(data) {
 }
 
 export async function updateUser(req) {
-  const { _id, name, email, corpNum, corpName } = req.body;
-  return await UserModel.updateOne( { _id }, { $set: { name, email, corpNum, corpName }});
+  const { _id, userName, email, mobile, corpNum, corpName, ceoName, bizType, bizClass, addr1, addr2 } = req.body;
+  return await UserModel.updateOne( { _id }, { $set: { userName, email, mobile, corpNum, corpName, ceoName, bizType, bizClass, addr1, addr2}});
 }

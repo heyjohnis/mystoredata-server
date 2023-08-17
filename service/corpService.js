@@ -8,8 +8,7 @@ const client = await soap.createClientAsync("https://ws.baroservice.com/TI.asmx?
 
 export async function checkCorpIsMember (req) {
 
-	const corpNum      = config.baro.corpNum
-	const checkCorpNum = req.query.checkCorpNum
+	const { corpNum, checkCorpNum} = req.body;
 
 	const response = await client.CheckCorpIsMemberAsync({
 		CERTKEY     : certKey,
@@ -17,20 +16,15 @@ export async function checkCorpIsMember (req) {
 		CheckCorpNum: checkCorpNum,
 	})
 
-	const result = response[0].CheckCorpIsMemberResult
-
-	if (result < 0) { // 호출 실패
-		console.log("CheckCorpIsMemberResult: ", result);
-	} else { // 호출 성공
-		console.log("CheckCorpIsMemberResult: ", result);
-	}
+	return response[0].CheckCorpIsMemberResult
 }
 
 export async function registCorp (req) {
 	
-	const { corpNum, corpName, ceoName, bizType, bizClass, 
-		addr1, addr2, memberName, id, pwd, tel,  email } = req.body;
+	const { corpNum, corpName, ceoName, bizType, bizClass, userName,
+		addr1, addr2, userId, mobile,  email } = req.body;
 
+	console.log("req.body: ",req.body);
 	const response = await client.RegistCorpAsync({
 		CERTKEY   : certKey,
 		CorpNum   : corpNum,
@@ -41,23 +35,34 @@ export async function registCorp (req) {
 		PostNum   : "",
 		Addr1     : addr1,
 		Addr2     : addr2,
-		MemberName: memberName,
+		MemberName: userName,
 		JuminNum  : "",
-		ID        : id,
-		PWD       : pwd,
+		ID        : userId,
+		PWD       : config.baro.password,
 		Grade     : "",
-		TEL       : tel,
-		HP        : "",
+		TEL       : mobile,
+		HP        : mobile,
 		Email     : email,
 	})
 
-	const result = response[0].RegistCorpResult
+	return response[0].RegistCorpResult
+}
 
-	if (result < 0) { // 호출 실패
-		console.log(result);
-		return result
-	} else { // 호출 성공
-		console.log(result);
-		return result
-	}
+// https://dev.barobill.co.kr/docs/references/바로빌-공통-API#UpdateCorpInfo
+export async function updateBoroCorpInfo( req ) {
+
+	const { corpNum, corpName, ceoName, bizType, bizClass, postNum, addr1, addr2} = req.body;
+
+	const response = await client.UpdateCorpInfoAsync({
+		CERTKEY : certKey,
+		CorpNum : corpNum,
+		CorpName: corpName,
+		CEOName : ceoName,
+		BizType : bizType,
+		BizClass: bizClass,
+		Addr1   : addr1,
+		Addr2   : addr2,
+	})
+
+	return response[0].UpdateCorpInfoResult
 }
