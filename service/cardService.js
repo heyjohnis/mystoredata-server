@@ -2,6 +2,7 @@ import soap from 'soap'; // https://www.npmjs.com/package/soap
 import * as cardData from '../data/cardData.js';
 import * as cardLogData from '../data/cardLogData.js'
 import { config } from '../config.js';
+import errorCase from '../middleware/baroError.js';
 const certKey        = config.baro.certKey
 
 //const client = await soap.createClientAsync('https://testws.baroservice.com/CARD.asmx?WSDL') // 테스트서버
@@ -114,28 +115,14 @@ export async function getCardList ( req, res ) {
 	}
 }
 
-export async function updateCardInfo ( req, res ) {
-	
-	const { cardNum, webId, webPwd } = req.body;
-	const corpNum = req.corpNum;
+export async function cancelStopCard ( req ) { 
 
-	const response = await client.UpdateCardAsync({
+	const response = await client.CancelStopCardAsync({
 		CERTKEY: certKey,
-		CorpNum: corpNum,
-		CardNum: cardNum,
-		WebId  : webId,
-		WebPwd : webPwd,
-		Alias  : "",
-		Usage  : "",
-	})
-
-	const result = response[0].UpdateCardResult
-
-	if (result < 0) { // 호출 실패
-		console.log(result);
-	} else { // 호출 성공
-		console.log(result);
-	}
+		CorpNum: req.body.corpNum || req.corpNum,
+		CardNum: req.body.cardNum,
+	});
+	return response[0].CancelStopCardResult;
 }
 
 export async function deleteCard ( req ) {
@@ -156,7 +143,7 @@ export async function regCardLog (req ) {
 	const cardNum = req.body.cardNum;
 	const startDate      = '20230701'
 	const endDate        = '20230830'
-	const countPerPage   = 10
+	const countPerPage   = 100
 	const currentPage    = 1
 	const orderDirection = 1
 
@@ -175,7 +162,8 @@ export async function regCardLog (req ) {
 	const result = response[0].GetPeriodCardLogEx2Result
 
 	if (result.CurrentPage < 0) { // 호출 실패
-		console.log(result.CurrentPage)
+		console.log("error: ", errorCase(result.CurrentPage));
+		return result.CurrentPage;
 	} else { // 호출 성공
 		// console.log(result.CurrentPage)
 		// console.log(result.CountPerPage)
@@ -191,6 +179,19 @@ export async function regCardLog (req ) {
 		}
 	}
 	return response[0].GetPeriodCardLogEx2Result;
+}
 
+export async function updateCardInfo ( req ) {
 
+	const response = await client.UpdateCardAsync({
+		CERTKEY: certKey,
+		CorpNum: req.body.corpNum || req.corpNum,
+		CardNum: req.body.cardNum,
+		WebId  : req.body.webId,
+		WebPwd : req.body.webPwd,
+		Alias  : '',
+		Usage  : '',
+	})
+
+	return response[0].UpdateCardResult
 }

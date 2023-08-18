@@ -35,7 +35,7 @@ export async function getAccounts ( req ) {
 	}
 }
 
-export async function regUserAccount ( req ) {
+export async function regAccount ( req ) {
 
 	const { bank, bankAccountType, bankAccountNum, bankAccountPwd, webId, webPwd } = req.body;
 	const collectCycle    = 'MINUTE10'
@@ -57,29 +57,26 @@ export async function regUserAccount ( req ) {
 	})
 	
 	return response[0].RegistBankAccountResult;
-
-	const result = await accountData.regAccount(user, newAccount);
-	console.log("result: ", code, result);
-	return code;
-	// const response2 = await client.ReRegistBankAccountAsync({
-	// 	CERTKEY       : certKey,
-	// 	CorpNum  	  : req.corpNum,
-	// 	BankAccountNum: bankAccountNum,
-	// })
-
-	// console.log("response[0].ReRegistBankAccountResult: ", response2[0].ReRegistBankAccountResult);
-
-	// const response3 = await client.CancelStopBankAccountAsync({
-	// 	CERTKEY       : certKey,
-	// 	CorpNum       : req.corpNum,
-	// 	BankAccountNum: bankAccountNum,
-	// })
-
-	// console.log("response3[0].CancelStopBankAccountResult: ", response3[0].CancelStopBankAccountResult);
-
 }
 
+export async function reRegAccount ( req ) {
 
+	const response = await client.ReRegistBankAccountAsync({
+		CERTKEY       : certKey,
+		CorpNum       : req.body.corpNum || req.corpNum,
+		BankAccountNum: req.body.bankAccountNum,
+	})  
+	return response[0].ReRegistBankAccountResult;
+}
+
+export async function cancelStopAccount ( req ) {
+	const response = await client.CancelStopBankAccountAsync({
+		CERTKEY       : certKey,
+		CorpNum       : req.body.corpNum || req.corpNum,
+		BankAccountNum: req.body.bankAccountNum,
+	});
+	return response[0].CancelStopBankAccountResult;
+}
 
 export async function regAcountLog (req) {
 	const { bankAccountNum, baseMonth } = req.body;
@@ -87,18 +84,19 @@ export async function regAcountLog (req) {
 	const currentPage    = 1
 	const orderDirection = 1
 
-	const response = await client.GetMonthlyBankAccountLogExAsync({
+	const response = await client.GetPeriodBankAccountLogExAsync({
 		CERTKEY       : certKey,
 		CorpNum       : req.corpNum,
 		ID            : req.userId,
 		BankAccountNum: bankAccountNum,
-		BaseMonth     : '202308',
+		StartDate     : '20230801',
+		EndDate       : '20230831',
 		CountPerPage  : countPerPage, 
 		CurrentPage   : currentPage,
 		OrderDirection: orderDirection,
 	})
 
-	const result = response[0].GetMonthlyBankAccountLogExResult;
+	const result = response[0].GetPeriodBankAccountLogExResult;
 	console.log("result: ", result);
 	if (result.CurrentPage < 0) { // 호출 실패
         return result.CurrentPage;

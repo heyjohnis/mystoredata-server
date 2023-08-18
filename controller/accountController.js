@@ -37,12 +37,17 @@ export async function getAccountLogs (req, res) {
 
 export async function regAccount ( req, res) {
     try {
-        const code = await service.regUserAccount(req);
+        let code = await service.regAccount(req);
+        console.log(errorCase(code));
+        if(code < 0) code = await service.reRegAccount(req);
+        if(code < 0) code = await service.cancelStopAccount(req);   
+        code = code === -51004 ? 1 : code; 
+
         if(code > 0) {
             const corpNum = req.body.corpNum || req.corpNum;
             const user = req.body.user || req._id;
-            await accountData.regAccount(user, {...req.body, corpNum});
-            res.status(200).json({success: true});    
+            const result = await accountData.regAccount(user, {...req.body, corpNum});
+            res.status(200).json(result);    
         } else {
             res.status(400).json(errorCase(code));
         }        

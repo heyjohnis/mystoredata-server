@@ -185,3 +185,9 @@ Content-Type: application/json; charset=UTF-8
     "tel": "01020070227",
     "email":"joon0227@gmail.com"
 }
+
+### 회사등록
+POST {{baseUrl}}/trans/merge HTTP/1.1
+Authorization: Bearer {{jwt}}
+
+Content-Type: application/json; charset=UTF-8

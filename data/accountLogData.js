@@ -1,5 +1,5 @@
-import UserModel from '../model/userModel.js';
 import AccountLogModel from '../model/accountLogModel.js';
+import { strToDate } from '../utils/date.js';
 
 export async function regAccountLog ( data ) {
   const { user, Withdraw, BankAccountNum, TransDT, TransRefKey } = data;
@@ -15,15 +15,15 @@ export async function regAccountLog ( data ) {
     if (existingData) {
       return;
     }
-
-    return await new AccountLogModel(data).save().then((res) => res._id);
+    console.log("strToDate(data.TransDT): " ,strToDate(data.TransDT));
+    return await new AccountLogModel({ ...data, transDate: strToDate(data.TransDT)}).save().then((res) => res._id);
   } catch (error) {
     throw error;
   }
 }
 
 export async function getAccountLogs ( data ) {
-  return AccountLogModel.find().sort({ createdAt: -1 });
+  return AccountLogModel.find().sort({ transDate: -1 });
 }
 
 

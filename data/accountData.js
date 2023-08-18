@@ -18,6 +18,7 @@ export async function regAccount(_id, newAccount ) {
     await new AccountModel({...newAccount, user: userInfo._id, corpName: userInfo.corpName, userId: userInfo.userId}).save();
     return  await UserModel.findByIdAndUpdate(_id, { $push: { accounts: newAccount }}, { returnOriginal: false });
   }
+  return;
 }
 
 export async function deleteAccout ( _id, accountNum ) {

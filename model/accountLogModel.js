@@ -13,6 +13,7 @@ const schema = new Mongoose.Schema(
     Deposit: { type: String, required: false },
     Balance: { type: String, required: false },
     TransDT: { type: String, required: false },
+    transDate: { type: Date, required: true },
     TransType: { type: String, required: false },
     TransOffice: { type: String, required: false },
     TransRemark: { type: String, required: false },

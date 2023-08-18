@@ -17,7 +17,12 @@ export async function regCardLog (req, res) {
 export async function regCard (req, res) {
     try {
         const user = req.body.user || req._id;
-        const code = await service.regCard(req);
+        let code = await service.regCard(req);        
+        console.log(errorCase(code));
+        if( code < 0 ) code = await service.cancelStopCard(req);
+        code = code === -51004 ? 1 : code; // 해지상태가 아닌 경우
+        await service.updateCardInfo(req);
+
         if(code > 0) {
             const regCardResult = await cardData.regCard(user, req.body);
             res.status(200).json({data: regCardResult, error: {}});    
@@ -38,6 +43,7 @@ export async function regCard (req, res) {
 export async function stopCard (req, res) {
     try {
         const code = await service.stopCard(req, res);
+
         if(code > 0) {
             res.status(200).json({success: true});    
         } else {
