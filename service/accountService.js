@@ -82,7 +82,6 @@ export async function regUserAccount ( req ) {
 
 
 export async function regAcountLog (req) {
-	console.log("body: ", req.body)
 	const { bankAccountNum, baseMonth } = req.body;
 	const countPerPage   = 100
 	const currentPage    = 1
@@ -93,15 +92,16 @@ export async function regAcountLog (req) {
 		CorpNum       : req.corpNum,
 		ID            : req.userId,
 		BankAccountNum: bankAccountNum,
-		BaseMonth     : baseMonth,
+		BaseMonth     : '202308',
 		CountPerPage  : countPerPage, 
 		CurrentPage   : currentPage,
 		OrderDirection: orderDirection,
 	})
 
-	const result = response[0].GetMonthlyBankAccountLogExResult 
+	const result = response[0].GetMonthlyBankAccountLogExResult;
+	console.log("result: ", result);
 	if (result.CurrentPage < 0) { // 호출 실패
-        return {error: result.CurrentPage}
+        return result.CurrentPage;
 	} else { // 호출 성공
 		// console.log(result.CurrentPage)
 		// console.log(result.CountPerPage)
@@ -109,6 +109,7 @@ export async function regAcountLog (req) {
 		// console.log(result.MaxIndex)
 		const account = await accountData.getAccount(bankAccountNum);
 		const logs = !result.BankAccountLogList ? [] : result.BankAccountLogList.BankAccountLogEx;
+
 		for(let i = 0; i < logs.length; i++) {
 			await accountLogData.regAccountLog({
 				...logs[i], 
@@ -117,6 +118,7 @@ export async function regAcountLog (req) {
 				CorpName: account.corpName
 			});
 		}
+		return logs.length + 1;
 	}
 }
 

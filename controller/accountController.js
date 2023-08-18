@@ -29,7 +29,7 @@ export async function regAcountLog (req, res) {
 export async function getAccountLogs (req, res) {
     try {
         const logs = await accountLogData.getAccountLogs(req)
-        res.status(200).json({ logs });
+        res.status(200).json(logs);
     } catch (error) {
         res.sendStatus(500).json(error);
     }

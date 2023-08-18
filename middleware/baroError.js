@@ -70,7 +70,7 @@ export default function errorCase( errCode ) {
         case -50224: return { error: { code: -50224, message: "계좌정보 검증에 실패하였습니다. 잠시 후 다시 시도해 주시기 바랍니다."}};
         case -50225: return { error: { code: -50225, message: "이미 등록된 계좌번호입니다."}};
 
-        default: return { error: { code: errCode, message: "https://dev.barobill.co.kr/docs/references/바로빌-API-오류코드"}}; break;
+        default: return { error: { code: errCode, message: `${errCode} https://dev.barobill.co.kr/docs/references/바로빌-API-오류코드`}}; break;
     }
 }
 

@@ -2,9 +2,7 @@ import UserModel from '../model/userModel.js';
 import AccountLogModel from '../model/accountLogModel.js';
 
 export async function regAccountLog ( data ) {
-  const { user, CorpNum, Withdraw, BankAccountNum, Deposit, Balance, TransDT, 
-    TransType, TransOffice, TransRemark, TransRefKey, MgtRemark1, MgtRemark2 } = data;
-
+  const { user, Withdraw, BankAccountNum, TransDT, TransRefKey } = data;
   try {
     const existingData = await AccountLogModel.findOne({
       user,
@@ -15,7 +13,7 @@ export async function regAccountLog ( data ) {
     });
     console.log("existingData", existingData);
     if (existingData) {
-      return existingData;
+      return;
     }
 
     return await new AccountLogModel(data).save().then((res) => res._id);

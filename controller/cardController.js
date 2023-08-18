@@ -2,6 +2,8 @@ import * as service from '../service/cardService.js';
 import errorCase from '../middleware/baroError.js';
 import * as cardData from '../data/cardData.js';
 import * as userData from '../data/userData.js';
+import * as userLogData from '../data/cardLogData.js';
+
 export async function regCardLog (req, res) {
     try {
         const data = await service.regCardLog(req);
@@ -46,7 +48,7 @@ export async function stopCard (req, res) {
     }
 } 
 
-export async function getCardList (req, res) {
+export async function getCardList ( req, res ) {
     try {
         const data = await service.getCardList(req, res);
         res.status(200).json(data);
@@ -55,6 +57,16 @@ export async function getCardList (req, res) {
         res.sendStatus(500);
     }
 } 
+
+export async function getCardLogs ( req , res ) {
+    try {
+        const data = await userLogData.getCardLogs(req);
+        res.status(200).json(data);
+    } catch (error) {
+        console.error(error);
+        res.sendStatus(500);
+    }
+}
 
 export async function deleteCard (req, res) {
     try {
