@@ -79,44 +79,41 @@ export async function cancelStopAccount ( req ) {
 }
 
 export async function regAcountLog (req) {
+	
 	const { bankAccountNum, baseMonth } = req.body;
-	const countPerPage   = 100
-	const currentPage    = 1
-	const orderDirection = 1
 
-	const response = await client.GetPeriodBankAccountLogExAsync({
+	let currentPage = 0;
+	const reqBaro = {
 		CERTKEY       : certKey,
 		CorpNum       : req.corpNum,
 		ID            : req.userId,
 		BankAccountNum: bankAccountNum,
-		StartDate     : '20230801',
-		EndDate       : '20230831',
-		CountPerPage  : countPerPage, 
-		CurrentPage   : currentPage,
-		OrderDirection: orderDirection,
-	})
-
-	const result = response[0].GetPeriodBankAccountLogExResult;
-	console.log("result: ", result);
-	if (result.CurrentPage < 0) { // 호출 실패
-        return result.CurrentPage;
-	} else { // 호출 성공
-		// console.log(result.CurrentPage)
-		// console.log(result.CountPerPage)
-		// console.log(result.MaxPageNum)
-		// console.log(result.MaxIndex)
-		const account = await accountData.getAccount(bankAccountNum);
-		const logs = !result.BankAccountLogList ? [] : result.BankAccountLogList.BankAccountLogEx;
-
-		for(let i = 0; i < logs.length; i++) {
-			await accountLogData.regAccountLog({
-				...logs[i], 
-				user: account.user, 
-				bank: account.bank, 	
-				CorpName: account.corpName
-			});
+		BaseMonth     : '202304',
+		CountPerPage  : 100, 
+		CurrentPage   : currentPage ++,
+		OrderDirection: 1,
+	}
+	let cntLog = 100;
+	while(cntLog === 100) {
+		const response = await client.GetMonthlyBankAccountLogExAsync(reqBaro);
+		const result = response[0].GetMonthlyBankAccountLogExResult;
+		if (result.CurrentPage < 0) { // 호출 실패
+			return result.CurrentPage;
+		} else { // 호출 성공
+			const account = await accountData.getAccount(bankAccountNum);
+			const logs = !result.BankAccountLogList ? [] : result.BankAccountLogList.BankAccountLogEx;
+			console.log("cntLog: ", cntLog, "page", currentPage);
+			for(let i = 0; i < logs.length; i++) {
+				console.log(logs[i]);
+				await accountLogData.regAccountLog({
+					...logs[i], 
+					user: account.user, 
+					bank: account.bank, 	
+					CorpName: account.corpName
+				});
+			}
+			return logs.length + 1;
 		}
-		return logs.length + 1;
 	}
 }
 

@@ -20,3 +20,14 @@ export async function updateUser(req, res) {
       res.status(500).json({error});
   }
 }
+
+export async function resetCategory(req, res) {
+  
+  try {
+    const data = await userData.resetCategory(req);
+    res.status(200).json({data, error: {}});    
+  } catch (error) {
+      res.status(500).json({error});
+  }
+
+}

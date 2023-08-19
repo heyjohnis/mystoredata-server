@@ -13,7 +13,7 @@ export async function checkCorpIsMember (req) {
 	const response = await client.CheckCorpIsMemberAsync({
 		CERTKEY     : certKey,
 		CorpNum     : corpNum,
-		CheckCorpNum: checkCorpNum,
+		CheckCorpNum: corpNum,
 	})
 
 	return response[0].CheckCorpIsMemberResult

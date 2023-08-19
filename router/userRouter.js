@@ -9,5 +9,7 @@ const router = express.Router();
 router.get('/list', isAuth, controller.getUserList);
 
 router.put('/update', isAuth, controller.updateUser);
-  
+
+router.put('/reset-category', controller.resetCategory);
+
 export default router;

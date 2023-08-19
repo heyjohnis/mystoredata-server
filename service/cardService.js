@@ -139,46 +139,42 @@ export async function deleteCard ( req ) {
 
 export async function regCardLog (req ) {
 
-	const corpNum = req.body.corpNum || req.corpNum;
 	const cardNum = req.body.cardNum;
-	const startDate      = '20230701'
-	const endDate        = '20230830'
-	const countPerPage   = 100
-	const currentPage    = 1
-	const orderDirection = 1
+	let currentPage = 0
+	let cntLog = 100;
+	while (cntLog == 100) {
 
-	const response = await client.GetPeriodCardLogEx2Async({
-		CERTKEY       : certKey,
-		CorpNum       : corpNum,
-		ID            : req.body.webId,
-		CardNum       : cardNum,
-		StartDate     : startDate,
-		EndDate       : endDate,
-		CountPerPage  : countPerPage,
-		CurrentPage   : currentPage,
-		OrderDirection: orderDirection,
-	})
+		const reqBaro = {
+			CERTKEY       : certKey,
+			CorpNum       : req.body.corpNum || req.corpNum,
+			ID            : req.body.webId,
+			CardNum       : cardNum,
+			BaseMonth     : '202305',
+			CountPerPage  : 100,
+			CurrentPage   : currentPage++,
+			OrderDirection: 1,
+		};
 
-	const result = response[0].GetPeriodCardLogEx2Result
+		const response = await client.GetMonthlyCardLogEx2Async(reqBaro);
 
-	if (result.CurrentPage < 0) { // 호출 실패
-		console.log("error: ", errorCase(result.CurrentPage));
-		return result.CurrentPage;
-	} else { // 호출 성공
-		// console.log(result.CurrentPage)
-		// console.log(result.CountPerPage)
-		// console.log(result.MaxPageNum)
-		// console.log(result.MaxIndex)
+		const result = response[0].GetMonthlyCardLogEx2Result
 
-		const card = await cardData.getCard(cardNum);
-		const cardLogs = !result.CardLogList ? [] : result.CardLogList.CardLogEx2
-		for ( let i = 0; i < cardLogs.length; i++ ) {
-			// 필드정보는 레퍼런스를 참고해주세요.
-			console.log(cardLogs[i]);
-			await cardLogData.regCardLog({...cardLogs[i], user: card.user, cardCompany: card.cardCompany, CorpName: card.corpName});
+		if (result.CurrentPage < 0) { // 호출 실패
+			console.log("error: ", errorCase(result.CurrentPage));
+			return result.CurrentPage;
+		} else { // 호출 성공
+			const card = await cardData.getCard(cardNum);
+			const cardLogs = !result.CardLogList ? [] : result.CardLogList.CardLogEx2
+			cntLog = cardLogs.length;
+			console.log("cntLog: ", cntLog, "page", currentPage);
+			for ( let i = 0; i < cntLog; i++ ) {
+				// 필드정보는 레퍼런스를 참고해주세요.
+				console.log(cardLogs[i]);
+				await cardLogData.regCardLog({...cardLogs[i], user: card.user, cardCompany: card.cardCompany, CorpName: card.corpName});
+			}
 		}
+		return response[0].GetPeriodCardLogEx2Result;
 	}
-	return response[0].GetPeriodCardLogEx2Result;
 }
 
 export async function updateCardInfo ( req ) {

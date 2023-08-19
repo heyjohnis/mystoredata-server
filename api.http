@@ -1,19 +1,19 @@
 @baseUrl = http://localhost:8089
-@jwt = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NGQ1ODA0M2MxZDczZjZjZTY0MjdkZGMiLCJpYXQiOjE2OTIyNTk4ODYsImV4cCI6MTY5NDg1MTg4Nn0._Yx-BCaeG0hyeGHIcyycMsX1n3Vc5UAfFhKogkLcVVo
+@jwt = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NGQxZDhiNGEyY2RhODg4MWU5NzkzNTYiLCJpYXQiOjE2OTI0NDcwNzUsImV4cCI6MTY5MjYxOTg3NX0.aR-ETrEnLCe7Bz_9lx833Zy7ny2mPQHu9LWFmixYGLQ
 
 ### 로그인
 POST {{baseUrl}}/auth/login HTTP/1.1
 Content-Type: application/json; charset=UTF-8
 
-# {
-#     "userId": "bethelean", 
-#     "password": "12345678"
-# }
-
 {
-    "userId": "iset12", 
+    "userId": "bethelean", 
     "password": "12345678"
 }
+
+# {
+#     "userId": "iset12", 
+#     "password": "12345678"
+# }
 
 ### 회원가입
 POST {{baseUrl}}/auth/signup HTTP/1.1
@@ -53,6 +53,15 @@ Content-Type: application/json; charset=UTF-8
 GET {{baseUrl}}/user/list HTTP/1.1
 Content-Type: application/json; charset=UTF-8
 Authorization: Bearer {{jwt}}
+
+### 사용자 카테고리 초기화
+PUT {{baseUrl}}/user/reset-category HTTP/1.1
+Content-Type: application/json; charset=UTF-8
+Authorization: Bearer {{jwt}}
+
+{
+    "corpNum": "6348702350" 
+}
 
 ### 카드목록
 GET {{baseUrl}}/card/list HTTP/1.1
@@ -158,13 +167,9 @@ Authorization: Bearer {{jwt}}
 }
 
 ### 회사등록여부 확인
-GET {{baseUrl}}/corp/check?checkCorpNum=6348702350 HTTP/1.1
+GET {{baseUrl}}/corp/check?checkCorpNum=4649400988 HTTP/1.1
 Content-Type: application/json; charset=UTF-8
 Authorization: Bearer {{jwt}}
-
-{
-    "CheckCorpNum": "1073270598"
-}
 
 
 ### 회사등록
@@ -186,8 +191,14 @@ Content-Type: application/json; charset=UTF-8
     "email":"joon0227@gmail.com"
 }
 
-### 회사등록
+
+### 로그 합치기
 POST {{baseUrl}}/trans/merge HTTP/1.1
+Content-Type: application/json; charset=UTF-8
 Authorization: Bearer {{jwt}}
 
+
+### 로그 합치기
+POST {{baseUrl}}/trans/words HTTP/1.1
 Content-Type: application/json; charset=UTF-8
+Authorization: Bearer {{jwt}}

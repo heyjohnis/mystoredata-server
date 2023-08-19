@@ -17,7 +17,8 @@ const schema = new Mongoose.Schema({
     mobile: { type: String ,required: false },
     corpId: { type: types.ObjectId },
     accounts: { type: Array }, 
-    cards: { type: Array }
+    cards: { type: Array },
+    category: { type: Object, required: false },
   }, { timestamps: true }
 );
 
