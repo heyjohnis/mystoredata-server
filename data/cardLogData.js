@@ -18,6 +18,7 @@ export async function regCardLog(data) {
       await new CardLogModel({
         ...data,
         transDate: strToDate(data.UseDT),
+        transAssetNum: CardNum,
       }).save();
     }
   } catch (error) {
@@ -25,6 +26,10 @@ export async function regCardLog(data) {
   }
 }
 
-export async function getCardLogs(data) {
-  return CardLogModel.find().sort({ transDate: -1 });
+export async function getCardLogs(req) {
+  const filter =
+    req.query.corpNum || req.body.corpNum
+      ? { CorpNum: req.query.corpNum || req.body.corpNum }
+      : {};
+  return CardLogModel.find(filter).sort({ transDate: -1 });
 }

@@ -4,7 +4,7 @@ import { isAuth } from "../middleware/auth.js";
 
 const router = express.Router();
 
-router.post("/merge", isAuth, controller.mergeTrans);
+router.put("/merge", isAuth, controller.mergeTrans);
 
 router.get("/log", isAuth, controller.mergeTransLogs);
 

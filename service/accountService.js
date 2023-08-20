@@ -38,6 +38,7 @@ export async function getAccounts(req) {
 }
 
 export async function regAccount(req) {
+  const corpNum = req.body.corpNum || req.corpNum;
   const {
     bank,
     bankAccountType,
@@ -45,24 +46,25 @@ export async function regAccount(req) {
     bankAccountPwd,
     webId,
     webPwd,
+    birth,
   } = req.body;
-  const collectCycle = "MINUTE10";
-  const corpNum = req.body.corpNum || req.corpNum;
-
-  const response = await client.RegistBankAccountAsync({
+  const reqBaro = {
     CERTKEY: certKey,
     CorpNum: corpNum,
-    CollectCycle: collectCycle,
+    CollectCycle: "MINUTE10",
     Bank: bank,
     BankAccountType: bankAccountType,
     BankAccountNum: bankAccountNum,
     BankAccountPwd: bankAccountPwd,
-    WebId: webId,
-    WebPwd: webPwd,
-    IdentityNum: bankAccountType === "C" ? corpNum : "",
+    WebId: webId || "",
+    WebPwd: webPwd || "",
+    IdentityNum: bankAccountType === "C" ? corpNum || "" : birth || "",
     Alias: "",
     Usage: "",
-  });
+  };
+
+  console.log({ reqBaro });
+  const response = await client.RegistBankAccountAsync(reqBaro);
 
   return response[0].RegistBankAccountResult;
 }
@@ -86,19 +88,21 @@ export async function cancelStopAccount(req) {
 }
 
 export async function regAcountLog(req) {
-  const { bankAccountNum, baseMonth } = req.body;
+  const { bankAccountNum, baseMonth, corpNum, userId } = req.body;
 
   let currentPage = 0;
   const reqBaro = {
     CERTKEY: certKey,
-    CorpNum: req.corpNum,
-    ID: req.userId,
+    CorpNum: corpNum || req.corpNum,
+    ID: userId || req.userId,
     BankAccountNum: bankAccountNum,
-    BaseMonth: "202304",
+    BaseMonth: baseMonth,
     CountPerPage: 100,
     CurrentPage: currentPage++,
     OrderDirection: 1,
   };
+
+  console.log({ reqBaro });
   let cntLog = 100;
   while (cntLog === 100) {
     const response = await client.GetMonthlyBankAccountLogExAsync(reqBaro);

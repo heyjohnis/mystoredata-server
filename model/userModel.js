@@ -20,6 +20,7 @@ const schema = new Mongoose.Schema(
     accounts: { type: Array },
     cards: { type: Array },
     category: { type: Object, required: false },
+    birth: { type: String, required: false },
   },
   { timestamps: true }
 );

@@ -10,52 +10,6 @@ const client = await soap.createClientAsync(
   "https://ws.baroservice.com/CARD.asmx?WSDL"
 ); // 운영서버
 
-export async function getDailyCardLog(req) {
-  const corpNum = req.corpNum;
-  const { id, cardNum, baseDate } = req.body;
-  const countPerPage = 10;
-  const currentPage = 1;
-  const orderDirection = 1;
-
-  const response = await client.GetDailyCardLogEx2Async({
-    CERTKEY: certKey,
-    CorpNum: corpNum,
-    ID: id,
-    CardNum: cardNum,
-    BaseDate: baseDate,
-    CountPerPage: countPerPage,
-    CurrentPage: currentPage,
-    OrderDirection: orderDirection,
-  });
-
-  const result = response[0].GetDailyCardLogEx2Result;
-
-  if (result.CurrentPage < 0) {
-    // 호출 실패
-    console.log(result.CurrentPage);
-  } else {
-    // 호출 성공
-    console.log(result.CurrentPage);
-    console.log(result.CountPerPage);
-    console.log(result.MaxPageNum);
-    console.log(result.MaxIndex);
-
-    const cardLogs = !result.CardLogList ? [] : result.CardLogList.CardLogEx2;
-    const card = await cardData.getCard(cardNum);
-
-    for (const cardLog of cardLogs) {
-      // 필드정보는 레퍼런스를 참고해주세요.
-      console.log(cardLog);
-      await cardLogData.regCardLog({
-        ...cardLog,
-        user: card.user,
-        card: card.cardCompany,
-        corpName: card.corpName,
-      });
-    }
-  }
-}
-
 export async function regCard(req) {
   const corpNum = req.body.corpNum || req.corpNum;
   const { cardCompany, cardType, cardNum, webId, webPwd } = req.body;
@@ -144,7 +98,7 @@ export async function regCardLog(req) {
       CorpNum: req.body.corpNum || req.corpNum,
       ID: req.body.webId,
       CardNum: cardNum,
-      BaseMonth: "202305",
+      BaseMonth: req.body.baseMonth,
       CountPerPage: 100,
       CurrentPage: currentPage++,
       OrderDirection: 1,

@@ -11,6 +11,7 @@ const schema = new Mongoose.Schema(
     CardNum: { type: String, required: true },
     UseDT: { type: String, required: false },
     transDate: { type: Date, required: true },
+    transAssetNum: { type: String, required: false },
     CardApprovalType: { type: String, required: false },
     CardApprovalNum: { type: String, required: false },
     CardApprovalCost: { type: String, required: false },

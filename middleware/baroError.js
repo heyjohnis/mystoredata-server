@@ -310,7 +310,7 @@ export default function errorCase(errCode) {
         error: {
           code: -50223,
           message:
-            "유효한 계좌정보가 아닙니다. 계좌정보를 확인해 주시기 바랍니다.",
+            "유효한 계좌정보가 아닙니다. 계좌정보를 확인해 주시기 바랍니다. 홈페이지에서 빠른조회 계좌를 등록하세요",
         },
       };
     case -50224:

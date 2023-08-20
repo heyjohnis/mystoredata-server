@@ -14,6 +14,7 @@ const schema = new Mongoose.Schema(
     Balance: { type: String, required: false },
     TransDT: { type: String, required: false },
     transDate: { type: Date, required: true },
+    transAssetNum: { type: String, required: false },
     TransType: { type: String, required: false },
     TransOffice: { type: String, required: false },
     TransRemark: { type: String, required: false },

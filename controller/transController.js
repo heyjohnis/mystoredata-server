@@ -23,6 +23,7 @@ export async function mergeTrans(req, res) {
         .mergeTransMoney(card)
         .catch((error) => console.log(error));
     }
+    res.status(200).json({ success: true });
   } catch (error) {
     console.log(error);
   }
@@ -34,11 +35,3 @@ export async function mergeTransLogs(req, res) {
     .catch((error) => console.log(error));
   res.status(200).json({ data, error: {} });
 }
-
-// export async function analyzeWords( req, res ) {
-
-//     let tagger = new Tagger(EUNJEON);
-//     let result = await tagger.tagSync("문단을 분석합니다. 자동으로 분리되어 목록을 만듭니다.");
-
-//     console.log(result[0].singleLineString()); // "문단을 분석합니다."의 품사분석 결과 출력
-// }

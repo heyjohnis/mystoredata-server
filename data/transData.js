@@ -10,19 +10,16 @@ export async function mergeTransMoney(asset) {
   const duplAsset = assets.find(
     (regAsset) => Math.abs(regAsset.transDate - asset.transDate) < 100000
   );
-  console.log("assets duplicated asset");
 
-  const mergedLogArray = [];
   if (duplAsset) {
     const mergedLog = await TransModel.updateOne(
       { _id: duplAsset._id },
       { $set: transAsset }
     );
-    mergedLogArray.push(mergedLog);
+    console.log("assets mergedLog", mergedLog);
   } else {
     await TransModel.create(transAsset);
   }
-  console.log("assets mergedLogArray", mergedLogArray);
 }
 
 function setTransAsset(asset) {
@@ -77,5 +74,6 @@ function setTransAsset(asset) {
 }
 
 export async function getTransMoney(req) {
-  return TransModel.find().sort({ transDate: -1 });
+  const filter = req.query.corpNum ? { corpNum: req.query.corpNum } : {};
+  return TransModel.find(filter).sort({ transDate: -1 });
 }

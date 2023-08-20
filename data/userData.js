@@ -34,6 +34,7 @@ export async function updateUser(req) {
     bizClass,
     addr1,
     addr2,
+    birth,
   } = req.body;
   return await UserModel.updateOne(
     { _id },
@@ -49,6 +50,7 @@ export async function updateUser(req) {
         bizClass,
         addr1,
         addr2,
+        birth,
       },
     }
   );
@@ -57,4 +59,10 @@ export async function updateUser(req) {
 export async function resetCategory(req) {
   const corpNum = req.body.corpNum;
   return await UserModel.updateOne({ corpNum }, { $set: { category } });
+}
+
+export async function getCategory(req) {
+  const userId = req.query.userId;
+  console.log(userId);
+  return await UserModel.findOne({ userId }, { category });
 }

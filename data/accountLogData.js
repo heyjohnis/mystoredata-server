@@ -19,6 +19,7 @@ export async function regAccountLog(data) {
     return await new AccountLogModel({
       ...data,
       transDate: strToDate(data.TransDT),
+      transAssetNum: data.BankAccountNum,
     })
       .save()
       .then((res) => res._id);
@@ -27,6 +28,10 @@ export async function regAccountLog(data) {
   }
 }
 
-export async function getAccountLogs(data) {
-  return AccountLogModel.find().sort({ transDate: -1 });
+export async function getAccountLogs(req) {
+  const filter =
+    req.query.corpNum || req.body.corpNum
+      ? { CorpNum: req.query.corpNum || req.body.corpNum }
+      : {};
+  return AccountLogModel.find(filter).sort({ transDate: -1 });
 }

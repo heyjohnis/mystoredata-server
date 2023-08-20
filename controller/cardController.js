@@ -2,7 +2,7 @@ import * as service from "../service/cardService.js";
 import errorCase from "../middleware/baroError.js";
 import * as cardData from "../data/cardData.js";
 import * as userData from "../data/userData.js";
-import * as userLogData from "../data/cardLogData.js";
+import * as logData from "../data/cardLogData.js";
 
 export async function regCardLog(req, res) {
   try {
@@ -68,7 +68,7 @@ export async function getCardList(req, res) {
 
 export async function getCardLogs(req, res) {
   try {
-    const data = await userLogData.getCardLogs(req);
+    const data = await logData.getCardLogs(req);
     res.status(200).json(data);
   } catch (error) {
     console.error(error);

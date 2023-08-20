@@ -29,3 +29,12 @@ export async function resetCategory(req, res) {
     res.status(500).json({ error });
   }
 }
+
+export async function getCategory(req, res) {
+  try {
+    const data = await userData.getCategory(req);
+    res.status(200).json({ data, error: {} });
+  } catch (error) {
+    res.status(500).json({ error });
+  }
+}

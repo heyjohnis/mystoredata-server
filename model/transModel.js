@@ -9,6 +9,7 @@ const schema = new Mongoose.Schema(
     corpName: { type: String, required: true },
     transDate: { type: Date, required: false },
     transMoney: { type: Number, required: false },
+    transAssetNum: { type: String, required: false },
     bank: { type: String, required: false },
     bankAccountNum: { type: String, required: false },
     transType: { type: String, required: false },
