@@ -1,10 +1,10 @@
-import Mongoose from 'mongoose';
-import { useVirtualId } from '../database/database.js';
+import Mongoose from "mongoose";
+import { useVirtualId } from "../database/database.js";
 
 const types = Mongoose.Types;
 const schema = new Mongoose.Schema(
   {
-    user: { type: Object, required: true, ref: 'user' },
+    user: { type: Object, required: true, ref: "user" },
     bank: { type: String, required: true },
     CorpNum: { type: String, required: true },
     CorpName: { type: String, required: true },
@@ -20,8 +20,8 @@ const schema = new Mongoose.Schema(
     TransRefKey: { type: String, required: true },
     MgtRemark1: { type: String, required: false },
     MgtRemark2: { type: String, required: false },
-  }, 
-  { timestamps: true },
+  },
+  { timestamps: true }
 );
 
 useVirtualId(schema);

@@ -1,15 +1,14 @@
-import express from 'express';
-import * as data from '../data/userData.js';
-import * as controller from '../controller/userController.js'
-import { isAuth } from '../middleware/auth.js';
-
+import express from "express";
+import * as data from "../data/userData.js";
+import * as controller from "../controller/userController.js";
+import { isAuth } from "../middleware/auth.js";
 
 const router = express.Router();
 
-router.get('/list', isAuth, controller.getUserList);
+router.get("/list", isAuth, controller.getUserList);
 
-router.put('/update', isAuth, controller.updateUser);
+router.put("/update", isAuth, controller.updateUser);
 
-router.put('/reset-category', controller.resetCategory);
+router.put("/reset-category", controller.resetCategory);
 
 export default router;

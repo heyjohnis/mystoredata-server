@@ -1,4 +1,4 @@
-import dotenv from 'dotenv';
+import dotenv from "dotenv";
 dotenv.config();
 
 export const config = {
@@ -16,15 +16,15 @@ export const config = {
   db: {
     host: process.env.DB_HOST,
   },
-  ssl : {
+  ssl: {
     path: process.env.SSL_PATH,
     key: process.env.SSL_KEY,
     cert: process.env.SSL_CERT,
     ca: process.env.SSL_CA,
   },
-  baro : {
+  baro: {
     certKey: process.env.CERT_KEY,
     corpNum: process.env.CORP_NUM,
     password: process.env.USER_PASSWORD,
-  }
+  },
 };

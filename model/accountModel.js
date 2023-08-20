@@ -1,5 +1,5 @@
-import Mongoose from 'mongoose';
-import { useVirtualId } from '../database/database.js';
+import Mongoose from "mongoose";
+import { useVirtualId } from "../database/database.js";
 
 const types = Mongoose.Types;
 const schema = new Mongoose.Schema(
@@ -14,8 +14,8 @@ const schema = new Mongoose.Schema(
     bankAccountPwd: { type: String, required: false },
     webId: { type: String, required: false },
     webPwd: { type: String, required: false },
-  }, 
-  { timestamps: true },
+  },
+  { timestamps: true }
 );
 
 useVirtualId(schema);
