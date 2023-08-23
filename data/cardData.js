@@ -1,8 +1,9 @@
 import UserModel from "../model/userModel.js";
 import CardModel from "../model/cardModel.js";
 
-export async function getCardList(_id) {
-  return UserModel.findOne({ _id });
+export async function getCardList(req) {
+  const { corpNum } = req.body;
+  return CardModel.find({ corpNum });
 }
 
 export async function getCard(cardNum) {
@@ -42,4 +43,23 @@ export async function deleteCard(_id, cardNum) {
   console.log(_id, cardNum);
   await CardModel.deleteOne({ cardNum, user: _id });
   return await UserModel.updateOne({ _id }, { $pull: { cards: { cardNum } } });
+}
+
+export async function updateCard(card) {
+  await CardModel.updateOne({ cardNum: card.cardNum }, { $set: { ...card } });
+  return await UserModel.updateOne(
+    { "cards.cardNum": card.cardNum },
+    { "cards.$.useKind": card.useKind }
+  );
+}
+
+export async function updateAccount(account) {
+  await AccountModel.updateOne(
+    { bankAccountNum: account.bankAccountNum },
+    { $set: { ...account } }
+  );
+  return await UserModel.updateOne(
+    { "accounts.bankAccountNum": account.bankAccountNum },
+    { "accounts.$.useKind": account.useKind }
+  );
 }

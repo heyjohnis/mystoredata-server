@@ -2,7 +2,7 @@ import Mongoose from "mongoose";
 import { useVirtualId } from "../database/database.js";
 
 const types = Mongoose.Types;
-const schema = new Mongoose.Schema(
+export const AccountSchema = new Mongoose.Schema(
   {
     user: { type: types.ObjectId, ref: `user`, required: true },
     userId: { type: String, required: true },
@@ -14,11 +14,12 @@ const schema = new Mongoose.Schema(
     bankAccountPwd: { type: String, required: false },
     webId: { type: String, required: false },
     webPwd: { type: String, required: false },
+    useKind: { type: String, required: false },
   },
   { timestamps: true }
 );
 
-useVirtualId(schema);
-const AccountModel = Mongoose.model(`account`, schema);
+useVirtualId(AccountSchema);
+const AccountModel = Mongoose.model(`account`, AccountSchema);
 
 export default AccountModel;

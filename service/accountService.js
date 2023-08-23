@@ -11,11 +11,7 @@ const client = await soap.createClientAsync(
 
 // 계좌조회 : https://dev.barobill.co.kr/docs/references/계좌조회-API#GetBankAccountEx
 export async function getAccounts(req) {
-  const { accounts } = await accountData.getAccountList(req._id);
-  console.log(accounts);
-
   const availOnly = 1;
-
   const response = await client.GetBankAccountExAsync({
     CERTKEY: certKey,
     CorpNum: req.corpNum,

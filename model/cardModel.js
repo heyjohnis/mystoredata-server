@@ -2,7 +2,7 @@ import Mongoose from "mongoose";
 import { useVirtualId } from "../database/database.js";
 
 const types = Mongoose.Types;
-const schema = new Mongoose.Schema(
+export const CardSchema = new Mongoose.Schema(
   {
     user: { type: types.ObjectId, ref: `user`, required: true },
     userId: { type: String, required: true },
@@ -13,11 +13,12 @@ const schema = new Mongoose.Schema(
     cardNum: { type: String, required: true },
     webId: { type: String, required: false },
     webPwd: { type: String, required: false },
+    useKind: { type: String, required: false },
   },
   { timestamps: true }
 );
 
-useVirtualId(schema);
-const CardModel = Mongoose.model(`card`, schema);
+useVirtualId(CardSchema);
+const CardModel = Mongoose.model(`card`, CardSchema);
 
 export default CardModel;

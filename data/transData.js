@@ -23,11 +23,12 @@ export async function mergeTransMoney(asset) {
 }
 
 function setTransAsset(asset) {
-  const assetNum = asset.cardNum || asset.BankAccountNum;
+  const assetNum = asset.CardNum || asset.BankAccountNum;
   const transMoney =
     parseInt(asset.CardApprovalCost || 0) * -1 ||
     parseInt(asset.Deposit) ||
     parseInt(asset.Withdraw) * -1;
+  console.log("transMoney", transMoney);
   const cardData = {
     user: asset.user,
     corpNum: asset.CorpNum,
@@ -51,6 +52,7 @@ function setTransAsset(asset) {
     useStoreTaxType: asset.UseStoreTaxType,
     paymentPlan: asset.PaymentPlan,
     currency: asset.Currency,
+    useKind: asset.useKind,
     transMoney,
   };
 
@@ -59,15 +61,17 @@ function setTransAsset(asset) {
     corpNum: asset.CorpNum,
     corpName: asset.CorpName,
     bankAccountNum: asset.BankAccountNum,
+    assetNum,
     transDate: asset.transDate,
     bank: asset.bank,
-    transMoney,
     transType: asset.TransType,
     transOffice: asset.TransOffice,
     transRemark: asset.TransRemark,
     transRefKey: asset.TransRefKey,
     mgtRemark1: asset.MgtRemark1,
     mgtRemark2: asset.MgtRemark2,
+    useKind: asset.useKind,
+    transMoney,
   };
 
   return asset.CardNum ? cardData : accountData;

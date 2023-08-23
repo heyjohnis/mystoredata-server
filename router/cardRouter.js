@@ -8,6 +8,8 @@ router.post("/regLog", controller.regCardLog);
 
 router.post("/reg", isAuth, controller.regCard);
 
+router.put("/update", isAuth, controller.updateCard);
+
 router.post("/stop", isAuth, controller.stopCard);
 
 router.get("/list", isAuth, controller.getCardList);

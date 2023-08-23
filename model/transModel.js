@@ -32,6 +32,8 @@ const schema = new Mongoose.Schema(
     useStoreTaxType: { type: String, required: false },
     paymentPlan: { type: String, required: false },
     currency: { type: String, required: false },
+    useKind: { type: String, required: false },
+    category: { type: String, required: false },
   },
   { timestamps: true }
 );

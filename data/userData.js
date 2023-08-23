@@ -3,7 +3,8 @@ import UserModel from "../model/userModel.js";
 import { category } from "../cmmCode.js";
 
 export async function getUserList(req) {
-  return UserModel.find().sort({ createdAt: -1 });
+  const users = await UserModel.find().sort({ createdAt: -1 });
+  return users;
 }
 
 export async function findById(_id) {

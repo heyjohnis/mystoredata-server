@@ -2,8 +2,9 @@ import UserModel from "../model/userModel.js";
 import AccountLogModel from "../model/accountLogModel.js";
 import AccountModel from "../model/accountModel.js";
 
-export async function getAccountList(_id) {
-  return UserModel.findOne({ _id });
+export async function getAccountList(req) {
+  const { corpNum } = req.body;
+  return AccountModel.find({ corpNum });
 }
 
 export async function getAccount(bankAccountNum) {
@@ -38,5 +39,16 @@ export async function deleteAccout(_id, accountNum) {
   return await UserModel.updateOne(
     { _id },
     { $pull: { accounts: { bankAccountNum: accountNum } } }
+  );
+}
+
+export async function updateAccount(account) {
+  await AccountModel.updateOne(
+    { bankAccountNum: account.bankAccountNum },
+    { $set: { ...account } }
+  );
+  return await UserModel.updateOne(
+    { "accounts.bankAccountNum": account.bankAccountNum },
+    { "accounts.$.useKind": account.useKind }
   );
 }

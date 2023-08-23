@@ -1,5 +1,7 @@
 import Mongoose from "mongoose";
 import { useVirtualId } from "../database/database.js";
+import { AccountSchema } from "./accountModel.js";
+import { CardSchema } from "./cardModel.js";
 
 const types = Mongoose.Types;
 const schema = new Mongoose.Schema(
@@ -17,8 +19,8 @@ const schema = new Mongoose.Schema(
     addr2: { type: String, required: false },
     mobile: { type: String, required: false },
     corpId: { type: types.ObjectId },
-    accounts: { type: Array },
-    cards: { type: Array },
+    accounts: [AccountSchema],
+    cards: [CardSchema],
     category: { type: Object, required: false },
     birth: { type: String, required: false },
   },

@@ -71,3 +71,13 @@ export async function deleteAccount(req, res) {
     res.sendStatus(500).json(error);
   }
 }
+
+export async function updateAccount(req, res) {
+  try {
+    console.log(req.body);
+    const result = await accountData.updateAccount(req.body);
+    res.status(200).json(result);
+  } catch (error) {
+    res.sendStatus(500).json(error);
+  }
+}

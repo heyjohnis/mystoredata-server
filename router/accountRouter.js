@@ -8,6 +8,8 @@ router.get("/list", isAuth, controller.getAccounts);
 
 router.post("/reg", isAuth, controller.regAccount);
 
+router.put("/update", isAuth, controller.updateAccount);
+
 router.post("/regLog", isAuth, controller.regAcountLog);
 
 router.get("/log", isAuth, controller.getAccountLogs);
