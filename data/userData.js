@@ -67,3 +67,9 @@ export async function getCategory(req) {
   console.log(userId);
   return await UserModel.findOne({ userId }, { category });
 }
+
+export async function getUserCategory(req) {
+  const user = req.params.user;
+  console.log({ user });
+  return await UserModel.findOne({ _id: user }, { category });
+}

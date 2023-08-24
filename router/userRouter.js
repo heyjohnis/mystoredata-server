@@ -13,4 +13,6 @@ router.put("/reset-category", controller.resetCategory);
 
 router.get("/category", isAuth, controller.getCategory);
 
+router.get("/category/:user", isAuth, controller.getUserCategory);
+
 export default router;

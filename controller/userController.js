@@ -38,3 +38,12 @@ export async function getCategory(req, res) {
     res.status(500).json({ error });
   }
 }
+
+export async function getUserCategory(req, res) {
+  try {
+    const data = await userData.getUserCategory(req);
+    res.status(200).json({ data, error: {} });
+  } catch (error) {
+    res.status(500).json({ error });
+  }
+}
