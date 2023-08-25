@@ -21,6 +21,7 @@ const schema = new Mongoose.Schema(
     TransRefKey: { type: String, required: true },
     MgtRemark1: { type: String, required: false },
     MgtRemark2: { type: String, required: false },
+    keyword: { type: Array, required: false },
   },
   { timestamps: true }
 );

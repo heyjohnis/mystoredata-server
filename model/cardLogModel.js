@@ -29,6 +29,7 @@ const schema = new Mongoose.Schema(
     PaymentPlan: { type: String, required: false },
     InstallmentMonths: { type: String, required: false },
     Currency: { type: String, required: false },
+    keyword: { type: Array, required: false },
   },
   { timestamps: true }
 );

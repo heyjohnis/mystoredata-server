@@ -12,8 +12,6 @@ export async function regCardLog(data) {
       UseDT,
     });
 
-    console.log("existingData", existingData);
-
     if (!existingData) {
       await new CardLogModel({
         ...data,

@@ -11,11 +11,9 @@ export async function regAccountLog(data) {
       TransDT,
       TransRefKey,
     });
-    console.log("existingData", existingData);
     if (existingData) {
       return;
     }
-    console.log("strToDate(data.TransDT): ", strToDate(data.TransDT));
     return await new AccountLogModel({
       ...data,
       transDate: strToDate(data.TransDT),

@@ -2,6 +2,7 @@ import soap from "soap";
 import { config } from "../config.js";
 import * as accountData from "../data/accountData.js";
 import * as accountLogData from "../data/accountLogData.js";
+import { keywordGen } from "../utils/keywordGen.js";
 
 const certKey = config.baro.certKey;
 // const client = await soap.createClientAsync('https://testws.baroservice.com/BANKACCOUNT.asmx?WSDL') // 테스트서버
@@ -114,9 +115,13 @@ export async function regAcountLog(req) {
         : result.BankAccountLogList.BankAccountLogEx;
       console.log("cntLog: ", cntLog, "page", currentPage);
       for (let i = 0; i < logs.length; i++) {
-        console.log(logs[i]);
+        const words = `${logs[i].TransRemark}`;
+        const keyword = await keywordGen(words);
+        console.log("keyword: ", keyword);
+
         await accountLogData.regAccountLog({
           ...logs[i],
+          keyword,
           user: account.user,
           bank: account.bank,
           CorpName: account.corpName,

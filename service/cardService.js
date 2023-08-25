@@ -1,8 +1,10 @@
 import soap from "soap"; // https://www.npmjs.com/package/soap
+import mecab from "mecab-ya";
 import * as cardData from "../data/cardData.js";
 import * as cardLogData from "../data/cardLogData.js";
 import { config } from "../config.js";
 import errorCase from "../middleware/baroError.js";
+import { keywordGen } from "../utils/keywordGen.js";
 const certKey = config.baro.certKey;
 
 //const client = await soap.createClientAsync('https://testws.baroservice.com/CARD.asmx?WSDL') // 테스트서버
@@ -120,9 +122,12 @@ export async function regCardLog(req) {
       console.log("cntLog: ", cntLog, "page", currentPage);
       for (let i = 0; i < cntLog; i++) {
         // 필드정보는 레퍼런스를 참고해주세요.
-        console.log(cardLogs[i]);
+        const words = `${cardLogs[i].UseStoreName} ${cardLogs[i].UseStoreName}`;
+        const keyword = await keywordGen(words);
+        console.log("keyword: ", keyword);
         await cardLogData.regCardLog({
           ...cardLogs[i],
+          keyword,
           user: card.user,
           cardCompany: card.cardCompany,
           CorpName: card.corpName,

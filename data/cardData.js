@@ -15,7 +15,6 @@ export async function regCard(_id, newCard) {
   const userInfo = await UserModel.findOne({ _id });
   const cards = userInfo?.cards;
   const hasCard = cards.find((card) => card.cardNum === newCard.cardNum);
-  console.log("hasCard", hasCard);
   if (!hasCard) {
     console.log("newcard", {
       ...newCard,

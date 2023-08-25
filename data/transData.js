@@ -12,6 +12,13 @@ export async function mergeTransMoney(asset) {
   );
 
   if (duplAsset) {
+    const setKeyword = new Set([
+      ...(transAsset.keyword || []),
+      ...(duplAsset.keyword || []),
+    ]);
+    console.log("keyword", transAsset.keyword, duplAsset.keyword);
+    transAsset.keyword = Array.from(setKeyword);
+    console.log("assets setKeyword", transAsset.keyword);
     const mergedLog = await TransModel.updateOne(
       { _id: duplAsset._id },
       { $set: transAsset }
@@ -54,6 +61,7 @@ function setTransAsset(asset) {
     currency: asset.Currency,
     useKind: asset.useKind,
     transMoney,
+    keyword: asset.keyword,
   };
 
   const accountData = {
@@ -72,6 +80,7 @@ function setTransAsset(asset) {
     mgtRemark2: asset.MgtRemark2,
     useKind: asset.useKind,
     transMoney,
+    keyword: asset.keyword,
   };
 
   return asset.CardNum ? cardData : accountData;

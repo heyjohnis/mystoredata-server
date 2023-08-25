@@ -34,6 +34,7 @@ const schema = new Mongoose.Schema(
     currency: { type: String, required: false },
     useKind: { type: String, required: false },
     category: { type: String, required: false },
+    keyword: { type: Array, required: false },
   },
   { timestamps: true }
 );
