@@ -90,3 +90,9 @@ export async function getTransMoney(req) {
   const filter = req.query.corpNum ? { corpNum: req.query.corpNum } : {};
   return TransModel.find(filter).sort({ transDate: -1 });
 }
+
+export async function updateTransMoney(req) {
+  const _id = req.params.id;
+  const update = req.body;
+  return TransModel.updateOne({ _id }, update);
+}

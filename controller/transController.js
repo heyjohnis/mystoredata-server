@@ -53,3 +53,10 @@ export async function mergeTransLogs(req, res) {
     .catch((error) => console.log(error));
   res.status(200).json({ data, error: {} });
 }
+
+export async function updateTrans(req, res) {
+  const data = await transData
+    .updateTransMoney(req)
+    .catch((error) => console.log(error));
+  res.status(200).json({ data, error: {} });
+}
