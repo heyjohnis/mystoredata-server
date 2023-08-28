@@ -20,11 +20,13 @@ export const category = {
   350: { name: "저축/투자", isFixed: false, default: true },
   360: { name: "이체", isFixed: false, default: true },
   370: { name: "카드대금", isFixed: false, default: true },
+  380: { name: "세금", isFixed: false, default: true },
 
   510: { name: "급여", isFixed: false, default: true },
   520: { name: "매출", isFixed: false, default: true },
   530: { name: "복리후생비", isFixed: false, default: true },
-  540: { name: "잡비", isFixed: false, default: true },
+  540: { name: "사대보험", isFixed: false, default: true },
+  550: { name: "잡비", isFixed: false, default: true },
 
   900: { name: "카테고리 없음", default: true },
 };

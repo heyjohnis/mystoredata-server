@@ -53,7 +53,7 @@ export async function getUserCategory(req, res) {
 export async function createCategoryRule(req, res) {
   try {
     const data = await userData.createCategoryRule(req);
-    res.status(200).json({ data, error: {} });
+    res.status(200).json(data);
   } catch (error) {
     console.log({ error });
     res.status(500).json({ error });
