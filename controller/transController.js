@@ -15,7 +15,6 @@ export async function mergeTrans(req, res) {
       .getAccountLogs(req)
       .catch((error) => console.log(error));
     for (const account of accounts) {
-      console.log({ account });
       const useKind = getUseKind(accountList, account.BankAccountNum);
       account.useKind = useKind;
       await transData
@@ -26,7 +25,6 @@ export async function mergeTrans(req, res) {
       .getCardLogs(req)
       .catch((error) => console.log(error));
     for (const card of cards) {
-      console.log({ card });
       const useKind = getUseKind(cardList, card.CardNum);
       card.useKind = useKind;
       await transData

@@ -35,6 +35,7 @@ export async function getCategory(req, res) {
     const data = await userData.getCategory(req);
     res.status(200).json({ data, error: {} });
   } catch (error) {
+    console.log({ error });
     res.status(500).json({ error });
   }
 }
@@ -44,6 +45,17 @@ export async function getUserCategory(req, res) {
     const data = await userData.getUserCategory(req);
     res.status(200).json({ data, error: {} });
   } catch (error) {
+    console.log({ error });
+    res.status(500).json({ error });
+  }
+}
+
+export async function createCategoryRule(req, res) {
+  try {
+    const data = await userData.createCategoryRule(req);
+    res.status(200).json({ data, error: {} });
+  } catch (error) {
+    console.log({ error });
     res.status(500).json({ error });
   }
 }

@@ -111,15 +111,12 @@ export async function regCardLog(req) {
     const result = response[0].GetMonthlyCardLogEx2Result;
 
     if (result.CurrentPage < 0) {
-      // 호출 실패
-      console.log("error: ", errorCase(result.CurrentPage));
       return result.CurrentPage;
     } else {
       // 호출 성공
       const card = await cardData.getCard(cardNum);
       const cardLogs = !result.CardLogList ? [] : result.CardLogList.CardLogEx2;
       cntLog = cardLogs.length;
-      console.log("cntLog: ", cntLog, "page", currentPage);
       for (let i = 0; i < cntLog; i++) {
         // 필드정보는 레퍼런스를 참고해주세요.
         const words = `${cardLogs[i].UseStoreName} ${cardLogs[i].UseStoreName}`;

@@ -1,4 +1,6 @@
+import CategoryRuleModel from "../model/categoryRule.js";
 import TransModel from "../model/transModel.js";
+import mongoose from "mongoose";
 
 export async function mergeTransMoney(asset) {
   const transAsset = setTransAsset(asset);
@@ -11,22 +13,23 @@ export async function mergeTransMoney(asset) {
     (regAsset) => Math.abs(regAsset.transDate - asset.transDate) < 100000
   );
 
+  let resultAsset = {};
   if (duplAsset) {
     const setKeyword = new Set([
       ...(transAsset.keyword || []),
       ...(duplAsset.keyword || []),
     ]);
-    console.log("keyword", transAsset.keyword, duplAsset.keyword);
     transAsset.keyword = Array.from(setKeyword);
-    console.log("assets setKeyword", transAsset.keyword);
-    const mergedLog = await TransModel.updateOne(
+    resultAsset = await TransModel.findOneAndUpdate(
       { _id: duplAsset._id },
-      { $set: transAsset }
+      { $set: transAsset },
+      { new: true }
     );
-    console.log("assets mergedLog", mergedLog);
   } else {
-    await TransModel.create(transAsset);
+    resultAsset = await TransModel.create(transAsset);
   }
+  const rule = await autosetCategoryAndUseKind(resultAsset);
+  // console.log("rule", rule);
 }
 
 function setTransAsset(asset) {
@@ -35,7 +38,6 @@ function setTransAsset(asset) {
     parseInt(asset.CardApprovalCost || 0) * -1 ||
     parseInt(asset.Deposit) ||
     parseInt(asset.Withdraw) * -1;
-  console.log("transMoney", transMoney);
   const cardData = {
     user: asset.user,
     corpNum: asset.CorpNum,
@@ -86,13 +88,48 @@ function setTransAsset(asset) {
   return asset.CardNum ? cardData : accountData;
 }
 
+async function autosetCategoryAndUseKind(asset) {
+  console.log("asset id: ", asset._id);
+  const query = { user: asset.user };
+  const { useStoreName, transRemark } = asset;
+  query.$or = query.$or || [];
+  if (asset.useStoreName) {
+    query.$or.push({ useStoreName });
+  }
+  if (asset.transRemark) {
+    query.$or.push({ transRemark });
+  }
+
+  if (query.$or.length === 0) return;
+
+  console.log("query", query);
+  const rule = await CategoryRuleModel.findOne(query);
+  console.log("rule", rule);
+  if (rule) {
+    const ruled = await TransModel.updateOne(
+      { _id: asset._id },
+      {
+        $set: {
+          category: rule.category,
+          categoryName: rule.categoryName,
+          useKind: rule.useKind,
+        },
+      }
+    );
+    console.log("ruled", ruled);
+  }
+}
+
 export async function getTransMoney(req) {
   const filter = req.query.corpNum ? { corpNum: req.query.corpNum } : {};
   return TransModel.find(filter).sort({ transDate: -1 });
 }
 
 export async function updateTransMoney(req) {
-  const _id = req.params.id;
-  const update = req.body;
-  return TransModel.updateOne({ _id }, update);
+  const _id = mongoose.Types.ObjectId(req.params.id);
+  const { useKind, category, categoryName } = req.body;
+  return TransModel.updateOne(
+    { _id },
+    { $set: { useKind, category, categoryName } }
+  );
 }

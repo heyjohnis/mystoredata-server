@@ -1,6 +1,9 @@
+import mongoose from "mongoose";
 import { createCorp } from "./corpData.js";
 import UserModel from "../model/userModel.js";
 import { category } from "../cmmCode.js";
+import CategoryRuleModel from "../model/categoryRule.js";
+import TransModel from "../model/transModel.js";
 
 export async function getUserList(req) {
   const users = await UserModel.find().sort({ createdAt: -1 });
@@ -64,12 +67,45 @@ export async function resetCategory(req) {
 
 export async function getCategory(req) {
   const userId = req.query.userId;
-  console.log(userId);
-  return await UserModel.findOne({ userId }, { category });
+  return await UserModel.findOne({ userId }, "category");
 }
 
 export async function getUserCategory(req) {
-  const user = req.params.user;
-  console.log({ user });
-  return await UserModel.findOne({ _id: user }, { category });
+  const _id = mongoose.Types.ObjectId(req.params.user);
+
+  const category = await UserModel.findOne({ _id }, "category");
+
+  return category;
+}
+
+export async function createCategoryRule(req) {
+  const { user, useStoreName, transRemark, category, categoryName, useKind } =
+    req.body;
+  console.log("req.body", req.body);
+  const query = { user };
+  query.$or = query.$or || [];
+  if (useStoreName) {
+    query.$or.push({ useStoreName });
+  }
+  if (transRemark) {
+    query.$or.push({ transRemark });
+  }
+  const existingData = await CategoryRuleModel.findOne(query);
+  console.log("existingData", existingData, query);
+  if (existingData) {
+    await CategoryRuleModel.updateOne(
+      { _id: existingData._id },
+      { category, categoryName, useKind }
+    );
+  } else {
+    const addRule = await new CategoryRuleModel({ ...req.body }).save();
+    console.log("addRule", addRule);
+  }
+
+  const result = await TransModel.updateMany(query, {
+    $set: { category, useKind, categoryName },
+  });
+
+  console.log("result", result);
+  return result;
 }

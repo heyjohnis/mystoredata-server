@@ -11,7 +11,6 @@ export async function regCardLog(data) {
       UseStoreNum,
       UseDT,
     });
-
     if (!existingData) {
       await new CardLogModel({
         ...data,
