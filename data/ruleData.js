@@ -12,3 +12,11 @@ export async function getCategoryRule(req) {
     return { error };
   }
 }
+
+export async function getKeywordCategoryRule(req) {
+  try {
+  } catch (error) {
+    console.log({ error });
+    return { error };
+  }
+}

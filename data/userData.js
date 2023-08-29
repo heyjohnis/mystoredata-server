@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import { createCorp } from "./corpData.js";
 import UserModel from "../model/userModel.js";
-import { category } from "../cmmCode.js";
+import { defaultCategory } from "../cmmCode.js";
 import CategoryRuleModel from "../model/categoryRule.js";
 import TransModel from "../model/transModel.js";
 
@@ -62,7 +62,10 @@ export async function updateUser(req) {
 
 export async function resetCategory(req) {
   const corpNum = req.body.corpNum;
-  return await UserModel.updateOne({ corpNum }, { $set: { category } });
+  return await UserModel.updateOne(
+    { corpNum },
+    { $set: { category: defaultCategory } }
+  );
 }
 
 export async function getCategory(req) {

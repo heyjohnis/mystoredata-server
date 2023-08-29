@@ -6,4 +6,6 @@ const router = express.Router();
 
 router.get("/category", isAuth, controller.getCategoryRule);
 
+router.get("/keyword", isAuth, controller.getCategoryRule);
+
 export default router;

@@ -21,7 +21,7 @@ const schema = new Mongoose.Schema(
     corpId: { type: types.ObjectId },
     accounts: [AccountSchema],
     cards: [CardSchema],
-    category: { type: Object, required: false },
+    category: { type: Array, required: false },
     birth: { type: String, required: false },
   },
   { timestamps: true }

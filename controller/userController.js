@@ -33,7 +33,8 @@ export async function resetCategory(req, res) {
 export async function getCategory(req, res) {
   try {
     const data = await userData.getCategory(req);
-    res.status(200).json({ data, error: {} });
+    console.log({ data });
+    res.status(200).json(data);
   } catch (error) {
     console.log({ error });
     res.status(500).json({ error });
@@ -43,7 +44,7 @@ export async function getCategory(req, res) {
 export async function getUserCategory(req, res) {
   try {
     const data = await userData.getUserCategory(req);
-    res.status(200).json({ data, error: {} });
+    res.status(200).json(data);
   } catch (error) {
     console.log({ error });
     res.status(500).json({ error });

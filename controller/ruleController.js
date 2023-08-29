@@ -17,3 +17,13 @@ export async function getCategoryRule(req, res) {
     res.status(500).json({ error });
   }
 }
+
+export async function getKeywordCategoryRule(req, res) {
+  try {
+    const data = await ruleDate.getKeywordCategoryRule(req);
+    res.status(200).json({ data, error: {} });
+  } catch (error) {
+    console.log({ error });
+    res.status(500).json({ error });
+  }
+}
