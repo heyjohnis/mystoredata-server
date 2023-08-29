@@ -1,0 +1,36 @@
+@baseUrl = http://localhost:8089
+@jwt = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NGQxZDhiNGEyY2RhODg4MWU5NzkzNTYiLCJpYXQiOjE2OTMyMDM4NDYsImV4cCI6MTY5NTc5NTg0Nn0.HfvmBEdvamrofUiUe6-vpZpnOpHzQUYJBWDCU3lugMU
+
+### 로그인
+POST {{baseUrl}}/auth/login HTTP/1.1
+Content-Type: application/json; charset=UTF-8
+
+{
+    "userId": "bethelean", 
+    "password": "12345678"
+}
+
+# {
+#     "userId": "iset12", 
+#     "password": "12345678"
+# }
+
+### 사용자 카테고리 초기화
+PUT {{baseUrl}}/user/reset-category HTTP/1.1
+Content-Type: application/json; charset=UTF-8
+Authorization: Bearer {{jwt}}
+
+{
+    "corpNum": "1073270598" 
+}
+
+
+### 사용자 카테고리 출력 
+GET {{baseUrl}}/user/category?userId=bethelean HTTP/1.1
+Content-Type: application/json; charset=UTF-8
+Authorization: Bearer {{jwt}}
+
+### 카테고리 키워드 초기화
+GET {{baseUrl}}/rule/reset-category HTTP/1.1
+Content-Type: application/json; charset=UTF-8
+Authorization: Bearer {{jwt}}
