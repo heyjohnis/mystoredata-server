@@ -8,4 +8,6 @@ router.get("/category", isAuth, controller.getCategoryRule);
 
 router.get("/keyword", isAuth, controller.getCategoryRule);
 
+router.get("/reset-category", isAuth, controller.createResetCategoryRule);
+
 export default router;

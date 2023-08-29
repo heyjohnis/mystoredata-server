@@ -5,16 +5,16 @@ const types = Mongoose.Types;
 export const RuleSchema = new Mongoose.Schema(
   {
     code: { type: String, required: false },
-    category: { type: String, required: false },
+    name: { type: String, required: false },
     kind: { type: String, required: false },
-    categoryName: { type: String, required: false },
     keyword: { type: [String], required: false },
-    useKind: { type: String, required: false },
+    order: { type: Number, required: false },
+    isFixed: { type: Boolean, required: false },
   },
   { timestamps: true }
 );
 
 useVirtualId(RuleSchema);
-const CategoryRuleModel = Mongoose.model(`categoryRule`, RuleSchema);
+const KeywordRuleModel = Mongoose.model(`categoryKeyword`, RuleSchema);
 
-export default CategoryRuleModel;
+export default KeywordRuleModel;

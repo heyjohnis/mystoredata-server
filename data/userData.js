@@ -4,6 +4,7 @@ import UserModel from "../model/userModel.js";
 import { defaultCategory } from "../cmmCode.js";
 import CategoryRuleModel from "../model/categoryRule.js";
 import TransModel from "../model/transModel.js";
+import KeywordRuleModel from "../model/keywordRule.js";
 
 export async function getUserList(req) {
   const users = await UserModel.find().sort({ createdAt: -1 });
@@ -69,13 +70,11 @@ export async function resetCategory(req) {
 }
 
 export async function getCategory(req) {
-  const userId = req.query.userId;
-  return await UserModel.findOne({ userId }, "category");
+  return await KeywordRuleModel.find();
 }
 
 export async function getUserCategory(req) {
   const _id = mongoose.Types.ObjectId(req.params.user);
-
   const category = await UserModel.findOne({ _id }, "category");
 
   return category;

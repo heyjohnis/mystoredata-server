@@ -90,9 +90,8 @@ function setTransAsset(asset) {
 
 async function autosetCategoryAndUseKind(asset) {
   console.log("asset id: ", asset._id);
-  const { useStoreName, transRemark } = asset;
-
   const query = { user: asset.user };
+  const { useStoreName, transRemark } = asset;
   query.$or = query.$or || [];
   if (asset.useStoreName) {
     query.$or.push({ useStoreName });

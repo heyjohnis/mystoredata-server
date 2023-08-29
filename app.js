@@ -16,6 +16,7 @@ import accountRouter from "./router/accountRouter.js";
 import corpRouter from "./router/corpRouter.js";
 import transRouter from "./router/transRouter.js";
 import ruleRouter from "./router/ruleRouter.js";
+import categoryRouter from "./router/categoryRouter.js";
 
 import { config } from "./config.js";
 import { initSocket } from "./connection/socket.js";
@@ -44,6 +45,7 @@ app.use("/account", accountRouter);
 app.use("/corp", corpRouter);
 app.use("/trans", transRouter);
 app.use("/rule", ruleRouter);
+app.use("/category", categoryRouter);
 
 app.use((req, res, next) => {
   res.sendStatus(404);

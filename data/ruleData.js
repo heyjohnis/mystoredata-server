@@ -1,4 +1,6 @@
+import { defaultCategory } from "../cmmCode.js";
 import CategoryRuleModel from "../model/categoryRule.js";
+import KeywordRuleModel from "../model/keywordRule.js";
 
 export async function getCategoryRule(req) {
   try {
@@ -15,6 +17,17 @@ export async function getCategoryRule(req) {
 
 export async function getKeywordCategoryRule(req) {
   try {
+  } catch (error) {
+    console.log({ error });
+    return { error };
+  }
+}
+
+export async function createKeywordCategoryRule(req) {
+  try {
+    defaultCategory.forEach(async (category) => {
+      new KeywordRuleModel({ ...category }).save();
+    });
   } catch (error) {
     console.log({ error });
     return { error };
