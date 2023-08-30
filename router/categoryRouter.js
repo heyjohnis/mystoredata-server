@@ -8,4 +8,6 @@ router.get("/keyword-rule", isAuth, controller.getKeywordCategoryRule);
 
 router.put("/keyword-rule/:code", isAuth, controller.updateKeywordCategoryRule);
 
+router.get("/keyword", isAuth, controller.keywordCategory);
+
 export default router;

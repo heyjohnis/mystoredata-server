@@ -1,6 +1,8 @@
 import CategoryRuleModel from "../model/categoryRule.js";
 import TransModel from "../model/transModel.js";
 import mongoose from "mongoose";
+import { defaultCategory } from "../cmmCode.js";
+import { keywordCategory } from "../data/categoryData.js";
 
 export async function mergeTransMoney(asset) {
   const transAsset = setTransAsset(asset);
@@ -89,35 +91,62 @@ function setTransAsset(asset) {
 }
 
 async function autosetCategoryAndUseKind(asset) {
-  console.log("asset id: ", asset._id);
-  const query = { user: asset.user };
+  const query = { user: asset.user, $or: [] };
   const { useStoreName, transRemark } = asset;
-  query.$or = query.$or || [];
-  if (asset.useStoreName) {
-    query.$or.push({ useStoreName });
-  }
-  if (asset.transRemark) {
-    query.$or.push({ transRemark });
-  }
-
+  if (asset.useStoreName) query.$or.push({ useStoreName });
+  if (asset.transRemark) query.$or.push({ transRemark });
   if (query.$or.length === 0) return;
 
-  console.log("query", query);
   const rule = await CategoryRuleModel.findOne(query);
-  console.log("rule", rule);
   if (rule) {
-    const ruled = await TransModel.updateOne(
-      { _id: asset._id },
-      {
-        $set: {
-          category: rule.category,
-          categoryName: rule.categoryName,
-          useKind: rule.useKind,
-        },
-      }
-    );
-    console.log("ruled", ruled);
+    await updateKeywordCategoryRule({
+      category: rule.category,
+      categoryName: rule.categoryName,
+      useKind: rule.useKind,
+    });
+  } else {
+    const code = await getAutosetCategoryCode(asset);
+    if (!code) return;
+    await updateKeywordCategoryRule({
+      category: code,
+      categoryName: defaultCategory.find((cate) => cate.code === code).name,
+      useKind: asset.useKind,
+    });
+    console.log("rule keyword");
   }
+}
+
+async function updateKeywordCategoryRule({ category, categoryName, useKind }) {
+  await TransModel.updateOne(
+    { _id: asset._id },
+    {
+      $set: {
+        category,
+        categoryName,
+        useKind,
+      },
+    }
+  );
+}
+
+async function getAutosetCategoryCode(asset) {
+  const cateObj = await keywordCategory(asset);
+  let code = "";
+  asset.keyword.forEach((keyword) => {
+    if (cateObj[keyword]) {
+      code = cateObj[keyword];
+    }
+  });
+
+  if (!code) {
+    const words = `${asset.transRemark} ${asset.useStoreName} ${asset.useStoreBizType}`;
+    Object.keys(cateObj).forEach((key) => {
+      if (words.includes(key)) {
+        code = cateObj[key];
+      }
+    });
+  }
+  return code;
 }
 
 export async function getTransMoney(req) {

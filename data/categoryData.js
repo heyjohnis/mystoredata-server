@@ -27,3 +27,19 @@ export async function updateKeywordCategoryRule(req) {
     return { error };
   }
 }
+
+export async function keywordCategory(req) {
+  try {
+    const categorys = await KeywordRuleModel.find();
+    const categoryObj = {};
+    categorys.forEach((cate) => {
+      cate.keyword.forEach((key) => {
+        categoryObj[key] = cate.code;
+      });
+    });
+    return categoryObj;
+  } catch (error) {
+    console.log({ error });
+    return { error };
+  }
+}

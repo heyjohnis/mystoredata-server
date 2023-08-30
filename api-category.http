@@ -21,7 +21,7 @@ Content-Type: application/json; charset=UTF-8
 Authorization: Bearer {{jwt}}
 
 {
-    "corpNum": "1073270598" 
+    "corpNum": "4649400988" 
 }
 
 
@@ -32,5 +32,10 @@ Authorization: Bearer {{jwt}}
 
 ### 카테고리 키워드 초기화
 GET {{baseUrl}}/rule/reset-category HTTP/1.1
+Content-Type: application/json; charset=UTF-8
+Authorization: Bearer {{jwt}}
+
+### 카테고리 판단 Object 생성
+GET {{baseUrl}}/category/keyword HTTP/1.1
 Content-Type: application/json; charset=UTF-8
 Authorization: Bearer {{jwt}}
