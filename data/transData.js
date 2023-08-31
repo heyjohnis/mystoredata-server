@@ -3,39 +3,86 @@ import TransModel from "../model/transModel.js";
 import mongoose from "mongoose";
 import { defaultCategory } from "../cmmCode.js";
 import { keywordCategory } from "../data/categoryData.js";
+import { nowDate } from "../utils/date.js";
 
 export async function mergeTransMoney(asset) {
-  const transAsset = setTransAsset(asset);
-
-  const assets = await TransModel.find({
-    corpNum: transAsset.corpNum,
-    transMoney: transAsset.transMoney,
-  });
-  const duplAsset = assets.find(
-    (regAsset) => Math.abs(regAsset.transDate - asset.transDate) < 100000
+  const transAsset = convertTransAsset(asset);
+  console.log(
+    `${nowDate()}: 거래 checking start: ${transAsset.transAssetNum} ${
+      transAsset.transMoney
+    } ${transAsset.transRemark} ${transAsset.useStoreName}`
   );
+  const query = {};
+  query.corpNum = transAsset.corpNum;
+  query.transMoney = transAsset.transMoney;
+  query.transDate = {
+    $gte: new Date(Number(transAsset.transDate) - 100000),
+    $lte: new Date(Number(transAsset.transDate) + 100000),
+  };
+  // if (transAsset.bankAccountNum)
+  //   query.bankAccountNum = { $ne: transAsset.bankAccountNum };
+
+  // if (transAsset.cardNum) query.cardNum = { $ne: transAsset.cardNum };
+
+  const guessDuplAssets = await TransModel.find(query);
+
+  let isDuplicate = guessDuplAssets.length > 0;
+
+  // if (guessDuplAsset?.transRemark) {
+  //   isDuplicate =
+  //     guessDuplAsset?.transRemark === transAsset.transRemark ? true : false;
+  // }
+  // if (guessDuplAsset?.useStoreName) {
+  //   isDuplicate =
+  //     guessDuplAsset?.useStoreName === transAsset.useStoreName ? true : false;
+  // }
 
   let resultAsset = {};
-  if (duplAsset) {
-    const setKeyword = new Set([
-      ...(transAsset.keyword || []),
-      ...(duplAsset.keyword || []),
-    ]);
-    transAsset.keyword = Array.from(setKeyword);
+
+  if (isDuplicate) {
+    if (
+      guessDuplAsset.cardNum === transAsset.cardNum ||
+      guessDuplAsset.bankAccountNum === transAsset.bankAccountNum
+    ) {
+      console.log(
+        `${nowDate()}: 기등록한 거래: ${transAsset.transAssetNum} ${
+          transAsset.transMoney
+        } ${transAsset.transRemark} ${transAsset.useStoreName}`
+      );
+      console.log("신규거래: ", new Date(Number(transAsset.transDate)));
+      console.log("기등록거래: ", new Date(Number(guessDuplAsset.transDate)));
+      return;
+    }
+    transAsset.keyword = Array.from(
+      new Set([
+        ...(transAsset.keyword || []),
+        ...(guessDuplAsset.keyword || []),
+      ])
+    );
     resultAsset = await TransModel.findOneAndUpdate(
-      { _id: duplAsset._id },
+      { _id: guessDuplAsset._id },
       { $set: transAsset },
       { new: true }
     );
+    console.log(
+      `${nowDate()}: trans asset updated: ${resultAsset.transAssetNum} ${
+        resultAsset.transMoney
+      } ${resultAsset.transRemark} ${resultAsset.useStoreName}`
+    );
   } else {
     resultAsset = await TransModel.create(transAsset);
+    console.log(
+      `${nowDate()}: trans asset created: ${resultAsset.transAssetNum} ${
+        resultAsset.transMoney
+      } ${resultAsset.transRemark} ${resultAsset.useStoreName}`
+    );
   }
-  const rule = await autosetCategoryAndUseKind(resultAsset);
-  // console.log("rule", rule);
+  // 카테고리 자동설정
+  await autosetCategoryAndUseKind(resultAsset);
 }
 
-function setTransAsset(asset) {
-  const assetNum = asset.CardNum || asset.BankAccountNum;
+function convertTransAsset(asset) {
+  const transAssetNum = asset.CardNum || asset.BankAccountNum;
   const transMoney =
     parseInt(asset.CardApprovalCost || 0) * -1 ||
     parseInt(asset.Deposit) ||
@@ -45,7 +92,7 @@ function setTransAsset(asset) {
     corpNum: asset.CorpNum,
     corpName: asset.CorpName,
     cardNum: asset.CardNum,
-    assetNum,
+    transAssetNum,
     transDate: asset.transDate,
     cardCompany: asset.cardCompany,
     cardApprovalType: asset.CardApprovalType,
@@ -73,7 +120,7 @@ function setTransAsset(asset) {
     corpNum: asset.CorpNum,
     corpName: asset.CorpName,
     bankAccountNum: asset.BankAccountNum,
-    assetNum,
+    transAssetNum,
     transDate: asset.transDate,
     bank: asset.bank,
     transType: asset.TransType,
@@ -91,32 +138,52 @@ function setTransAsset(asset) {
 }
 
 async function autosetCategoryAndUseKind(asset) {
+  // 기 등록된 적요를 통해 카테고리 자동 설정
+  const registedRemark = await registedRemarkForCategory(asset);
+
+  if (registedRemark) {
+    await updateKeywordCategoryRule({
+      category: registedRemark.category,
+      categoryName: registedRemark.categoryName,
+      useKind: registedRemark.useKind,
+    });
+    console.log(
+      `${nowDate()}: set category by remark: ${asset.transAssetNum} ${
+        asset.transMoney
+      } ${asset.transRemark} ${asset.useStoreName}`
+    );
+  } else {
+    const code = await getAutosetCategoryCode(asset);
+    if (!code) return;
+    await updateKeywordCategoryRule({
+      asset,
+      category: code,
+      categoryName: defaultCategory.find((cate) => cate.code === code).name,
+      useKind: asset.useKind,
+    });
+    console.log(
+      `${nowDate()}: set category by keyword: ${asset.transAssetNum} ${
+        asset.transMoney
+      } ${asset.transRemark} ${asset.useStoreName}`
+    );
+  }
+}
+
+async function registedRemarkForCategory(asset) {
   const query = { user: asset.user, $or: [] };
   const { useStoreName, transRemark } = asset;
   if (asset.useStoreName) query.$or.push({ useStoreName });
   if (asset.transRemark) query.$or.push({ transRemark });
   if (query.$or.length === 0) return;
-
-  const rule = await CategoryRuleModel.findOne(query);
-  if (rule) {
-    await updateKeywordCategoryRule({
-      category: rule.category,
-      categoryName: rule.categoryName,
-      useKind: rule.useKind,
-    });
-  } else {
-    const code = await getAutosetCategoryCode(asset);
-    if (!code) return;
-    await updateKeywordCategoryRule({
-      category: code,
-      categoryName: defaultCategory.find((cate) => cate.code === code).name,
-      useKind: asset.useKind,
-    });
-    console.log("rule keyword");
-  }
+  return await CategoryRuleModel.findOne(query);
 }
 
-async function updateKeywordCategoryRule({ category, categoryName, useKind }) {
+async function updateKeywordCategoryRule({
+  asset,
+  category,
+  categoryName,
+  useKind,
+}) {
   await TransModel.updateOne(
     { _id: asset._id },
     {
@@ -132,6 +199,7 @@ async function updateKeywordCategoryRule({ category, categoryName, useKind }) {
 async function getAutosetCategoryCode(asset) {
   const cateObj = await keywordCategory(asset);
   let code = "";
+  // 형태소 분석을 통한 카테고리 자동 설정
   asset.keyword.forEach((keyword) => {
     if (cateObj[keyword]) {
       code = cateObj[keyword];
@@ -139,6 +207,7 @@ async function getAutosetCategoryCode(asset) {
   });
 
   if (!code) {
+    // 적요, 상점명, 업태의 내용에 키워드 포함 여부를 통한 카테고리 자동 설정s
     const words = `${asset.transRemark} ${asset.useStoreName} ${asset.useStoreBizType}`;
     Object.keys(cateObj).forEach((key) => {
       if (words.includes(key)) {
