@@ -7,6 +7,8 @@ const schema = new Mongoose.Schema(
     user: { type: types.ObjectId, ref: `user`, required: true },
     corpNum: { type: String, required: true },
     corpName: { type: String, required: true },
+    account: { type: Object, required: false },
+    card: { type: Object, required: false },
     transDate: { type: Date, required: false },
     transMoney: { type: Number, required: false },
     transAssetNum: { type: String, required: false },

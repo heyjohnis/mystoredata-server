@@ -6,19 +6,6 @@ import * as cardData from "../data/cardData.js";
 
 export async function mergeTrans(req, res) {
   try {
-    // TODO: redis로 변경
-    const cardList = await cardData.getCardList(req);
-    const cards = await cardLogData
-      .getCardLogs(req)
-      .catch((error) => console.log(error));
-    for (const card of cards) {
-      console.log("card 분석중");
-      const useKind = getUseKind(cardList, card.CardNum);
-      card.useKind = useKind;
-      await transData
-        .mergeTransMoney(card)
-        .catch((error) => console.log(error));
-    }
     const accountList = await accountData.getAccountList(req);
     const accounts = await accountLogData
       .getAccountLogs(req)
@@ -30,6 +17,19 @@ export async function mergeTrans(req, res) {
       account.useKind = useKind;
       await transData
         .mergeTransMoney(account)
+        .catch((error) => console.log(error));
+    }
+    // TODO: redis로 변경
+    const cardList = await cardData.getCardList(req);
+    const cards = await cardLogData
+      .getCardLogs(req)
+      .catch((error) => console.log(error));
+    for (const card of cards) {
+      console.log("card 분석중");
+      const useKind = getUseKind(cardList, card.CardNum);
+      card.useKind = useKind;
+      await transData
+        .mergeTransMoney(card)
         .catch((error) => console.log(error));
     }
     res.status(200).json({ success: true });

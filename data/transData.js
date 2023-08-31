@@ -7,11 +7,6 @@ import { nowDate } from "../utils/date.js";
 
 export async function mergeTransMoney(asset) {
   const transAsset = convertTransAsset(asset);
-  console.log(
-    `${nowDate()}: 거래 checking start: ${transAsset.transAssetNum} ${
-      transAsset.transMoney
-    } ${transAsset.transRemark} ${transAsset.useStoreName}`
-  );
   const query = {};
   query.corpNum = transAsset.corpNum;
   query.transMoney = transAsset.transMoney;
@@ -19,30 +14,28 @@ export async function mergeTransMoney(asset) {
     $gte: new Date(Number(transAsset.transDate) - 100000),
     $lte: new Date(Number(transAsset.transDate) + 100000),
   };
-  // if (transAsset.bankAccountNum)
-  //   query.bankAccountNum = { $ne: transAsset.bankAccountNum };
+  query.$or = [];
+  if (transAsset?.bankAccountNum) {
+    query.$or.push({ account: transAsset.account });
+    query.$or.push({
+      $and: [{ account: { $ne: transAsset.account } }, { card: { $ne: null } }],
+    });
+  }
+  if (transAsset?.cardNum) {
+    query.$or.push({ card: transAsset.card });
+    query.$or.push({
+      $and: [{ card: { $ne: transAsset.card } }, { account: { $ne: null } }],
+    });
+  }
 
-  // if (transAsset.cardNum) query.cardNum = { $ne: transAsset.cardNum };
-
-  const guessDuplAssets = await TransModel.find(query);
-
-  let isDuplicate = guessDuplAssets.length > 0;
-
-  // if (guessDuplAsset?.transRemark) {
-  //   isDuplicate =
-  //     guessDuplAsset?.transRemark === transAsset.transRemark ? true : false;
-  // }
-  // if (guessDuplAsset?.useStoreName) {
-  //   isDuplicate =
-  //     guessDuplAsset?.useStoreName === transAsset.useStoreName ? true : false;
-  // }
+  const duplAsset = await TransModel.findOne(query);
 
   let resultAsset = {};
 
-  if (isDuplicate) {
+  if (duplAsset) {
     if (
-      guessDuplAsset.cardNum === transAsset.cardNum ||
-      guessDuplAsset.bankAccountNum === transAsset.bankAccountNum
+      (duplAsset.card && duplAsset.card === transAsset.card) ||
+      (duplAsset.account && duplAsset.account === transAsset.account)
     ) {
       console.log(
         `${nowDate()}: 기등록한 거래: ${transAsset.transAssetNum} ${
@@ -50,17 +43,14 @@ export async function mergeTransMoney(asset) {
         } ${transAsset.transRemark} ${transAsset.useStoreName}`
       );
       console.log("신규거래: ", new Date(Number(transAsset.transDate)));
-      console.log("기등록거래: ", new Date(Number(guessDuplAsset.transDate)));
+      console.log("기등록거래: ", new Date(Number(duplAsset.transDate)));
       return;
     }
     transAsset.keyword = Array.from(
-      new Set([
-        ...(transAsset.keyword || []),
-        ...(guessDuplAsset.keyword || []),
-      ])
+      new Set([...(transAsset.keyword || []), ...(duplAsset.keyword || [])])
     );
     resultAsset = await TransModel.findOneAndUpdate(
-      { _id: guessDuplAsset._id },
+      { _id: duplAsset._id },
       { $set: transAsset },
       { new: true }
     );
@@ -89,6 +79,7 @@ function convertTransAsset(asset) {
     parseInt(asset.Withdraw) * -1;
   const cardData = {
     user: asset.user,
+    card: asset.CardNum ? asset._id : null,
     corpNum: asset.CorpNum,
     corpName: asset.CorpName,
     cardNum: asset.CardNum,
@@ -119,6 +110,7 @@ function convertTransAsset(asset) {
     user: asset.user,
     corpNum: asset.CorpNum,
     corpName: asset.CorpName,
+    account: asset.BankAccountNum ? asset._id : null,
     bankAccountNum: asset.BankAccountNum,
     transAssetNum,
     transDate: asset.transDate,
