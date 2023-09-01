@@ -3,7 +3,8 @@ import TransModel from "../model/transModel.js";
 import mongoose from "mongoose";
 import { defaultCategory } from "../cmmCode.js";
 import { keywordCategory } from "../data/categoryData.js";
-import { nowDate } from "../utils/date.js";
+import { nowDate, strToDate } from "../utils/date.js";
+import { assetFilter } from "../utils/filter.js";
 
 export async function mergeTransMoney(asset) {
   const transAsset = convertTransAsset(asset);
@@ -79,6 +80,7 @@ function convertTransAsset(asset) {
     parseInt(asset.Withdraw) * -1;
   const cardData = {
     user: asset.user,
+    userId: asset.userId,
     card: asset.CardNum ? asset._id : null,
     corpNum: asset.CorpNum,
     corpName: asset.CorpName,
@@ -108,6 +110,7 @@ function convertTransAsset(asset) {
 
   const accountData = {
     user: asset.user,
+    userId: asset.userId,
     corpNum: asset.CorpNum,
     corpName: asset.CorpName,
     account: asset.BankAccountNum ? asset._id : null,
@@ -135,6 +138,7 @@ async function autosetCategoryAndUseKind(asset) {
 
   if (registedRemark) {
     await updateKeywordCategoryRule({
+      asset,
       category: registedRemark.category,
       categoryName: registedRemark.categoryName,
       useKind: registedRemark.useKind,
@@ -211,15 +215,17 @@ async function getAutosetCategoryCode(asset) {
 }
 
 export async function getTransMoney(req) {
-  const filter = req.query.corpNum ? { corpNum: req.query.corpNum } : {};
+  const filter = assetFilter(req);
+  console.log({ filter });
   return TransModel.find(filter).sort({ transDate: -1 });
 }
 
 export async function updateTransMoney(req) {
   const _id = mongoose.Types.ObjectId(req.params.id);
-  const { useKind, category, categoryName } = req.body;
+  const { useKind, category, categoryName, useYn } = req.body;
+  console.log({ _id, useKind, category, categoryName, useYn });
   return TransModel.updateOne(
     { _id },
-    { $set: { useKind, category, categoryName } }
+    { $set: { useKind, category, categoryName, useYn } }
   );
 }

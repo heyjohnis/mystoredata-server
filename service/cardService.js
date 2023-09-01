@@ -126,6 +126,7 @@ export async function regCardLog(req) {
           ...cardLogs[i],
           keyword,
           user: card.user,
+          userId: card.userId,
           cardCompany: card.cardCompany,
           CorpName: card.corpName,
         });

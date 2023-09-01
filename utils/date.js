@@ -1,6 +1,7 @@
 export function strToDate(dateString) {
+  dateString = (dateString || "").replace(/[^0-9]/g, "");
   const strLength = dateString.length;
-
+  if (strLength < 8) return null;
   const year = parseInt(dateString.substring(0, 4));
   const month = parseInt(dateString.substring(4, 6)) - 1; // 월은 0부터 시작하므로 1을 빼줍니다.
   const day = parseInt(dateString.substring(6, 8));

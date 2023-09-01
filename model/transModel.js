@@ -5,6 +5,7 @@ const types = Mongoose.Types;
 const schema = new Mongoose.Schema(
   {
     user: { type: types.ObjectId, ref: `user`, required: true },
+    userId: { type: String, required: true },
     corpNum: { type: String, required: true },
     corpName: { type: String, required: true },
     account: { type: Object, required: false },
@@ -38,6 +39,7 @@ const schema = new Mongoose.Schema(
     category: { type: String, required: false },
     categoryName: { type: String, required: false },
     keyword: { type: Array, required: false },
+    useYn: { type: Boolean, required: true, default: true },
   },
   { timestamps: true }
 );

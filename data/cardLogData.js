@@ -24,9 +24,19 @@ export async function regCardLog(data) {
 }
 
 export async function getCardLogs(req) {
-  const filter =
-    req.query.corpNum || req.body.corpNum
-      ? { CorpNum: req.query.corpNum || req.body.corpNum }
-      : {};
+  const filter = {};
+  if (req.query.corpNum || req.body.corpNum)
+    filter.CorpNum = req.query.corpNum || req.body.corpNum;
+  if (req.query.userId || req.body.userId)
+    filter.userId = req.query.userId || req.body.userId;
+  if (
+    (req.query.fromAt || req.body.fromAt) &&
+    (req.query.toAt || req.body.toAt)
+  )
+    filter.transDate = {
+      $gte: new Date(`${req.query.fromAt || req.body.fromAt}`),
+      $lte: new Date(`${req.query.toAt || req.body.toAt}`),
+    };
+
   return CardLogModel.find(filter).sort({ transDate: -1 });
 }

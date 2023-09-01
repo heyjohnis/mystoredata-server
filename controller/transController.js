@@ -12,7 +12,6 @@ export async function mergeTrans(req, res) {
       .catch((error) => console.log(error));
     // TODO: redis로 변경
     for (const account of accounts) {
-      console.log("account 분석중");
       const useKind = getUseKind(accountList, account.BankAccountNum);
       account.useKind = useKind;
       await transData
@@ -25,7 +24,6 @@ export async function mergeTrans(req, res) {
       .getCardLogs(req)
       .catch((error) => console.log(error));
     for (const card of cards) {
-      console.log("card 분석중");
       const useKind = getUseKind(cardList, card.CardNum);
       card.useKind = useKind;
       await transData
@@ -50,12 +48,12 @@ export async function mergeTransLogs(req, res) {
   const data = await transData
     .getTransMoney(req)
     .catch((error) => console.log(error));
-  res.status(200).json({ data, error: {} });
+  res.status(200).json(data);
 }
 
 export async function updateTrans(req, res) {
   const data = await transData
     .updateTransMoney(req)
     .catch((error) => console.log(error));
-  res.status(200).json({ data, error: {} });
+  res.status(200).json(data);
 }

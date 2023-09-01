@@ -1,10 +1,12 @@
 import UserModel from "../model/userModel.js";
 import AccountLogModel from "../model/accountLogModel.js";
 import AccountModel from "../model/accountModel.js";
+import { strToDate } from "../utils/date.js";
+import { assetFilter } from "../utils/filter.js";
 
 export async function getAccountList(req) {
-  const { corpNum } = req.body;
-  return AccountModel.find({ corpNum });
+  const filter = assetFilter(req);
+  return AccountModel.find(filter);
 }
 
 export async function getAccount(bankAccountNum) {

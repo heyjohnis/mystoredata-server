@@ -1,9 +1,10 @@
 import UserModel from "../model/userModel.js";
 import CardModel from "../model/cardModel.js";
+import { assetFilter } from "../utils/filter.js";
 
 export async function getCardList(req) {
-  const { corpNum } = req.body;
-  return CardModel.find({ corpNum });
+  const filter = assetFilter(req);
+  return CardModel.find(filter);
 }
 
 export async function getCard(cardNum) {

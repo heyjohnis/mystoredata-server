@@ -5,6 +5,7 @@ const types = Mongoose.Types;
 const schema = new Mongoose.Schema(
   {
     user: { type: Object, required: true, ref: "user" },
+    userId: { type: String, required: true },
     cardCompany: { type: String, required: true },
     CorpNum: { type: String, required: true },
     CorpName: { type: String, required: true },

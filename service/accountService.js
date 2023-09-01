@@ -123,6 +123,7 @@ export async function regAcountLog(req) {
           ...logs[i],
           keyword,
           user: account.user,
+          userId: account.userId,
           bank: account.bank,
           CorpName: account.corpName,
         });

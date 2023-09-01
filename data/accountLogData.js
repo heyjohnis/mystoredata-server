@@ -1,5 +1,6 @@
 import AccountLogModel from "../model/accountLogModel.js";
 import { strToDate } from "../utils/date.js";
+import { assetFilter } from "../utils/filter.js";
 
 export async function regAccountLog(data) {
   const { user, Withdraw, BankAccountNum, TransDT, TransRefKey } = data;
@@ -27,9 +28,7 @@ export async function regAccountLog(data) {
 }
 
 export async function getAccountLogs(req) {
-  const filter =
-    req.query.corpNum || req.body.corpNum
-      ? { CorpNum: req.query.corpNum || req.body.corpNum }
-      : {};
+  const filter = assetFilter(req);
+  console.log({ filter });
   return AccountLogModel.find(filter).sort({ transDate: -1 });
 }
