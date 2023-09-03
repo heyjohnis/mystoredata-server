@@ -7,7 +7,9 @@ import TransModel from "../model/transModel.js";
 import KeywordRuleModel from "../model/keywordRule.js";
 
 export async function getUserList(req) {
-  const users = await UserModel.find().sort({ createdAt: -1 });
+  const { userType } = req.query;
+  console.log({ userType });
+  const users = await UserModel.find({ userType }).sort({ createdAt: -1 });
   return users;
 }
 
@@ -20,7 +22,7 @@ export async function findByUserId(userId) {
 }
 
 export async function createUser(data) {
-  const user = await new UserModel({ ...data, category })
+  const user = await new UserModel({ ...data, defaultCategory })
     .save()
     .then((res) => res._id);
   return createCorp({ ...data, user });

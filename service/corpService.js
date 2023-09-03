@@ -10,7 +10,6 @@ const client = await soap.createClientAsync(
 
 export async function checkCorpIsMember(req) {
   const { corpNum, checkCorpNum } = req.body;
-
   const response = await client.CheckCorpIsMemberAsync({
     CERTKEY: certKey,
     CorpNum: corpNum,

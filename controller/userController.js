@@ -9,12 +9,18 @@ export async function getUserList(req, res) {
 
 export async function updateUser(req, res) {
   try {
-    const code = await corpService.updateBoroCorpInfo(req);
-    if (code > 0) {
+    if (req.body.userType === "CORP") {
+      let code = 0;
+      code = await corpService.updateBoroCorpInfo(req);
+      if (code > 0) {
+        const data = await userData.updateUser(req);
+        res.status(200).json({ data, error: {} });
+      } else {
+        res.status(400).json(errorCase(code));
+      }
+    } else {
       const data = await userData.updateUser(req);
       res.status(200).json({ data, error: {} });
-    } else {
-      res.status(400).json(errorCase(code));
     }
   } catch (error) {
     res.status(500).json({ error });
