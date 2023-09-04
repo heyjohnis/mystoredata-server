@@ -10,14 +10,18 @@ export const FinItemSchema = new Mongoose.Schema(
     card: { type: Object, required: false, ref: `card` },
     itemKind: { type: String, required: true },
     itemKindName: { type: String, required: true },
-    finCorp: { type: String, required: true },
+    itemType: { type: String, required: true },
+    itemTypeName: { type: String, required: true },
+    finCorpCode: { type: String, required: false },
+    finCorpName: { type: String, required: false },
     itemName: { type: String, required: true },
-    useYn: { type: String, required: true, default: true },
+    amount: { type: Number, required: true },
+    useYn: { type: Boolean, required: true, default: true },
   },
   { timestamps: true }
 );
 
 useVirtualId(FinItemSchema);
-const FinItemtModel = Mongoose.model(`asset`, FinItemSchema);
+const FinItemtModel = Mongoose.model(`finitem`, FinItemSchema);
 
 export default FinItemtModel;

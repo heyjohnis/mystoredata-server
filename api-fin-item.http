@@ -1,0 +1,36 @@
+@baseUrl = http://localhost:8089
+@jwt = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NGQxZDhiNGEyY2RhODg4MWU5NzkzNTYiLCJpYXQiOjE2OTM4MDk4MjgsImV4cCI6MTY5NjQwMTgyOH0.WQ5aNPtZ1N5JN9xCYHgUHSr-xl9_GLklMpk4SrB6M-g
+
+### 로그인
+POST {{baseUrl}}/auth/login HTTP/1.1
+Content-Type: application/json; charset=UTF-8
+
+{
+    "userId": "bethelean", 
+    "password": "12345678"
+}
+
+# {
+#     "userId": "iset12", 
+#     "password": "12345678"
+# }
+
+### 금융상품 등록
+POST {{baseUrl}}/fin-item/reg HTTP/1.1
+Content-Type: application/json; charset=UTF-8
+Authorization: Bearer {{jwt}}
+
+{
+    "userId": "bethelean",
+    "itemKind": "ASSET",
+    "itemKindName": "자산",
+    "itemType": "CASH",
+    "itemTypeName": "현금",
+    "itemName": "예금인출금",
+    "amount": 123456789
+}
+
+### 금융상품 조회
+GET {{baseUrl}}/fin-item/list HTTP/1.1
+Content-Type: application/json; charset=UTF-8
+Authorization: Bearer {{jwt}}
