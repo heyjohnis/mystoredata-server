@@ -1,7 +1,7 @@
 import CategoryRuleModel from "../model/categoryRule.js";
 import TransModel from "../model/transModel.js";
 import mongoose from "mongoose";
-import { defaultCategory } from "../cmmCode.js";
+import { DefaultCategory } from "../cmmCode.js";
 import { keywordCategory } from "../data/categoryData.js";
 import { nowDate, strToDate } from "../utils/date.js";
 import { assetFilter } from "../utils/filter.js";
@@ -154,7 +154,7 @@ async function autosetCategoryAndUseKind(asset) {
     await updateKeywordCategoryRule({
       asset,
       category: code,
-      categoryName: defaultCategory.find((cate) => cate.code === code).name,
+      categoryName: DefaultCategory.find((cate) => cate.code === code).name,
       useKind: asset.useKind,
     });
     console.log(

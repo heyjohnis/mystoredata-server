@@ -1,8 +1,18 @@
 import FinItemtModel from "../model/finItemModel.js";
 
 export async function regFinItem(data) {
+  const inital = {
+    itemKind: "ASSET",
+    itemKindName: "자산",
+    itemType: "checkingAccount",
+    itemTypeName: "자유입출금 예금",
+    itemName: "자유입출금 예금",
+    amount: 0,
+    account: data._id,
+  };
+
   try {
-    const finItem = await new FinItemtModel({ ...data }).save();
+    const finItem = await new FinItemtModel({ ...inital, ...data }).save();
 
     return finItem;
   } catch (error) {

@@ -20,28 +20,35 @@ export async function regAccount(_id, newAccount) {
     (account) => account.bankAccountNum === newAccount.bankAccountNum
   );
   if (!hasAccount) {
-    await new AccountModel({
+    const registedResult = await new AccountModel({
       ...newAccount,
       user: userInfo._id,
       corpName: userInfo.corpName,
       userId: userInfo.userId,
     }).save();
-    return await UserModel.findByIdAndUpdate(
+    const updateUserInfo = await UserModel.findByIdAndUpdate(
       _id,
       { $push: { accounts: newAccount } },
       { returnOriginal: false }
     );
+    return { ...updateUserInfo, ...registedResult };
   }
   return;
 }
 
 export async function deleteAccout(_id, accountNum) {
   console.log(_id, accountNum);
-  await AccountModel.deleteOne({ bankAccountNum: accountNum, user: _id });
-  return await UserModel.updateOne(
+  const resultDeleteAccount = await AccountModel.deleteOne({
+    bankAccountNum: accountNum,
+    user: _id,
+  });
+  console.log({ resultDeleteAccount });
+  const updatedAccount = await UserModel.updateOne(
     { _id },
     { $pull: { accounts: { bankAccountNum: accountNum } } }
   );
+  console.log({ updatedAccount });
+  return updatedAccount;
 }
 
 export async function updateAccount(account) {

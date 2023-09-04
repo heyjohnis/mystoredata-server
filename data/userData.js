@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import { createCorp } from "./corpData.js";
 import UserModel from "../model/userModel.js";
-import { defaultCategory } from "../cmmCode.js";
+import { DefaultCategory } from "../cmmCode.js";
 import CategoryRuleModel from "../model/categoryRule.js";
 import TransModel from "../model/transModel.js";
 import KeywordRuleModel from "../model/keywordRule.js";
@@ -22,7 +22,7 @@ export async function findByUserId(userId) {
 }
 
 export async function createUser(data) {
-  const user = await new UserModel({ ...data, defaultCategory })
+  const user = await new UserModel({ ...data, category: DefaultCategory })
     .save()
     .then((res) => res._id);
   return createCorp({ ...data, user });
@@ -67,7 +67,7 @@ export async function resetCategory(req) {
   const corpNum = req.body.corpNum;
   return await UserModel.updateOne(
     { corpNum },
-    { $set: { category: defaultCategory } }
+    { $set: { category: DefaultCategory } }
   );
 }
 
