@@ -120,12 +120,24 @@ export async function regAcountLog(req) {
         console.log("keyword: ", keyword);
 
         await accountLogData.regAccountLog({
-          ...logs[i],
-          keyword,
           user: account.user,
           userId: account.userId,
           bank: account.bank,
-          CorpName: account.corpName,
+          corpNum: account.corpNum,
+          corpName: account.corpName,
+          account: account._id,
+          useKind: account.useKind,
+          bankAccountNum: account.bankAccountNum,
+          withdraw: logs[i].Withdraw,
+          deposit: logs[i].Deposit,
+          balance: logs[i].Balance,
+          transDT: logs[i].TransDT,
+          transOffice: logs[i].TransOffice,
+          transRemark: logs[i].TransRemark,
+          transRefKey: logs[i].TransRefKey,
+          mgtRemark1: logs[i].MgtRemark1,
+          mgtRemark2: logs[i].MgtRemark2,
+          keyword,
         });
       }
       return logs.length + 1;

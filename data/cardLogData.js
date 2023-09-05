@@ -2,20 +2,21 @@ import CardLogModel from "../model/cardLogModel.js";
 import { strToDate } from "../utils/date.js";
 
 export async function regCardLog(data) {
-  const { CorpNum, CardNum, CardApprovalCost, UseStoreNum, UseDT } = data;
+  const { corpNum, cardNum, cardApprovalCost, useStoreNum, useDT } = data;
   try {
     const existingData = await CardLogModel.findOne({
-      CorpNum,
-      CardNum,
-      CardApprovalCost,
-      UseStoreNum,
-      UseDT,
+      corpNum,
+      cardNum,
+      cardApprovalCost,
+      useStoreNum,
+      useDT,
     });
     if (!existingData) {
       await new CardLogModel({
         ...data,
-        transDate: strToDate(data.UseDT),
-        transAssetNum: CardNum,
+        transDate: strToDate(data.useDT),
+        transMoney: parseInt(data.cardApprovalCost) * -1,
+        transAssetNum: cardNum,
       }).save();
     }
   } catch (error) {
@@ -38,5 +39,5 @@ export async function getCardLogs(req) {
       $lte: new Date(`${req.query.toAt || req.body.toAt}`),
     };
 
-  return CardLogModel.find(filter).sort({ transDate: -1 });
+  return await CardLogModel.find(filter).sort({ transDate: -1 });
 }

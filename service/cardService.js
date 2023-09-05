@@ -133,12 +133,33 @@ export async function regCardLog(req) {
         const keyword = await keywordGen(words);
         console.log("keyword: ", keyword);
         await cardLogData.regCardLog({
-          ...cardLogs[i],
-          keyword,
           user: card.user,
           userId: card.userId,
+          corpNum: card.corpNum,
+          corpName: card.corpName,
+          card: card._id,
           cardCompany: card.cardCompany,
-          CorpName: card.corpName,
+          cardNum: card.cardNum,
+          useKind: card.useKind,
+          useDT: cardLogs[i].UseDT,
+          cardApprovalType: cardLogs[i].CardApprovalType,
+          cardApprovalNum: cardLogs[i].CardApprovalNum,
+          cardApprovalCost: cardLogs[i].CardApprovalCost,
+          amount: cardLogs[i].Amount,
+          tax: cardLogs[i].Tax,
+          serviceCharge: cardLogs[i].ServiceCharge,
+          totalAmount: cardLogs[i].TotalAmount,
+          useStoreNum: cardLogs[i].UseStoreNum,
+          useStoreCorpNum: cardLogs[i].UseStoreCorpNum,
+          useStoreName: cardLogs[i].UseStoreName,
+          useStoreAddr: cardLogs[i].UseStoreAddr,
+          useStoreBizType: cardLogs[i].UseStoreBizType,
+          useStoreTel: cardLogs[i].UseStoreTel,
+          useStoreTaxType: cardLogs[i].UseStoreTaxType,
+          paymentPlan: cardLogs[i].PaymentPlan,
+          installmentMonths: cardLogs[i].InstallmentMonths,
+          currency: cardLogs[i].Currency,
+          keyword,
         });
       }
     }

@@ -6,53 +6,52 @@ import { keywordCategory } from "../data/categoryData.js";
 import { nowDate, strToDate } from "../utils/date.js";
 import { assetFilter } from "../utils/filter.js";
 
-export async function mergeTransMoney(asset) {
-  const transAsset = convertTransAsset(asset);
+export async function mergeTransMoney(log) {
+  const asset = convertTransAsset(log);
+
   const query = {};
-  query.corpNum = transAsset.corpNum;
-  query.transMoney = transAsset.transMoney;
+  query.corpNum = asset.corpNum;
+  query.transMoney = asset.transMoney;
   query.transDate = {
-    $gte: new Date(Number(transAsset.transDate) - 100000),
-    $lte: new Date(Number(transAsset.transDate) + 100000),
+    $gte: new Date(Number(asset.transDate) - 100000),
+    $lte: new Date(Number(asset.transDate) + 100000),
   };
   query.$or = [];
-  if (transAsset?.bankAccountNum) {
-    query.$or.push({ account: transAsset.account });
+  if (asset?.bankAccountNum) {
+    query.$or.push({ account: asset.account });
     query.$or.push({
-      $and: [{ account: { $ne: transAsset.account } }, { card: { $ne: null } }],
+      $and: [{ account: { $ne: asset.account } }, { card: { $ne: null } }],
     });
   }
-  if (transAsset?.cardNum) {
-    query.$or.push({ card: transAsset.card });
+  if (asset?.cardNum) {
+    query.$or.push({ card: asset.card });
     query.$or.push({
-      $and: [{ card: { $ne: transAsset.card } }, { account: { $ne: null } }],
+      $and: [{ card: { $ne: asset.card } }, { account: { $ne: null } }],
     });
   }
 
   const duplAsset = await TransModel.findOne(query);
-
   let resultAsset = {};
-
   if (duplAsset) {
     if (
-      (duplAsset.card && duplAsset.card === transAsset.card) ||
-      (duplAsset.account && duplAsset.account === transAsset.account)
+      (duplAsset.card && duplAsset.card === asset.card) ||
+      (duplAsset.account && duplAsset.account === asset.account)
     ) {
       console.log(
-        `${nowDate()}: 기등록한 거래: ${transAsset.transAssetNum} ${
-          transAsset.transMoney
-        } ${transAsset.transRemark} ${transAsset.useStoreName}`
+        `${nowDate()}: 기등록한 거래: ${asset.transAssetNum} ${
+          asset.transMoney
+        } ${asset.transRemark} ${asset.useStoreName}`
       );
-      console.log("신규거래: ", new Date(Number(transAsset.transDate)));
+      console.log("신규거래: ", new Date(Number(asset.transDate)));
       console.log("기등록거래: ", new Date(Number(duplAsset.transDate)));
       return;
     }
-    transAsset.keyword = Array.from(
-      new Set([...(transAsset.keyword || []), ...(duplAsset.keyword || [])])
+    asset.keyword = Array.from(
+      new Set([...(asset.keyword || []), ...(duplAsset.keyword || [])])
     );
     resultAsset = await TransModel.findOneAndUpdate(
       { _id: duplAsset._id },
-      { $set: transAsset },
+      { $set: asset },
       { new: true }
     );
     console.log(
@@ -61,7 +60,8 @@ export async function mergeTransMoney(asset) {
       } ${resultAsset.transRemark} ${resultAsset.useStoreName}`
     );
   } else {
-    resultAsset = await TransModel.create(transAsset);
+    console.log("create log");
+    resultAsset = await new TransModel(asset).save();
     console.log(
       `${nowDate()}: trans asset created: ${resultAsset.transAssetNum} ${
         resultAsset.transMoney
@@ -70,66 +70,6 @@ export async function mergeTransMoney(asset) {
   }
   // 카테고리 자동설정
   await autosetCategoryAndUseKind(resultAsset);
-}
-
-function convertTransAsset(asset) {
-  const transAssetNum = asset.CardNum || asset.BankAccountNum;
-  const transMoney =
-    parseInt(asset.CardApprovalCost || 0) * -1 ||
-    parseInt(asset.Deposit) ||
-    parseInt(asset.Withdraw) * -1;
-  const cardData = {
-    user: asset.user,
-    userId: asset.userId,
-    card: asset.CardNum ? asset._id : null,
-    corpNum: asset.CorpNum,
-    corpName: asset.CorpName,
-    cardNum: asset.CardNum,
-    transAssetNum,
-    transDate: asset.transDate,
-    cardCompany: asset.cardCompany,
-    cardApprovalType: asset.CardApprovalType,
-    cardApprovalCost: asset.CardApprovalNum,
-    serviceCharge: asset.ServiceCharge,
-    amount: asset.Amount,
-    tax: asset.Tax,
-    totalAmount: asset.TotalAmount,
-    useStoreNum: asset.UseStoreNum,
-    useStoreCorpNum: asset.UseStoreCorpNum,
-    useStoreName: asset.UseStoreName,
-    useStoreAddr: asset.UseStoreAddr,
-    useStoreBizType: asset.UseStoreBizType,
-    useStoreTel: asset.UseStoreTel,
-    useStoreTaxType: asset.UseStoreTaxType,
-    paymentPlan: asset.PaymentPlan,
-    currency: asset.Currency,
-    useKind: asset.useKind,
-    transMoney,
-    keyword: asset.keyword,
-  };
-
-  const accountData = {
-    user: asset.user,
-    userId: asset.userId,
-    corpNum: asset.CorpNum,
-    corpName: asset.CorpName,
-    account: asset.BankAccountNum ? asset._id : null,
-    bankAccountNum: asset.BankAccountNum,
-    transAssetNum,
-    transDate: asset.transDate,
-    bank: asset.bank,
-    transType: asset.TransType,
-    transOffice: asset.TransOffice,
-    transRemark: asset.TransRemark,
-    transRefKey: asset.TransRefKey,
-    mgtRemark1: asset.MgtRemark1,
-    mgtRemark2: asset.MgtRemark2,
-    useKind: asset.useKind,
-    transMoney,
-    keyword: asset.keyword,
-  };
-
-  return asset.CardNum ? cardData : accountData;
 }
 
 async function autosetCategoryAndUseKind(asset) {
@@ -228,4 +168,66 @@ export async function updateTransMoney(req) {
     { _id },
     { $set: { useKind, category, categoryName, useYn } }
   );
+}
+
+function convertTransAsset(asset) {
+  const cardData = {
+    user: asset.user,
+    userId: asset.userId,
+    corpNum: asset.corpNum,
+    corpName: asset.corpName,
+    card: asset.card,
+    cardCompany: asset.cardCompany,
+    cardNum: asset.cardNum,
+    useKind: asset.useKind,
+    useDT: asset.useDT,
+    transDate: asset.transDate,
+    transMoney: asset.transMoney,
+    transAssetNum: asset.transAssetNum,
+    cardApprovalType: asset.cardApprovalType,
+    cardApprovalNum: asset.cardApprovalNum,
+    cardApprovalCost: asset.cardApprovalCost,
+    amount: asset.amount,
+    tax: asset.tax,
+    serviceCharge: asset.serviceCharge,
+    totalAmount: asset.totalAmount,
+    useStoreNum: asset.useStoreNum,
+    useStoreCorpNum: asset.useStoreCorpNum,
+    useStoreName: asset.useStoreName,
+    useStoreAddr: asset.useStoreAddr,
+    useStoreBizType: asset.useStoreBizType,
+    useStoreTel: asset.useStoreTel,
+    useStoreTaxType: asset.useStoreTaxType,
+    paymentPlan: asset.paymentPlan,
+    installmentMonths: asset.installmentMonths,
+    currency: asset.currency,
+    keyword: asset.keyword,
+  };
+
+  const accountData = {
+    user: asset.user,
+    userId: asset.userId,
+    useKind: asset.useKind,
+    bank: asset.bank,
+    corpNum: asset.corpNum,
+    corpName: asset.corpName,
+    bankAccountNum: asset.bankAccountNum,
+    account: asset.account,
+    withdraw: asset.withdraw,
+    deposit: asset.deposit,
+    balance: asset.balance,
+    transDT: asset.transDT,
+    transDate: asset.transDate,
+    transMoney: asset.transMoney,
+    transAssetNum: asset.transAssetNum,
+    transType: asset.transType,
+    transOffice: asset.transOffice,
+    transRemark: asset.transRemark,
+    transRefKey: asset.transRefKey,
+    mgtRemark1: asset.mgtRemark1,
+    mgtRemark2: asset.mgtRemark2,
+    keyword: asset.keyword,
+  };
+
+  return asset.cardNum ? cardData : accountData;
 }
