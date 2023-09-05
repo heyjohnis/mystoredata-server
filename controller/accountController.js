@@ -17,6 +17,8 @@ export async function getAccounts(req, res) {
 export async function regAcountLog(req, res) {
   try {
     const code = await service.regAcountLog(req);
+    const updatedAmount = await accountData.updateAccountAmount(req);
+    console.log("updatedAmount: ", updatedAmount);
     if (code > 0) {
       res.status(200).json({ success: true });
     } else {
@@ -105,7 +107,7 @@ export async function deleteAccount(req, res) {
 export async function updateAccount(req, res) {
   try {
     console.log(req.body);
-    const result = await accountData.updateAccount(req.body);
+    const result = await accountData.updateAccount(req);
     res.status(200).json(result);
   } catch (error) {
     console.error(error);

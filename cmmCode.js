@@ -69,7 +69,7 @@ export const CardCorpCode = [
   {name: "VISA", code: "4V", baro: ""},
 ];
 
-const BankCorpCode = [
+export const BankCorpCode = [
   {name: "경남은행", code: "039", baro: "KNBANK"},
   {name: "광주은행", code: "034", baro: "KJBANK"},
   {name: "단위농협", code: "012", baro: ""},
@@ -98,7 +98,7 @@ const BankCorpCode = [
   {name: "Sh수협은행", code: "007", baro: "SUHYUP"},
 ];
 
-const SecurityCorpCode = [
+export const SecurityCorpCode = [
   {name: "교보증권", code: "261"},
   {name: "대신증권", code: "267"},
   {name: "메리츠증권", code: "287"},
@@ -126,7 +126,7 @@ const SecurityCorpCode = [
   {name: "SK증권", code: "266"},
 ];
 
-const FinItemCode = [
+export const FinItemCode = [
   {name: "자유입출금식 예금", code: "CHKACC"},
   {name: "정기예금", code: "TIMDEP"},
   {name: "정기적금", code: "INSTSAVACC"},

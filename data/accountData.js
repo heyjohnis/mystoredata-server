@@ -3,6 +3,7 @@ import AccountLogModel from "../model/accountLogModel.js";
 import AccountModel from "../model/accountModel.js";
 import { strToDate } from "../utils/date.js";
 import { assetFilter } from "../utils/filter.js";
+import FinItemtModel from "../model/finItemModel.js";
 
 export async function getAccountList(req) {
   const filter = assetFilter(req);
@@ -26,12 +27,13 @@ export async function regAccount(_id, newAccount) {
       corpName: userInfo.corpName,
       userId: userInfo.userId,
     }).save();
-    const updateUserInfo = await UserModel.findByIdAndUpdate(
+    await UserModel.findByIdAndUpdate(
       _id,
       { $push: { accounts: newAccount } },
       { returnOriginal: false }
     );
-    return { ...updateUserInfo, ...registedResult };
+
+    return registedResult;
   }
   return;
 }
@@ -53,13 +55,25 @@ export async function deleteAccout(req) {
   return updatedAccount;
 }
 
-export async function updateAccount(account) {
-  await AccountModel.updateOne(
-    { bankAccountNum: account.bankAccountNum },
-    { $set: { ...account } }
-  );
+export async function updateAccount(req) {
+  const { bankAccountNum, useKind } = req.body;
+  await AccountModel.updateOne({ bankAccountNum }, { $set: { useKind } });
   return await UserModel.updateOne(
-    { "accounts.bankAccountNum": account.bankAccountNum },
-    { "accounts.$.useKind": account.useKind }
+    { "accounts.bankAccountNum": bankAccountNum },
+    { "accounts.$.useKind": useKind }
   );
+}
+
+export async function updateAccountAmount(req) {
+  const bankAccountNum = req.body.bankAccountNum;
+  const lastTran = await AccountLogModel.findOne({ bankAccountNum }).sort({
+    transDate: -1,
+  });
+
+  const balance = parseInt(lastTran?.balance || 0);
+  const result = await FinItemtModel.updateOne(
+    { account: lastTran?.account },
+    { $set: { amount: balance } }
+  );
+  return result;
 }

@@ -1,19 +1,27 @@
 import FinItemtModel from "../model/finItemModel.js";
+import { BankCorpCode, FinItemCode } from "../cmmCode.js";
 
 export async function regFinItem(data) {
-  const inital = {
+  const bankCode = BankCorpCode.find((item) => item.baro === data.bank);
+  const itemCode = FinItemCode.find((item) => item.code === "CHKACC");
+  const item = {
+    user: data.user,
+    userId: data.userId,
+    account: data._id,
     itemKind: "ASSET",
     itemKindName: "자산",
-    itemType: "checkingAccount",
-    itemTypeName: "자유입출금 예금",
+    itemType: itemCode.code,
+    itemTypeName: itemCode.name,
     itemName: "자유입출금 예금",
+    finCorpCode: bankCode.code,
+    finCorpName: bankCode.name,
     amount: 0,
-    account: data._id,
   };
 
+  console.log({ item });
   try {
-    const finItem = await new FinItemtModel({ ...inital, ...data }).save();
-
+    const finItem = await new FinItemtModel(item).save();
+    console.log({ finItem });
     return finItem;
   } catch (error) {
     console.log({ error });
