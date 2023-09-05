@@ -1,0 +1,141 @@
+@baseUrl = http://localhost:8089
+@jwt = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NGQxZDhiNGEyY2RhODg4MWU5NzkzNTYiLCJpYXQiOjE2OTMyMDM4NDYsImV4cCI6MTY5NTc5NTg0Nn0.HfvmBEdvamrofUiUe6-vpZpnOpHzQUYJBWDCU3lugMU
+
+### 로그인
+POST {{baseUrl}}/auth/login HTTP/1.1
+Content-Type: application/json; charset=UTF-8
+
+{
+    "userId": "bethelean", 
+    "password": "12345678"
+}
+
+# {
+#     "userId": "iset12", 
+#     "password": "12345678"
+# }
+
+
+
+### 카드목록
+GET {{baseUrl}}/card/list HTTP/1.1
+Content-Type: application/json; charset=UTF-8
+Authorization: Bearer {{jwt}}
+
+
+### 카드등록
+POST {{baseUrl}}/card/reg HTTP/1.1
+Content-Type: application/json; charset=UTF-8
+Authorization: Bearer {{jwt}}
+
+{
+    "cardCompany": "SHINHAN",
+    "cardType": "P",
+    "cardNum": "9410822093647032", 
+    "webId": "iset12",
+    "webPwd": "hj@28480404"
+}
+
+### 카드삭제
+POST {{baseUrl}}/card/stop HTTP/1.1
+Content-Type: application/json; charset=UTF-8
+Authorization: Bearer {{jwt}}
+
+{
+    "corpNum": "1073270598",
+	"cardNum": "4336920003113475"
+}
+
+### 카드내역불러와 저장
+POST {{baseUrl}}/card/regLog HTTP/1.1
+Content-Type: application/json; charset=UTF-8
+
+{
+    "id": "iset12",
+    "corpNum": "1073270598",
+    "cardNum": "5594100017143644"
+}
+
+
+### 통장내역불러오기와 저장
+POST {{baseUrl}}/account/regLog HTTP/1.1
+Content-Type: application/json; charset=UTF-8
+Authorization: Bearer {{jwt}}
+
+{
+    "bankAccountNum": "110335376921",
+    "baseMonth": "202307"
+}
+
+### 통장내역불러오기
+POST {{baseUrl}}/account/log HTTP/1.1
+Content-Type: application/json; charset=UTF-8
+Authorization: Bearer {{jwt}}
+
+{
+    "bankAccountNum": "110335376921"
+}
+
+### 통장목록
+GET {{baseUrl}}/account/list HTTP/1.1
+Content-Type: application/json; charset=UTF-8
+Authorization: Bearer {{jwt}}
+
+### 통장등록
+POST {{baseUrl}}/account/reg HTTP/1.1
+Content-Type: application/json; charset=UTF-8
+Authorization: Bearer {{jwt}}
+
+{
+    "corpNum": "1073270598",
+    "bankAccountType": "P",
+    "bank": "SHINHAN",
+    "bankAccountNum": "110335376921",
+    "bankAccountPwd": "2848",
+    "webId": "HEYJOHN",
+    "webPwd": "hj@28480404",
+    "identityNum": ""
+}
+
+# {
+#     "bankAccountType": "C",
+#     "bank": "HANA",
+#     "bankAccountNum": "37691003114104",
+#     "bankAccountPwd": "2848"
+# }
+
+
+### 통장목록
+GET {{baseUrl}}/account/list HTTP/1.1
+Content-Type: application/json; charset=UTF-8
+Authorization: Bearer {{jwt}}
+
+
+### 통장삭제
+DELETE  {{baseUrl}}/account/delete HTTP/1.1
+Content-Type: application/json; charset=UTF-8
+Authorization: Bearer {{jwt}}
+
+{
+    "bankAccountNum": "110335376921"
+}
+
+### 통장 해지 취소
+POST {{baseUrl}}/account/cancel-stop HTTP/1.1
+Content-Type: application/json; charset=UTF-8
+Authorization: Bearer {{jwt}}
+
+{
+    "bankAccountNum": "110335376921",
+    "corpNum": "1073270598"
+}
+
+### 통장 재등록
+POST {{baseUrl}}/account/re-reg HTTP/1.1
+Content-Type: application/json; charset=UTF-8
+Authorization: Bearer {{jwt}}
+
+{
+    "bankAccountNum": "37691003114104",
+    "corpNum": "6348702350"
+}

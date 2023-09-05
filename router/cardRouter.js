@@ -18,4 +18,8 @@ router.get("/log", isAuth, controller.getCardLogs);
 
 router.delete("/delete", isAuth, controller.deleteCard);
 
+router.post("/cancel-stop", isAuth, controller.cancelStopCard);
+
+router.post("/re-reg", isAuth, controller.reRegCard);
+
 export default router;

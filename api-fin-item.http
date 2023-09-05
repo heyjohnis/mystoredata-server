@@ -24,8 +24,8 @@ Authorization: Bearer {{jwt}}
     "userId": "bethelean",
     "itemKind": "ASSET",
     "itemKindName": "자산",
-    "itemType": "CASH",
-    "itemTypeName": "현금",
+    "itemType": "CHKACC",
+    "itemTypeName": "자유입출금식 예금",
     "itemName": "예금인출금",
     "amount": 123456789
 }

@@ -90,6 +90,16 @@ export async function deleteCard(req) {
   return response[0].StopCardResult;
 }
 
+export async function reRegCard(req) {
+  const response = await client.ReRegistCardAsync({
+    CERTKEY: certKey,
+    CorpNum: req.body.corpNum || req.corpNum,
+    CardNum: req.body.cardNum,
+  });
+
+  return response[0].ReRegistCardResult;
+}
+
 export async function regCardLog(req) {
   const cardNum = req.body.cardNum;
   let currentPage = 0;

@@ -16,4 +16,8 @@ router.get("/log", isAuth, controller.getAccountLogs);
 
 router.delete("/delete", isAuth, controller.deleteAccount);
 
+router.post("/cancel-stop", isAuth, controller.cancelStopAccount);
+
+router.post("/re-reg", isAuth, controller.reRegAccount);
+
 export default router;

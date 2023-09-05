@@ -48,7 +48,7 @@ export async function regAccount(req) {
   const reqBaro = {
     CERTKEY: certKey,
     CorpNum: corpNum,
-    CollectCycle: "MINUTE10",
+    CollectCycle: "HOUR4",
     Bank: bank,
     BankAccountType: bankAccountType,
     BankAccountNum: bankAccountNum,
@@ -135,14 +135,13 @@ export async function regAcountLog(req) {
 
 export async function deleteAccount(req) {
   const { bankAccountNum } = req.body;
-
   const response = await client.StopBankAccountAsync({
     CERTKEY: certKey,
-    CorpNum: req.corpNum,
+    CorpNum: req.body.corpNum || req.corpNum,
     BankAccountNum: bankAccountNum,
   });
   const resultCode = response[0].StopBankAccountResult;
-  const result = await accountData.deleteAccout(req._id, bankAccountNum);
+  const result = await accountData.deleteAccout(req);
   console.log("delete account: ", result);
 
   if (resultCode < 0) {

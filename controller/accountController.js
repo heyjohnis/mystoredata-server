@@ -65,6 +65,30 @@ export async function regAccount(req, res) {
   }
 }
 
+export async function cancelStopAccount(req, res) {
+  try {
+    const code = await service.cancelStopAccount(req);
+    console.log("code: ", errorCase(code));
+    if (code > 0) {
+      res.status(200).json({ success: true });
+    }
+  } catch (error) {
+    res.sendStatus(500).json(error);
+  }
+}
+
+export async function reRegAccount(req, res) {
+  try {
+    const code = await service.reRegAccount(req);
+    console.log("code: ", errorCase(code));
+    if (code > 0) {
+      res.status(200).json({ success: true });
+    }
+  } catch (error) {
+    res.sendStatus(500).json(error);
+  }
+}
+
 export async function deleteAccount(req, res) {
   try {
     const code = await service.deleteAccount(req);
@@ -84,6 +108,7 @@ export async function updateAccount(req, res) {
     const result = await accountData.updateAccount(req.body);
     res.status(200).json(result);
   } catch (error) {
+    console.error(error);
     res.sendStatus(500).json(error);
   }
 }

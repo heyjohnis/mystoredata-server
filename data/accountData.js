@@ -36,16 +36,18 @@ export async function regAccount(_id, newAccount) {
   return;
 }
 
-export async function deleteAccout(_id, accountNum) {
-  console.log(_id, accountNum);
+export async function deleteAccout(req) {
+  const { bankAccountNum } = req.body;
+  const _id = req.body.user || req.body._id || req._id;
+
   const resultDeleteAccount = await AccountModel.deleteOne({
-    bankAccountNum: accountNum,
+    bankAccountNum,
     user: _id,
   });
   console.log({ resultDeleteAccount });
-  const updatedAccount = await UserModel.updateOne(
+  const updatedAccount = await UserModel.findOneAndUpdate(
     { _id },
-    { $pull: { accounts: { bankAccountNum: accountNum } } }
+    { $pull: { accounts: { bankAccountNum } } }
   );
   console.log({ updatedAccount });
   return updatedAccount;

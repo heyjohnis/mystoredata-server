@@ -100,3 +100,27 @@ export async function deleteCard(req, res) {
     res.status(500).json(error);
   }
 }
+
+export async function cancelStopCard(req, res) {
+  try {
+    const code = await service.cancelStopCard(req);
+    console.log("code: ", errorCase(code));
+    if (code > 0) {
+      res.status(200).json({ success: true });
+    }
+  } catch (error) {
+    res.sendStatus(500).json(error);
+  }
+}
+
+export async function reRegCard(req, res) {
+  try {
+    const code = await service.reRegCard(req);
+    console.log("code: ", errorCase(code));
+    if (code > 0) {
+      res.status(200).json({ success: true });
+    }
+  } catch (error) {
+    res.sendStatus(500).json(error);
+  }
+}
