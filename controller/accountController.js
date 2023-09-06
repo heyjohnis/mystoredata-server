@@ -53,11 +53,6 @@ export async function regAccount(req, res) {
         ...req.body,
         corpNum,
       });
-
-      console.log("regAccount: ", result);
-
-      const registedFinItem = await finItemData.regFinItem(result);
-      console.log("registedFinItem: ", registedFinItem);
       res.status(200).json(result);
     } else {
       res.status(400).json(errorCase(code));

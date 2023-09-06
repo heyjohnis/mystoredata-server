@@ -3,15 +3,7 @@ import * as userData from "../data/userData.js";
 
 export async function regFinItem(req, res) {
   try {
-    let userInfo = req.body.user
-      ? await userData.findById(user)
-      : await userData.findByUserId(req.body.userId);
-    const { _id, userId } = userInfo;
-    const data = await finItemData.regFinItem({
-      ...req.body,
-      user: _id,
-      userId,
-    });
+    const data = await finItemData.regFinItem(req);
     res.status(200).json({ is_success: data });
   } catch (error) {
     console.error(error);
@@ -22,6 +14,16 @@ export async function regFinItem(req, res) {
 export async function listFinItem(req, res) {
   try {
     res.status(200).json(await finItemData.listFinItem(req));
+  } catch (error) {
+    console.error(error);
+    res.sendStatus(500);
+  }
+}
+
+export async function updateFinItem(req, res) {
+  try {
+    const data = await finItemData.updateFinItem(req);
+    res.status(200).json({ is_success: data });
   } catch (error) {
     console.error(error);
     res.sendStatus(500);

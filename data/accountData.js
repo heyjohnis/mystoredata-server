@@ -4,7 +4,8 @@ import AccountModel from "../model/accountModel.js";
 import { strToDate } from "../utils/date.js";
 import { assetFilter } from "../utils/filter.js";
 import FinItemtModel from "../model/finItemModel.js";
-
+import * as finItemData from "./finItemData.js";
+import mongoose from "mongoose";
 export async function getAccountList(req) {
   const filter = assetFilter(req);
   return AccountModel.find(filter);
@@ -21,7 +22,7 @@ export async function regAccount(_id, newAccount) {
     (account) => account.bankAccountNum === newAccount.bankAccountNum
   );
   if (!hasAccount) {
-    const registedResult = await new AccountModel({
+    const registedAccount = await new AccountModel({
       ...newAccount,
       user: userInfo._id,
       corpName: userInfo.corpName,
@@ -29,11 +30,24 @@ export async function regAccount(_id, newAccount) {
     }).save();
     await UserModel.findByIdAndUpdate(
       _id,
-      { $push: { accounts: newAccount } },
+      { $push: { accounts: registedAccount } },
       { returnOriginal: false }
     );
-
-    return registedResult;
+    const hasFinItem = await FinItemtModel.findOne({
+      user: userInfo._id,
+      account: registedAccount._id,
+    });
+    console.log("자산 등록 전: ", registedAccount);
+    if (!hasFinItem) {
+      await finItemData.regFinItem({
+        user: registedAccount.user,
+        userId: registedAccount.userId,
+        account: registedAccount._id,
+        bank: registedAccount.bank,
+        bankAccountNum: registedAccount.bankAccountNum,
+      });
+    }
+    return registedAccount;
   }
   return;
 }
@@ -66,13 +80,14 @@ export async function updateAccount(req) {
 
 export async function updateAccountAmount(req) {
   const bankAccountNum = req.body.bankAccountNum;
+  console.log("updateAccountAmount: ", req.body);
   const lastTran = await AccountLogModel.findOne({ bankAccountNum }).sort({
     transDate: -1,
   });
-
-  const balance = parseInt(lastTran?.balance || 0);
+  console.log({ lastTran });
+  const balance = parseInt(lastTran.balance || 0);
   const result = await FinItemtModel.updateOne(
-    { account: lastTran?.account },
+    { account: mongoose.Types.ObjectId(req.body._id) },
     { $set: { amount: balance } }
   );
   return result;
