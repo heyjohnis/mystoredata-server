@@ -5,7 +5,7 @@ import * as transController from "../controller/transController.js";
 import { nowDate, fromAtDate, toAtDate } from "../utils/date.js";
 
 export async function syncBaroData() {
-  nodeschedule.scheduleJob("0 52 22 * * *", async function () {
+  nodeschedule.scheduleJob("0 0 7 * * *", async function () {
     await syncBaroAccount({});
     console.log(`${nowDate()} syncBaroAccount`);
     await syncBaroCard({});
