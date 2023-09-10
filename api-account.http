@@ -126,8 +126,8 @@ Content-Type: application/json; charset=UTF-8
 Authorization: Bearer {{jwt}}
 
 {
-    "bankAccountNum": "110335376921",
-    "corpNum": "1073270598"
+    "bankAccountNum": "37691003114104",
+    "corpNum": "6348702350"
 }
 
 ### 통장 재등록

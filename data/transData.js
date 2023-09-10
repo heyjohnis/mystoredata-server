@@ -13,8 +13,8 @@ export async function mergeTransMoney(log) {
   query.corpNum = asset.corpNum;
   query.transMoney = asset.transMoney;
   query.transDate = {
-    $gte: new Date(Number(asset.transDate) - 100000),
-    $lte: new Date(Number(asset.transDate) + 100000),
+    $gte: new Date(Number(asset.transDate) - 200000),
+    $lte: new Date(Number(asset.transDate) + 200000),
   };
   query.$or = [];
   if (asset?.bankAccountNum) {
@@ -71,6 +71,15 @@ export async function mergeTransMoney(log) {
   }
   // 카테고리 자동설정
   await autosetCategoryAndUseKind(resultAsset);
+
+  // 카드 취소의 경우
+  if (!asset.useYn) {
+    console.log("card cancel");
+    const query = { transMoney: asset.transMoney * -1 };
+    const update = { $set: { useYn: false } };
+    const sort = { transDate: -1 };
+    await TransModel.findOneAndUpdate(query, update, sort);
+  }
 }
 
 async function autosetCategoryAndUseKind(asset) {
@@ -172,6 +181,7 @@ export async function updateTransMoney(req) {
 }
 
 function convertTransAsset(asset) {
+  const isCanceled = asset.cardApprovalType === "취소";
   const cardData = {
     user: asset.user,
     userId: asset.userId,
@@ -203,6 +213,7 @@ function convertTransAsset(asset) {
     installmentMonths: asset.installmentMonths,
     currency: asset.currency,
     keyword: asset.keyword,
+    useYn: !isCanceled,
   };
 
   const accountData = {
@@ -228,6 +239,7 @@ function convertTransAsset(asset) {
     mgtRemark1: asset.mgtRemark1,
     mgtRemark2: asset.mgtRemark2,
     keyword: asset.keyword,
+    useYn: !isCanceled,
   };
 
   return asset.cardNum ? cardData : accountData;
