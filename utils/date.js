@@ -1,5 +1,8 @@
 export function strToDate(dateString) {
+  dateString = dateString.toString();
+  console.log(typeof dateString);
   dateString = (dateString || "").replace(/[^0-9]/g, "");
+  console.log({ dateString });
   const strLength = dateString.length;
   if (strLength < 8) return null;
   const year = parseInt(dateString.substring(0, 4));
@@ -36,4 +39,14 @@ export function nowDate() {
   )} ${hour.padStart(2, "0")}:${min.padStart(2, "0")}:${sec.padStart(2, "0")}`;
 
   return today;
+}
+
+export function fromAtDate(str) {
+  const fromAt = strToDate(str);
+  return new Date(fromAt.setHours(fromAt.getHours()));
+}
+
+export function toAtDate(str) {
+  const toAt = strToDate(str);
+  return new Date(toAt.setHours(toAt.getHours() + 24));
 }

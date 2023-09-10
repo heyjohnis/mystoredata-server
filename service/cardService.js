@@ -102,7 +102,7 @@ export async function reRegCard(req) {
 
 export async function regCardLog(req) {
   const cardNum = req.body.cardNum;
-  let currentPage = 0;
+  let currentPage = 1;
   let cntLog = 100;
   while (cntLog == 100) {
     const reqBaro = {
@@ -121,6 +121,7 @@ export async function regCardLog(req) {
     const result = response[0].GetMonthlyCardLogEx2Result;
 
     if (result.CurrentPage < 0) {
+      console.log(errorCase(result.CurrentPage));
       return result.CurrentPage;
     } else {
       // 호출 성공

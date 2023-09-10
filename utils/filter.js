@@ -1,6 +1,8 @@
-import { strToDate } from "./date.js";
+import { strToDate, fromAtDate, toAtDate } from "./date.js";
 
 export function assetFilter(req) {
+  if (!req?.body && !req?.query) return;
+  console.log("req.body: ", req.body);
   const { corpNum, userId, fromAt, toAt } =
     Object.keys(req.body).length > 0 ? req.body : req.query;
   const filter = {};
@@ -8,10 +10,10 @@ export function assetFilter(req) {
     filter.corpNum = corpNum;
   }
   if (userId) filter.userId = userId;
-  if (strToDate(fromAt) && strToDate(toAt)) {
+  if (fromAt && toAt) {
     filter.transDate = {
-      $gte: strToDate(fromAt),
-      $lte: strToDate(toAt),
+      $gte: fromAtDate(fromAt),
+      $lte: toAtDate(toAt),
     };
   }
   return filter;

@@ -1,13 +1,13 @@
 import UserModel from "../model/userModel.js";
 import AccountLogModel from "../model/accountLogModel.js";
 import AccountModel from "../model/accountModel.js";
-import { strToDate } from "../utils/date.js";
 import { assetFilter } from "../utils/filter.js";
 import FinItemtModel from "../model/finItemModel.js";
 import * as finItemData from "./finItemData.js";
 import mongoose from "mongoose";
 export async function getAccountList(req) {
   const filter = assetFilter(req);
+  console.log("getAccountList filter: ", filter);
   return AccountModel.find(filter);
 }
 

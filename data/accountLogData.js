@@ -29,7 +29,22 @@ export async function regAccountLog(data) {
 }
 
 export async function getAccountLogs(req) {
-  const filter = assetFilter(req);
-  console.log({ filter });
+  const filter = {};
+  if (req.query?.corpNum || req.body?.corpNum)
+    filter.corpNum = req.query?.corpNum || req.body?.corpNum;
+  if (req.query?.userId || req.body?.userId)
+    filter.userId = req.query?.userId || req.body?.userId;
+  if (
+    (req.query?.fromAt || req.body?.fromAt) &&
+    (req.query?.toAt || req.body?.toAt)
+  ) {
+    const toAt = new Date(`${req.query?.toAt || req.body?.toAt}`);
+    toAt.setDate(toAt.getDate() + 1);
+    filter.transDate = {
+      $gte: new Date(`${req.query?.fromAt || req.body?.fromAt}`),
+      $lte: new Date(toAt),
+    };
+  }
+  console.log("getAccountLogs filter: ", filter);
   return await AccountLogModel.find(filter).sort({ transDate: -1 });
 }

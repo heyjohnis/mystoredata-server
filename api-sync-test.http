@@ -1,0 +1,15 @@
+@baseUrl = http://localhost:8089
+
+
+
+### 통장 로그 동기화
+GET {{baseUrl}}/batch/sync-account HTTP/1.1
+Content-Type: application/json; charset=UTF-8
+
+### 카드 로그 동기화
+GET {{baseUrl}}/batch/sync-card HTTP/1.1
+Content-Type: application/json; charset=UTF-8
+
+###  로그 동기화
+GET {{baseUrl}}/batch/sync-merge HTTP/1.1
+Content-Type: application/json; charset=UTF-8

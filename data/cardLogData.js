@@ -26,18 +26,20 @@ export async function regCardLog(data) {
 
 export async function getCardLogs(req) {
   const filter = {};
-  if (req.query.corpNum || req.body.corpNum)
-    filter.CorpNum = req.query.corpNum || req.body.corpNum;
-  if (req.query.userId || req.body.userId)
-    filter.userId = req.query.userId || req.body.userId;
+  if (req.query?.corpNum || req.body?.corpNum)
+    filter.CorpNum = req.query?.corpNum || req.body?.corpNum;
+  if (req.query?.userId || req.body?.userId)
+    filter.userId = req.query?.userId || req.body?.userId;
   if (
-    (req.query.fromAt || req.body.fromAt) &&
-    (req.query.toAt || req.body.toAt)
-  )
+    (req.query?.fromAt || req.body?.fromAt) &&
+    (req.query?.toAt || req.body?.toAt)
+  ) {
+    const toAt = new Date(`${req.query?.toAt || req.body?.toAt}`);
+    toAt.setDate(toAt.getDate() + 1);
     filter.transDate = {
-      $gte: new Date(`${req.query.fromAt || req.body.fromAt}`),
-      $lte: new Date(`${req.query.toAt || req.body.toAt}`),
+      $gte: new Date(`${req.query?.fromAt || req.body?.fromAt}`),
+      $lte: new Date(toAt),
     };
-
+  }
   return await CardLogModel.find(filter).sort({ transDate: -1 });
 }

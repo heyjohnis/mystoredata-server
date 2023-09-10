@@ -4,24 +4,7 @@ import * as transData from "../data/transData.js";
 
 export async function mergeTrans(req, res) {
   try {
-    const accountLogs = await accountLogData
-      .getAccountLogs(req)
-      .catch((error) => console.log(error));
-    // TODO: redis로 변경
-    for (const account of accountLogs) {
-      await transData
-        .mergeTransMoney(account)
-        .catch((error) => console.log(error));
-    }
-    // TODO: redis로 변경
-    const cardLogs = await cardLogData
-      .getCardLogs(req)
-      .catch((error) => console.log(error));
-    for (const card of cardLogs) {
-      await transData
-        .mergeTransMoney(card)
-        .catch((error) => console.log(error));
-    }
+    await mergeAccountAndCard(req);
     res.status(200).json({ success: true });
   } catch (error) {
     console.log(error);
@@ -40,4 +23,25 @@ export async function updateTrans(req, res) {
     .updateTransMoney(req)
     .catch((error) => console.log(error));
   res.status(200).json(data);
+}
+
+export async function mergeAccountAndCard(req) {
+  const accountLogs = await accountLogData
+    .getAccountLogs(req)
+    .catch((error) => console.log(error));
+  // TODO: redis로 변경
+  console.log("accountLogs: ", accountLogs);
+  for (const account of accountLogs) {
+    console.log("bankAccountNum: ", account.bankAccountNum);
+    await transData
+      .mergeTransMoney(account)
+      .catch((error) => console.log(error));
+  }
+  // TODO: redis로 변경
+  const cardLogs = await cardLogData
+    .getCardLogs(req)
+    .catch((error) => console.log(error));
+  for (const card of cardLogs) {
+    await transData.mergeTransMoney(card).catch((error) => console.log(error));
+  }
 }

@@ -3,12 +3,12 @@ import TransModel from "../model/transModel.js";
 import mongoose from "mongoose";
 import { DefaultCategory } from "../cmmCode.js";
 import { keywordCategory } from "../data/categoryData.js";
-import { nowDate, strToDate } from "../utils/date.js";
+import { nowDate } from "../utils/date.js";
 import { assetFilter } from "../utils/filter.js";
 
 export async function mergeTransMoney(log) {
   const asset = convertTransAsset(log);
-
+  console.log(" mergeTransMoney asset: ", asset);
   const query = {};
   query.corpNum = asset.corpNum;
   query.transMoney = asset.transMoney;
@@ -29,8 +29,9 @@ export async function mergeTransMoney(log) {
       $and: [{ card: { $ne: asset.card } }, { account: { $ne: null } }],
     });
   }
-
+  console.log("query: ", query);
   const duplAsset = await TransModel.findOne(query);
+  console.log("duplAsset: ", duplAsset);
   let resultAsset = {};
   if (duplAsset) {
     if (

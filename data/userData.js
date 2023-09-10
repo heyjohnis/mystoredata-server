@@ -7,9 +7,9 @@ import TransModel from "../model/transModel.js";
 import KeywordRuleModel from "../model/keywordRule.js";
 
 export async function getUserList(req) {
-  const { userType } = req.query;
-  console.log({ userType });
-  const users = await UserModel.find({ userType }).sort({ createdAt: -1 });
+  const userType =
+    req?.query && req.query.userType ? { userType: req.query.userType } : {};
+  const users = await UserModel.find(userType).sort({ createdAt: -1 });
   return users;
 }
 

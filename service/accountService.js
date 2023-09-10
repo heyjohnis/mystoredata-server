@@ -3,6 +3,7 @@ import { config } from "../config.js";
 import * as accountData from "../data/accountData.js";
 import * as accountLogData from "../data/accountLogData.js";
 import { keywordGen } from "../utils/keywordGen.js";
+import errorCase from "../middleware/baroError.js";
 
 const certKey = config.baro.certKey;
 // const client = await soap.createClientAsync('https://testws.baroservice.com/BANKACCOUNT.asmx?WSDL') // 테스트서버
@@ -87,7 +88,7 @@ export async function cancelStopAccount(req) {
 export async function regAcountLog(req) {
   const { bankAccountNum, baseMonth, corpNum, userId } = req.body;
 
-  let currentPage = 0;
+  let currentPage = 1;
   const reqBaro = {
     CERTKEY: certKey,
     CorpNum: corpNum || req.corpNum,
@@ -105,6 +106,7 @@ export async function regAcountLog(req) {
     const response = await client.GetMonthlyBankAccountLogExAsync(reqBaro);
     const result = response[0].GetMonthlyBankAccountLogExResult;
     if (result.CurrentPage < 0) {
+      console.log("CurrentPage: ", errorCase(result.CurrentPage));
       // 호출 실패
       return result.CurrentPage;
     } else {
