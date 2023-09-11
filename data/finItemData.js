@@ -1,9 +1,27 @@
 import FinItemtModel from "../model/finItemModel.js";
 import { BankCorpCode, FinItemCode } from "../cmmCode.js";
 import mongoose from "mongoose";
+import UserModel from "../model/userModel.js";
 export async function regFinItem(req) {
   console.log("regFinItem: ", req.body || req);
-  const { user, userId, account, bank, bankAccountNum } = req.body || req;
+  const {
+    user,
+    userId,
+    account,
+    bank,
+    bankAccountNum,
+    accountNum,
+    amount,
+    corpCode,
+    itemKind,
+    itemType,
+    itemTypeName,
+    itemName,
+  } = req.body || req;
+  let userInfo;
+  if (user) {
+    userInfo = await UserModel({ userId }).findOne();
+  }
   const bankCode = BankCorpCode.find((item) => item.baro === bank);
   const itemCode = FinItemCode.find((item) => item.code === "CHKACC");
   const item = {
