@@ -10,6 +10,4 @@ router.get("/log", isAuth, controller.mergeTransLogs);
 
 router.put("/update/:id", isAuth, controller.updateTrans);
 
-// router.post('/words', controller.analyzeWords);
-
 export default router;

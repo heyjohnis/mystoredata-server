@@ -9,44 +9,13 @@ import { assetFilter } from "../utils/filter.js";
 export async function mergeTransMoney(log) {
   const asset = convertTransAsset(log);
   console.log(" mergeTransMoney asset: ", asset);
-  const query = {};
-  query.corpNum = asset.corpNum;
-  query.transMoney = asset.transMoney;
-  query.transDate = {
-    $gte: new Date(Number(asset.transDate) - 200000),
-    $lte: new Date(Number(asset.transDate) + 200000),
-  };
-  query.$or = [];
-  if (asset?.bankAccountNum) {
-    query.$or.push({ account: asset.account });
-    query.$or.push({
-      $and: [{ account: { $ne: asset.account } }, { card: { $ne: null } }],
-    });
-  }
-  if (asset?.cardNum) {
-    query.$or.push({ card: asset.card });
-    query.$or.push({
-      $and: [{ card: { $ne: asset.card } }, { account: { $ne: null } }],
-    });
-  }
-  console.log("query: ", query);
-  const duplAsset = await TransModel.findOne(query);
-  console.log("duplAsset: ", duplAsset);
+  // 중복 거래 확인(카드만 등록, 계좌만 등록, 기 등록된 거래인지?)
+  const duplAsset = await extractDuplAsset(asset);
   let resultAsset = {};
   if (duplAsset) {
-    if (
-      (duplAsset.card && duplAsset.card === asset.card) ||
-      (duplAsset.account && duplAsset.account === asset.account)
-    ) {
-      console.log(
-        `${nowDate()}: 기등록한 거래: ${asset.transAssetNum} ${
-          asset.transMoney
-        } ${asset.transRemark} ${asset.useStoreName}`
-      );
-      console.log("신규거래: ", new Date(Number(asset.transDate)));
-      console.log("기등록거래: ", new Date(Number(duplAsset.transDate)));
-      return;
-    }
+    // 기 등록된 거래는 skip
+    if (isRegistedTrans(asset, duplAsset)) return;
+
     asset.keyword = Array.from(
       new Set([...(asset.keyword || []), ...(duplAsset.keyword || [])])
     );
@@ -74,12 +43,59 @@ export async function mergeTransMoney(log) {
 
   // 카드 취소의 경우
   if (!asset.useYn) {
-    console.log("card cancel");
-    const query = { transMoney: asset.transMoney * -1 };
-    const update = { $set: { useYn: false } };
-    const sort = { transDate: -1 };
-    await TransModel.findOneAndUpdate(query, update, sort);
+    await autoCancelCard(asset);
   }
+}
+
+function isRegistedTrans(asset, duplAsset) {
+  let isRegisted = false;
+  if (
+    (duplAsset.card && duplAsset.card === asset.card) ||
+    (duplAsset.account && duplAsset.account === asset.account)
+  ) {
+    console.log(
+      `${nowDate()}: 기등록한 거래: ${asset.transAssetNum} ${
+        asset.transMoney
+      } ${asset.transRemark} ${asset.useStoreName}`
+    );
+    console.log("신규거래: ", new Date(Number(asset.transDate)));
+    console.log("기등록거래: ", new Date(Number(duplAsset.transDate)));
+    isRegisted = true;
+  }
+
+  return isRegisted;
+}
+
+async function extractDuplAsset(asset) {
+  const query = {};
+  query.corpNum = asset.corpNum;
+  query.transMoney = asset.transMoney;
+  query.transDate = {
+    $gte: new Date(Number(asset.transDate) - 200000),
+    $lte: new Date(Number(asset.transDate) + 200000),
+  };
+  query.$or = [];
+  if (asset?.bankAccountNum) {
+    query.$or.push({ account: asset.account });
+    query.$or.push({
+      $and: [{ account: { $ne: asset.account } }, { card: { $ne: null } }],
+    });
+  }
+  if (asset?.cardNum) {
+    query.$or.push({ card: asset.card });
+    query.$or.push({
+      $and: [{ card: { $ne: asset.card } }, { account: { $ne: null } }],
+    });
+  }
+  return await TransModel.findOne(query);
+}
+
+async function autoCancelCard(asset) {
+  console.log("card cancel");
+  const query = { transMoney: asset.transMoney * -1 };
+  const update = { $set: { useYn: false } };
+  const sort = { transDate: -1 };
+  await TransModel.findOneAndUpdate(query, update, sort);
 }
 
 async function autosetCategoryAndUseKind(asset) {
@@ -243,4 +259,33 @@ function convertTransAsset(asset) {
   };
 
   return asset.cardNum ? cardData : accountData;
+}
+
+export async function upateCancelLog(req) {
+  try {
+    const _id = mongoose.Types.ObjectId(req._id);
+    const toDate = new Date(
+      new Date(req.transDate).setMinutes(
+        new Date(req.transDate).getMinutes() + 2
+      )
+    );
+    console.log({
+      transDate: { $lte: toDate },
+      transMoney: req.transMoney * -1,
+    });
+    await TransModel.updateOne({ _id }, { $set: { useYn: false } });
+    await TransModel.findOneAndUpdate(
+      {
+        userId: req.userId,
+        transDate: { $lte: toDate },
+        transMoney: req.transMoney * -1,
+      },
+      { $set: { useYn: false } },
+      { sort: { transDate: -1 } }
+    );
+    return { success: true };
+  } catch (error) {
+    console.log({ error });
+    return { error };
+  }
 }
