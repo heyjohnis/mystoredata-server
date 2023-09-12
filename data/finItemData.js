@@ -15,36 +15,39 @@ export async function regFinItem(req) {
     corpCode,
     itemKind,
     itemType,
-    itemTypeName,
     itemName,
   } = req.body || req;
   let userInfo;
-  if (user) {
-    userInfo = await UserModel({ userId }).findOne();
+  if (!user) {
+    userInfo = await UserModel.findOne({ userId });
   }
   const bankCode = BankCorpCode.find((item) => item.baro === bank);
   const itemCode = FinItemCode.find((item) => item.code === "CHKACC");
+  const finCorpName = corpCode
+    ? BankCorpCode.find((item) => item.code === corpCode)?.name
+    : bankCode.name;
   const item = {
-    user,
+    user: userInfo._id || user,
     userId,
-    account: mongoose.Types.ObjectId(account),
-    accountNum: bankAccountNum,
-    itemKind: "ASSET",
-    itemKindName: "자산",
-    itemType: itemCode.code,
-    itemTypeName: itemCode.name,
-    itemName: "자유입출금 예금",
-    finCorpCode: bankCode.code,
-    finCorpName: bankCode.name,
-    isFixed: true,
-    amount: 0,
+    account: account,
+    accountNum: bankAccountNum || accountNum,
+    itemKind: itemKind || "ASSET",
+    itemKindName:
+      itemKind === "ASSET"
+        ? "자산"
+        : itemKind === "LIABILITY"
+        ? "부채"
+        : "자산",
+    itemType: itemType || itemCode.code,
+    itemTypeName: FinItemCode[itemType] || itemCode.name,
+    itemName: itemName || "자유입출금 예금",
+    finCorpCode: corpCode || bankCode.code,
+    finCorpName,
+    isFixed: !!user,
+    amount: amount || 0,
   };
-
-  console.log("regFinItem: ", item);
   try {
-    const finItem = await new FinItemtModel(item).save();
-    console.log({ finItem });
-    return finItem;
+    return await new FinItemtModel(item).save().then((result) => result);
   } catch (error) {
     console.log({ error });
     return { error };
@@ -104,6 +107,16 @@ export async function updateFinItem(req) {
     );
     console.log({ result });
     return result;
+  } catch (error) {
+    console.log({ error });
+    return { error };
+  }
+}
+
+export function deleteFinItem(req) {
+  const _id = req.params._id;
+  try {
+    return FinItemtModel.deleteOne({ _id });
   } catch (error) {
     console.log({ error });
     return { error };

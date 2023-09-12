@@ -10,4 +10,6 @@ router.put("/update/:_id", isAuth, controller.updateFinItem);
 
 router.get("/list", isAuth, controller.listFinItem);
 
+router.delete("/delete/:_id", isAuth, controller.deleteFinItem);
+
 export default router;

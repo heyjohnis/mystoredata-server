@@ -87,7 +87,7 @@ export async function updateAccountAmount(req) {
   console.log({ lastTran });
   const balance = parseInt(lastTran.balance || 0);
   const result = await FinItemtModel.updateOne(
-    { account: mongoose.Types.ObjectId(req.body._id) },
+    { account: req.body._id },
     { $set: { amount: balance } }
   );
   return result;

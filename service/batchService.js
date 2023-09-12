@@ -24,6 +24,7 @@ export async function syncBaroAccount(req) {
         baseMonth,
       },
     });
+    await accountData.updateAccountAmount({ body: { bankAccountNum } });
   }
 }
 
