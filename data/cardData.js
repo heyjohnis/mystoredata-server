@@ -26,10 +26,10 @@ export async function regCard(req) {
     webPwd,
     useKind,
   } = req?.body || req;
-
-  const hasCard = CardModel.findOne((card) => card.cardNum === cardNum);
-  if (!hasCard) {
-    const regedCard = await new CardModel({
+  let regedCardInfo = await CardModel.findOne({ user, cardNum });
+  console.log("regedCardInfo: ", regedCardInfo);
+  if (!regedCardInfo) {
+    regedCardInfo = await new CardModel({
       user,
       userId,
       cardNum,
@@ -41,14 +41,17 @@ export async function regCard(req) {
       webPwd,
       useKind,
     }).save();
-    return await UserModel.findByIdAndUpdate(
-      _id,
-      {
-        $push: { cards: regedCard },
-      },
-      { returnOriginal: false }
-    );
+    console.log("regedCardInfo: ", regedCardInfo);
   }
+  const updateUserCard = await UserModel.findByIdAndUpdate(
+    { _id: user },
+    {
+      $push: { cards: regedCardInfo },
+    },
+    { returnOriginal: false }
+  );
+  console.log("updateUserCard: ", updateUserCard);
+  return updateUserCard;
 }
 
 export async function deleteCard(req) {

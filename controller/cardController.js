@@ -25,7 +25,7 @@ export async function regCard(req, res) {
 
     if (code > 0) {
       const regCardResult = await cardData.regCard(req);
-      res.status(200).json({ data: regCardResult, error: {} });
+      res.status(200).json(regCardResult);
     } else {
       const userInfo = await userData.findById(user);
       const hasCard = userInfo.cards.find(
@@ -91,10 +91,10 @@ export async function deleteCard(req, res) {
     console.log({ code });
     if (code > 0) {
       const result = await cardData.deleteCard(req);
-      res.status(200).json({ data: result, error: {} });
+      res.status(200).json(result);
     } else {
       const result = await cardData.deleteCard(req);
-      res.status(400).json(errorCase(code));
+      res.status(200).json(result);
     }
   } catch (error) {
     res.status(500).json(error);
