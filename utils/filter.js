@@ -2,7 +2,6 @@ import { strToDate, fromAtDate, toAtDate } from "./date.js";
 
 export function assetFilter(req) {
   if (!req?.body && !req?.query) return;
-  console.log("req.body: ", req.body);
   const { corpNum, userId, fromAt, toAt } =
     Object.keys(req.body).length > 0 ? req.body : req.query;
   const filter = {};

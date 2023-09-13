@@ -1,8 +1,6 @@
 export function strToDate(dateString) {
   dateString = dateString.toString();
-  console.log(typeof dateString);
   dateString = (dateString || "").replace(/[^0-9]/g, "");
-  console.log({ dateString });
   const strLength = dateString.length;
   if (strLength < 8) return null;
   const year = parseInt(dateString.substring(0, 4));

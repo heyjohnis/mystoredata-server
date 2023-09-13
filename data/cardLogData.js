@@ -25,9 +25,10 @@ export async function regCardLog(data) {
 }
 
 export async function getCardLogs(req) {
+  console.log("getCardLogs filter: ", req?.body);
   const filter = {};
   if (req.query?.corpNum || req.body?.corpNum)
-    filter.CorpNum = req.query?.corpNum || req.body?.corpNum;
+    filter.corpNum = req.query?.corpNum || req.body?.corpNum;
   if (req.query?.userId || req.body?.userId)
     filter.userId = req.query?.userId || req.body?.userId;
   if (

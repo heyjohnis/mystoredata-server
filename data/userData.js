@@ -83,8 +83,15 @@ export async function getUserCategory(req) {
 }
 
 export async function createCategoryRule(req) {
-  const { user, useStoreName, transRemark, category, categoryName, useKind } =
-    req.body;
+  const {
+    user,
+    useStoreName,
+    transRemark,
+    category,
+    categoryName,
+    useKind,
+    userId,
+  } = req.body;
   const query = { user };
 
   query.$or = query.$or || [];
@@ -98,7 +105,7 @@ export async function createCategoryRule(req) {
   if (existingData) {
     await CategoryRuleModel.updateOne(
       { _id: existingData._id },
-      { category, categoryName, useKind }
+      { category, categoryName, useKind, userId }
     );
   } else {
     const addRule = await new CategoryRuleModel({ ...req.body }).save();

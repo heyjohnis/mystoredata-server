@@ -148,14 +148,14 @@ export async function regAcountLog(req) {
 }
 
 export async function deleteAccount(req) {
-  const { bankAccountNum } = req.body;
+  const { account } = req.params;
   const response = await client.StopBankAccountAsync({
     CERTKEY: certKey,
     CorpNum: req.body.corpNum || req.corpNum,
-    BankAccountNum: bankAccountNum,
+    account,
   });
   const resultCode = response[0].StopBankAccountResult;
-  const result = await accountData.deleteAccout(req);
+  const result = await accountData.deleteAccount(req);
   console.log("delete account: ", result);
 
   if (resultCode < 0) {

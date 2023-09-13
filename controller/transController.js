@@ -41,6 +41,7 @@ export async function mergeAccountAndCard(req) {
     .getCardLogs(req)
     .catch((error) => console.log(error));
   for (const card of cardLogs) {
+    console.log("card: ", card.useStoreNum);
     await transData.mergeTransMoney(card).catch((error) => console.log(error));
   }
   await autoCancelCard();

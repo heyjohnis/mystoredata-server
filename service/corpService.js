@@ -34,7 +34,6 @@ export async function registCorp(req) {
     email,
   } = req.body;
 
-  console.log("req.body: ", req.body);
   const response = await client.RegistCorpAsync({
     CERTKEY: certKey,
     CorpNum: corpNum,

@@ -12,37 +12,52 @@ export async function getCard(cardNum) {
   return CardModel.findOne({ cardNum });
 }
 
-export async function regCard(_id, newCard) {
-  const userInfo = await UserModel.findOne({ _id });
-  const cards = userInfo?.cards;
-  const hasCard = cards.find((card) => card.cardNum === newCard.cardNum);
+export async function regCard(req) {
+  console.log("regCard: ", req?.body || req);
+  const {
+    user,
+    userId,
+    cardNum,
+    corpNum,
+    corpName,
+    cardCompany,
+    cardType,
+    webId,
+    webPwd,
+    useKind,
+  } = req?.body || req;
+
+  const hasCard = CardModel.findOne((card) => card.cardNum === cardNum);
   if (!hasCard) {
-    console.log("newcard", {
-      ...newCard,
-      corpNum: userInfo.corpNum,
-      user: userInfo._id,
-      corpName: userInfo.corpName,
-      userId: userInfo.userId,
-    });
-    await new CardModel({
-      ...newCard,
-      corpNum: userInfo.corpNum,
-      user: userInfo._id,
-      corpName: userInfo.corpName,
-      userId: userInfo.userId,
+    const regedCard = await new CardModel({
+      user,
+      userId,
+      cardNum,
+      corpNum,
+      corpName,
+      cardCompany,
+      cardType,
+      webId,
+      webPwd,
+      useKind,
     }).save();
     return await UserModel.findByIdAndUpdate(
       _id,
-      { $push: { cards: newCard } },
+      {
+        $push: { cards: regedCard },
+      },
       { returnOriginal: false }
     );
   }
 }
 
-export async function deleteCard(_id, cardNum) {
-  console.log(_id, cardNum);
-  await CardModel.deleteOne({ cardNum, user: _id });
-  return await UserModel.updateOne({ _id }, { $pull: { cards: { cardNum } } });
+export async function deleteCard(req) {
+  const _id = req.params._id;
+  const deletedCard = await CardModel.findOneAndDelete({ _id });
+  return await UserModel.updateOne(
+    { _id: deletedCard.user },
+    { $pull: { cards: { _id } } }
+  );
 }
 
 export async function updateCard(card) {

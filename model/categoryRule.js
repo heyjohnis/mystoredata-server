@@ -5,6 +5,7 @@ const types = Mongoose.Types;
 export const RuleSchema = new Mongoose.Schema(
   {
     user: { type: types.ObjectId, ref: `user`, required: true },
+    userId: { type: String, required: true },
     useStoreBizType: { type: String, required: false },
     useStoreName: { type: String, required: false },
     transRemark: { type: String, required: false },

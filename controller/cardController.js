@@ -20,11 +20,11 @@ export async function regCard(req, res) {
     let code = await service.regCard(req);
     console.log(errorCase(code));
     if (code < 0) code = await service.cancelStopCard(req);
-    code = code === -51004 ? 1 : code; // 해지상태가 아닌 경우
+    code = code === -51004 || -50118 ? 1 : code; // 해지상태가 아닌 경우
     await service.updateCardInfo(req);
 
     if (code > 0) {
-      const regCardResult = await cardData.regCard(user, req.body);
+      const regCardResult = await cardData.regCard(req);
       res.status(200).json({ data: regCardResult, error: {} });
     } else {
       const userInfo = await userData.findById(user);
@@ -33,7 +33,7 @@ export async function regCard(req, res) {
       );
       console.log("hasCard", hasCard);
       if (!hasCard) {
-        await cardData.regCard(user, req.body);
+        await cardData.regCard(req);
       }
       res.status(400).json(errorCase(code));
     }
@@ -90,10 +90,10 @@ export async function deleteCard(req, res) {
     const code = await service.deleteCard(req);
     console.log({ code });
     if (code > 0) {
-      const result = await cardData.deleteCard(req._id, req.body.cardNum);
+      const result = await cardData.deleteCard(req);
       res.status(200).json({ data: result, error: {} });
     } else {
-      const result = await cardData.deleteCard(req._id, req.body.cardNum);
+      const result = await cardData.deleteCard(req);
       res.status(400).json(errorCase(code));
     }
   } catch (error) {

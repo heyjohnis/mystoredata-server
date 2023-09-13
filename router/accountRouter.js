@@ -14,7 +14,7 @@ router.post("/regLog", isAuth, controller.regAcountLog);
 
 router.get("/log", isAuth, controller.getAccountLogs);
 
-router.delete("/delete", isAuth, controller.deleteAccount);
+router.delete("/delete/:_id", isAuth, controller.deleteAccount);
 
 router.post("/cancel-stop", isAuth, controller.cancelStopAccount);
 

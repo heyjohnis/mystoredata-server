@@ -3,7 +3,7 @@ import { BankCorpCode, FinItemCode } from "../cmmCode.js";
 import mongoose from "mongoose";
 import UserModel from "../model/userModel.js";
 export async function regFinItem(req) {
-  console.log("regFinItem: ", req.body || req);
+  console.log("regFinItem: ", req?.body || req);
   const {
     user,
     userId,
@@ -16,7 +16,8 @@ export async function regFinItem(req) {
     itemKind,
     itemType,
     itemName,
-  } = req.body || req;
+    transDate,
+  } = req?.body || req;
   let userInfo;
   if (!user) {
     userInfo = await UserModel.findOne({ userId });
@@ -27,9 +28,9 @@ export async function regFinItem(req) {
     ? BankCorpCode.find((item) => item.code === corpCode)?.name
     : bankCode.name;
   const item = {
-    user: userInfo._id || user,
+    user: userInfo?._id || user,
     userId,
-    account: account,
+    account: mongoose.Types.ObjectId(account),
     accountNum: bankAccountNum || accountNum,
     itemKind: itemKind || "ASSET",
     itemKindName:
@@ -44,8 +45,10 @@ export async function regFinItem(req) {
     finCorpCode: corpCode || bankCode.code,
     finCorpName,
     isFixed: !!user,
+    transDate: transDate || new Date(),
     amount: amount || 0,
   };
+  console.log("regFinItem item: ", item);
   try {
     return await new FinItemtModel(item).save().then((result) => result);
   } catch (error) {
@@ -61,7 +64,6 @@ export async function listFinItem(req) {
     if (user) query.user = user;
     if (userId) query.userId = userId;
     const finItems = await FinItemtModel.find(query).sort({ itemName: 1 });
-    console.log({ finItems });
     return finItems;
   } catch (error) {
     console.log({ error });
@@ -84,6 +86,7 @@ export async function updateFinItem(req) {
       finCorpCode,
       finCorpName,
       itemName,
+      transDate,
       useYn,
     } = req.body;
     const result = await FinItemtModel.updateOne(
@@ -101,6 +104,7 @@ export async function updateFinItem(req) {
           finCorpCode,
           finCorpName,
           itemName,
+          transDate,
           useYn,
         },
       }

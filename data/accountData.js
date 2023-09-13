@@ -28,6 +28,7 @@ export async function regAccount(_id, newAccount) {
       corpName: userInfo.corpName,
       userId: userInfo.userId,
     }).save();
+    console.log("registedAccount user 에 추가 ", registedAccount);
     await UserModel.findByIdAndUpdate(
       _id,
       { $push: { accounts: registedAccount } },
@@ -52,18 +53,16 @@ export async function regAccount(_id, newAccount) {
   return;
 }
 
-export async function deleteAccout(req) {
-  const { bankAccountNum } = req.body;
-  const _id = req.body.user || req.body._id || req._id;
-
-  const resultDeleteAccount = await AccountModel.deleteOne({
-    bankAccountNum,
-    user: _id,
+export async function deleteAccount(req) {
+  const { _id } = req.params;
+  console.log("deleteAccount: ", _id);
+  const resultDeleteAccount = await AccountModel.findOneAndDelete({
+    _id,
   });
   console.log({ resultDeleteAccount });
   const updatedAccount = await UserModel.findOneAndUpdate(
-    { _id },
-    { $pull: { accounts: { bankAccountNum } } }
+    { _id: resultDeleteAccount.user },
+    { $pull: { accounts: { _id } } }
   );
   console.log({ updatedAccount });
   return updatedAccount;
@@ -81,14 +80,17 @@ export async function updateAccount(req) {
 export async function updateAccountAmount(req) {
   const bankAccountNum = req.body.bankAccountNum;
   console.log("updateAccountAmount: ", req.body);
-  const lastTran = await AccountLogModel.findOne({ bankAccountNum }).sort({
-    transDate: -1,
-  });
+  const lastTran = await AccountLogModel.findOne(
+    { bankAccountNum },
+    {},
+    { sort: { transDate: -1 } }
+  );
   console.log({ lastTran });
   const balance = parseInt(lastTran.balance || 0);
   const result = await FinItemtModel.updateOne(
-    { account: req.body._id },
-    { $set: { amount: balance } }
+    { account: lastTran.account },
+    { $set: { amount: balance, transDate: lastTran.transDate } }
   );
+  console.log("updateAccountAmount: ", result);
   return result;
 }

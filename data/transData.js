@@ -8,7 +8,6 @@ import { assetFilter } from "../utils/filter.js";
 
 export async function mergeTransMoney(log) {
   const asset = convertTransAsset(log);
-  console.log(" mergeTransMoney asset: ", asset);
   // 중복 거래 확인(카드만 등록, 계좌만 등록, 기 등록된 거래인지?)
   const duplAsset = await extractDuplAsset(asset);
   let resultAsset = {};
@@ -40,11 +39,6 @@ export async function mergeTransMoney(log) {
   }
   // 카테고리 자동설정
   await autosetCategoryAndUseKind(resultAsset);
-
-  // 카드 취소의 경우
-  if (!asset.useYn) {
-    await autoCancelCard(asset);
-  }
 }
 
 function isRegistedTrans(asset, duplAsset) {
@@ -88,14 +82,6 @@ async function extractDuplAsset(asset) {
     });
   }
   return await TransModel.findOne(query);
-}
-
-async function autoCancelCard(asset) {
-  console.log("card cancel");
-  const query = { transMoney: asset.transMoney * -1 };
-  const update = { $set: { useYn: false } };
-  const sort = { transDate: -1 };
-  await TransModel.findOneAndUpdate(query, update, sort);
 }
 
 async function autosetCategoryAndUseKind(asset) {
