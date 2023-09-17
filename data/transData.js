@@ -70,15 +70,21 @@ async function extractDuplAsset(asset) {
   };
   query.$or = [];
   if (asset?.bankAccountNum) {
-    query.$or.push({ account: asset.account });
+    query.$or.push({ accountLog: asset.accountLog });
     query.$or.push({
-      $and: [{ account: { $ne: asset.account } }, { card: { $ne: null } }],
+      $and: [
+        { accountLog: { $ne: asset.accountLog } },
+        { cardLog: { $ne: null } },
+      ],
     });
   }
   if (asset?.cardNum) {
-    query.$or.push({ card: asset.card });
+    query.$or.push({ cardLog: asset.cardLog });
     query.$or.push({
-      $and: [{ card: { $ne: asset.card } }, { account: { $ne: null } }],
+      $and: [
+        { cardLog: { $ne: asset.cardLog } },
+        { accountLog: { $ne: null } },
+      ],
     });
   }
   return await TransModel.findOne(query);
@@ -183,8 +189,9 @@ export async function updateTransMoney(req) {
 }
 
 function convertTransAsset(asset) {
-  const isCanceled = asset.cardApprovalType === "취소";
+  const isCanceled = ["취소", "거절"].includes(asset.cardApprovalType);
   const cardData = {
+    cardLog: asset._id,
     user: asset.user,
     userId: asset.userId,
     corpNum: asset.corpNum,
@@ -219,6 +226,7 @@ function convertTransAsset(asset) {
   };
 
   const accountData = {
+    accountLog: asset._id,
     user: asset.user,
     userId: asset.userId,
     useKind: asset.useKind,
@@ -257,10 +265,10 @@ export async function upateCancelLog(req) {
     );
     console.log({
       transDate: { $lte: toDate },
-      transMoney: req.transMoney * -1,
+      transMoney: req.transMoney,
     });
     await TransModel.updateOne({ _id }, { $set: { useYn: false } });
-    await TransModel.findOneAndUpdate(
+    const canceledLogs = await TransModel.findOneAndUpdate(
       {
         userId: req.userId,
         transDate: { $lte: toDate },
@@ -269,6 +277,7 @@ export async function upateCancelLog(req) {
       { $set: { useYn: false } },
       { sort: { transDate: -1 } }
     );
+    console.log("canceledLogs: ", canceledLogs);
     return { success: true };
   } catch (error) {
     console.log({ error });

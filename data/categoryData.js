@@ -1,4 +1,5 @@
 import KeywordRuleModel from "../model/keywordRule.js";
+import TransModel from "../model/transModel.js";
 
 export async function getKeywordCategoryRule(req) {
   try {
@@ -39,6 +40,26 @@ export async function keywordCategory(req) {
       });
     });
     return categoryObj;
+  } catch (error) {
+    console.log({ error });
+    return { error };
+  }
+}
+
+export async function getNonCategory(req) {
+  try {
+    const { userId } = req.params;
+    const nonAccountCategories = await TransModel.aggregate([
+      { $match: { category: "900" } },
+      { $group: { _id: "$transRemark", total: { $sum: 1 } } },
+    ]);
+    console.log("nonCategories: ", nonAccountCategories);
+    const nonCardCategories = await TransModel.aggregate([
+      { $match: { category: "900" } },
+      { $group: { _id: "$useStoreName", total: { $sum: 1 } } },
+    ]);
+    console.log("nonCardCategories: ", nonCardCategories);
+    return { nonAccountCategories, nonCardCategories };
   } catch (error) {
     console.log({ error });
     return { error };

@@ -44,16 +44,17 @@ export async function mergeAccountAndCard(req) {
     console.log("card: ", card.useStoreNum);
     await transData.mergeTransMoney(card).catch((error) => console.log(error));
   }
-  await autoCancelCard();
+  await autoCancelCard(req);
 }
 
-async function autoCancelCard() {
-  const baseMonth = new Date().toISOString().slice(0, 7);
-  const baseDate = new Date().toISOString().slice(0, 10);
+async function autoCancelCard(req) {
+  const fromAt =
+    req.body.fromAt || new Date().toISOString().slice(0, 7) + "-01";
+  const toAt = req.body.toAt || new Date().toISOString().slice(0, 10);
   const transLogs = await transData.getTransMoney({
     body: {
-      fromAt: `${baseMonth}-01`,
-      toAt: baseDate,
+      fromAt,
+      toAt,
     },
   });
 

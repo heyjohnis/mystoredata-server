@@ -10,4 +10,6 @@ router.put("/keyword-rule/:code", isAuth, controller.updateKeywordCategoryRule);
 
 router.get("/keyword", isAuth, controller.keywordCategory);
 
+router.get("/non-category/:userId", isAuth, controller.getNonCategory);
+
 export default router;

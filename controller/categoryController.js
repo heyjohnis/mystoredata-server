@@ -29,3 +29,13 @@ export async function keywordCategory(req, res) {
     res.status(500).json({ error });
   }
 }
+
+export async function getNonCategory(req, res) {
+  try {
+    const data = await categoryDate.getNonCategory(req);
+    res.status(200).json(data);
+  } catch (error) {
+    console.log({ error });
+    res.status(500).json({ error });
+  }
+}
