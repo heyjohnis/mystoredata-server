@@ -107,8 +107,8 @@ async function autosetCategoryAndUseKind(asset) {
       } ${asset.transRemark} ${asset.useStoreName}`
     );
   } else {
-    const code = await getAutosetCategoryCode(asset);
-    if (!code) return;
+    let code = await getAutosetCategoryCode(asset);
+    if (!code) code = "900"; // 미분류 카테고리
     await updateKeywordCategoryRule({
       asset,
       category: code,
