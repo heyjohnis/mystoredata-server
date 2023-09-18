@@ -258,26 +258,27 @@ function convertTransAsset(asset) {
 export async function upateCancelLog(req) {
   try {
     const _id = mongoose.Types.ObjectId(req._id);
-    const toDate = new Date(
-      new Date(req.transDate).setMinutes(
-        new Date(req.transDate).getMinutes() + 2
-      )
-    );
-    console.log({
-      transDate: { $lte: toDate },
-      transMoney: req.transMoney,
-    });
     await TransModel.updateOne({ _id }, { $set: { useYn: false } });
     const canceledLogs = await TransModel.findOneAndUpdate(
       {
         userId: req.userId,
-        transDate: { $lte: toDate },
+        transDate: { $lte: req.transDate },
         transMoney: req.transMoney * -1,
       },
       { $set: { useYn: false } },
       { sort: { transDate: -1 } }
     );
     console.log("canceledLogs: ", canceledLogs);
+    if (!canceledLogs) {
+      const canceledLogsInverse = await TransModel.findOneAndUpdate(
+        {
+          userId: req.userId,
+          transDate: { $gte: req.transDate },
+          transMoney: req.transMoney * -1,
+        },
+        { $set: { useYn: false } }
+      );
+    }
     return { success: true };
   } catch (error) {
     console.log({ error });

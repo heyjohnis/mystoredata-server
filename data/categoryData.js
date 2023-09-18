@@ -48,18 +48,42 @@ export async function keywordCategory(req) {
 
 export async function getNonCategory(req) {
   try {
-    const { userId } = req.params;
+    const { userId } = req.query;
     const nonAccountCategories = await TransModel.aggregate([
-      { $match: { category: "900" } },
-      { $group: { _id: "$transRemark", total: { $sum: 1 } } },
+      {
+        $match: {
+          category: "900",
+        },
+      },
+      {
+        $group: {
+          _id: "$transRemark",
+          total: { $sum: 1 },
+          lastDate: { $last: "$transDate" },
+          userId: { $last: "$userId" },
+          corpName: { $last: "$corpName" },
+        },
+      },
     ]);
-    console.log("nonCategories: ", nonAccountCategories);
     const nonCardCategories = await TransModel.aggregate([
-      { $match: { category: "900" } },
-      { $group: { _id: "$useStoreName", total: { $sum: 1 } } },
+      {
+        $match: {
+          category: "900",
+        },
+      },
+      {
+        $group: {
+          _id: "$useStoreName",
+          total: { $sum: 1 },
+          lastDate: { $last: "$transDate" },
+          userId: { $last: "$userId" },
+          corpName: { $last: "$corpName" },
+        },
+      },
     ]);
-    console.log("nonCardCategories: ", nonCardCategories);
-    return { nonAccountCategories, nonCardCategories };
+    return [...nonAccountCategories, ...nonCardCategories].filter(
+      (item) => !!item._id
+    );
   } catch (error) {
     console.log({ error });
     return { error };
