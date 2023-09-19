@@ -89,7 +89,7 @@ export async function getNonCategory(req) {
       },
     ]);
     return [...nonAccountCategories, ...nonCardCategories].filter(
-      (item) => !!item._id
+      (item) => !!item._id.remark
     );
   } catch (error) {
     console.log({ error });
