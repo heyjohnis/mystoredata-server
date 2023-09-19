@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import { createCorp } from "./corpData.js";
 import UserModel from "../model/userModel.js";
-import { DefaultCorpCategory, DefaultUserCategory } from "../cmmCode.js";
+import { DefaultCorpCategory, DefaultPersonalCategory } from "../cmmCode.js";
 import CategoryRuleModel from "../model/categoryRule.js";
 import TransModel from "../model/transModel.js";
 import KeywordRuleModel from "../model/keywordRule.js";
@@ -22,7 +22,11 @@ export async function findByUserId(userId) {
 }
 
 export async function createUser(data) {
-  const user = await new UserModel({ ...data, category: DefaultCategory })
+  const user = await new UserModel({
+    ...data,
+    persnalCategory: DefaultPersonalCategory,
+    corpCategory: DefaultCorpCategory,
+  })
     .save()
     .then((res) => res._id);
   return createCorp({ ...data, user });
@@ -64,12 +68,12 @@ export async function updateUser(req) {
 }
 
 export async function resetCategory(req) {
-  const corpNum = req.body.corpNum;
+  const userId = req.body.userId;
   return await UserModel.updateOne(
-    { corpNum },
+    { userId },
     {
       $set: {
-        userCategory: DefaultUserCategory,
+        personalCategory: DefaultPersonalCategory,
         corpCategory: DefaultCorpCategory,
       },
     }
@@ -82,9 +86,12 @@ export async function getCategory(req) {
 
 export async function getUserCategory(req) {
   const _id = mongoose.Types.ObjectId(req.params.user);
-  const category = await UserModel.findOne({ _id }, "category");
-
-  return category;
+  const pCate = await UserModel.findOne({ _id }, "personalCategory");
+  const cCate = await UserModel.findOne({ _id }, "corpCategory");
+  return {
+    personalCategory: pCate.personalCategory,
+    corpCategory: cCate.corpCategory,
+  };
 }
 
 export async function createCategoryRule(req) {

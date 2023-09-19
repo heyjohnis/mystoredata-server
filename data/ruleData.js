@@ -1,4 +1,4 @@
-import { DefaultCategory } from "../cmmCode.js";
+import { DefaultPersonalCategory, DefaultCorpCategory } from "../cmmCode.js";
 import CategoryRuleModel from "../model/categoryRule.js";
 import KeywordRuleModel from "../model/keywordRule.js";
 
@@ -24,9 +24,12 @@ export async function getKeywordCategoryRule(req) {
 }
 
 export async function createKeywordCategoryRule(req) {
+  const { useKind } = req.query;
+  let DefaultCategory =
+    useKind === "BIZ" ? DefaultCorpCategory : DefaultPersonalCategory;
   try {
     DefaultCategory.forEach(async (category) => {
-      new KeywordRuleModel({ ...category }).save();
+      new KeywordRuleModel({ ...category, useKind }).save();
     });
   } catch (error) {
     console.log({ error });

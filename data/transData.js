@@ -1,7 +1,7 @@
 import CategoryRuleModel from "../model/categoryRule.js";
 import TransModel from "../model/transModel.js";
 import mongoose from "mongoose";
-import { DefaultCategory } from "../cmmCode.js";
+import { DefaultPersonalCategory, DefaultCorpCategory } from "../cmmCode.js";
 import { keywordCategory } from "../data/categoryData.js";
 import { nowDate } from "../utils/date.js";
 import { assetFilter } from "../utils/filter.js";
@@ -93,13 +93,13 @@ async function extractDuplAsset(asset) {
 async function autosetCategoryAndUseKind(asset) {
   // 기 등록된 적요를 통해 카테고리 자동 설정
   const registedRemark = await registedRemarkForCategory(asset);
-
   if (registedRemark) {
+    const { useKind, category, categoryName } = registedRemark;
     await updateKeywordCategoryRule({
       asset,
-      category: registedRemark.category,
-      categoryName: registedRemark.categoryName,
-      useKind: registedRemark.useKind,
+      category,
+      categoryName,
+      useKind,
     });
     console.log(
       `${nowDate()}: set category by remark: ${asset.transAssetNum} ${
@@ -107,8 +107,9 @@ async function autosetCategoryAndUseKind(asset) {
       } ${asset.transRemark} ${asset.useStoreName}`
     );
   } else {
-    let code = await getAutosetCategoryCode(asset);
-    if (!code) code = "900"; // 미분류 카테고리
+    const DefaultCategory =
+      asset.useKind === "BIZ" ? DefaultCorpCategory : DefaultPersonalCategory;
+    const code = (await getAutosetCategoryCode(asset)) || "900";
     await updateKeywordCategoryRule({
       asset,
       category: code,
@@ -124,7 +125,7 @@ async function autosetCategoryAndUseKind(asset) {
 }
 
 async function registedRemarkForCategory(asset) {
-  const query = { user: asset.user, $or: [] };
+  const query = { user: asset.user, useKind: asset.useKind, $or: [] };
   const { useStoreName, transRemark } = asset;
   if (asset.useStoreName) query.$or.push({ useStoreName });
   if (asset.transRemark) query.$or.push({ transRemark });

@@ -29,10 +29,10 @@ export async function updateKeywordCategoryRule(req) {
   }
 }
 
-export async function keywordCategory(req) {
+export async function keywordCategory(asset) {
   try {
     // TODO: redis로 변경
-    const categorys = await KeywordRuleModel.find();
+    const categorys = await KeywordRuleModel.find({ useKind: asset.useKind });
     const categoryObj = {};
     categorys.forEach((cate) => {
       cate.keyword.forEach((key) => {

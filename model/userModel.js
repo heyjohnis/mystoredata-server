@@ -23,7 +23,7 @@ const schema = new Mongoose.Schema(
     accounts: [AccountSchema],
     cards: [CardSchema],
     category: { type: Array, required: false },
-    userCategory: { type: Array, required: false },
+    personalCategory: { type: Array, required: false },
     corpCategory: { type: Array, required: false },
     birth: { type: String, required: false },
   },
