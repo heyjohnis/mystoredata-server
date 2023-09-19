@@ -57,11 +57,15 @@ export async function getNonCategory(req) {
       },
       {
         $group: {
-          _id: "$transRemark",
+          _id: {
+            remark: "$transRemark",
+            useKind: "$useKind",
+          },
           total: { $sum: 1 },
           lastDate: { $last: "$transDate" },
           userId: { $last: "$userId" },
           corpName: { $last: "$corpName" },
+          useKind: { $last: "$useKind" },
         },
       },
     ]);
@@ -73,7 +77,10 @@ export async function getNonCategory(req) {
       },
       {
         $group: {
-          _id: "$useStoreName",
+          _id: {
+            remark: "$useStoreName",
+            useKind: "$useKind",
+          },
           total: { $sum: 1 },
           lastDate: { $last: "$transDate" },
           userId: { $last: "$userId" },
