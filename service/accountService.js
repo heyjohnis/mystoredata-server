@@ -100,7 +100,6 @@ export async function regAcountLog(req) {
     OrderDirection: 1,
   };
 
-  console.log({ reqBaro });
   let cntLog = 100;
   while (cntLog === 100) {
     const response = await client.GetMonthlyBankAccountLogExAsync(reqBaro);

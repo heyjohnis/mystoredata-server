@@ -67,6 +67,20 @@ export async function updateUser(req) {
   );
 }
 
+export async function updateUserHometaxInfo(req) {
+  const { _id, hometaxID, HometaxPWD, hometaxLoginMethod } = req.body;
+  return await UserModel.updateOne(
+    { _id },
+    {
+      $set: {
+        hometaxID,
+        HometaxPWD,
+        hometaxLoginMethod,
+      },
+    }
+  );
+}
+
 export async function resetCategory(req) {
   const userId = req.body.userId;
   return await UserModel.updateOne(

@@ -1,10 +1,11 @@
 import soap from "soap";
 import { config } from "../config.js";
+import * as taxData from "../data/taxLogData.js";
 
-const certKey = config.baro.certKey;
+const certKey = config.baro.testCertKey;
 
 const client = await soap.createClientAsync(
-  "https://ws.baroservice.com/TI.asmx?WSDL"
+  "https://testws.baroservice.com/TI.asmx?WSDL"
 ); // 운영서버
 
 export async function registTaxInvoiceScrapAsync(req) {
@@ -22,42 +23,45 @@ export async function registTaxInvoiceScrapAsync(req) {
 }
 
 export async function getPeriodTaxInvoiceSalesListAsync(req) {
-  const taxType = 1;
-  const dateType = 1;
-  const countPerPage = 10;
-  const currentPage = 1;
-  const { corpNum, userId, fromAt, toAt } = req.body;
-  const response = await client.GetPeriodTaxInvoiceSalesListAsync({
+  const { corpNum, corpName, userId, user, fromAt, toAt } = req.body;
+
+  let currentPage = 1;
+  const reqBaro = {
     CERTKEY: certKey,
     CorpNum: corpNum,
     UserID: userId,
-    TaxType: taxType,
-    DateType: dateType,
+    TaxType: 1,
+    DateType: 1,
     StartDate: fromAt,
     EndDate: toAt,
-    CountPerPage: countPerPage,
+    CountPerPage: 100,
     CurrentPage: currentPage,
-  });
+  };
 
-  const result = response[0].GetPeriodTaxInvoiceSalesListResult;
+  let cntLog = 100;
+  while (cntLog === 100) {
+    const response = await client.GetPeriodTaxInvoiceSalesListAsync(reqBaro);
+    const result = response[0].GetPeriodTaxInvoiceSalesListResult;
+
+    if (result.CurrentPage < 0) {
+      console.log("CurrentPage: ", errorCase(result.CurrentPage));
+      // 호출 실패
+      return result.CurrentPage;
+    } else {
+    }
+  }
 
   if (result.CurrentPage < 0) {
     // 호출 실패
-    console.log(result.CurrentPage);
+    console.log("result.CurrentPage::::", result.CurrentPage);
+    return result.CurrentPage;
   } else {
-    // 호출 성공
-    console.log(result.CurrentPage);
-    console.log(result.CountPerPage);
-    console.log(result.MaxPageNum);
-    console.log(result.MaxIndex);
-
     const simpleTaxInvoices = !result.SimpleTaxInvoiceExList
       ? []
       : result.SimpleTaxInvoiceExList.SimpleTaxInvoiceEx;
 
     for (const simpleTaxInvoice of simpleTaxInvoices) {
-      // 필드정보는 레퍼런스를 참고해주세요.
-      console.log(simpleTaxInvoice);
+      taxData.regTaxLog(simpleTaxInvoice, { corpNum, corpName, userId, user });
     }
   }
 }

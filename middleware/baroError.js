@@ -1,5 +1,7 @@
 export default function errorCase(errCode) {
   switch (errCode) {
+    case 1:
+      return { success: true };
     case -10000:
       return {
         error: {
@@ -324,6 +326,70 @@ export default function errorCase(errCode) {
     case -50225:
       return {
         error: { code: -50225, message: "이미 등록된 계좌번호입니다." },
+      };
+
+    case -50401:
+      return {
+        error: {
+          code: -50401,
+          message: "홈택스 로그인 방법이 잘못 입력되었습니다.",
+        },
+      };
+    case -50402:
+      return {
+        error: {
+          code: -50402,
+          message: "홈택스 아이디가 입력되지 않았습니다.",
+        },
+      };
+    case -50403:
+      return {
+        error: {
+          code: -50403,
+          message: "홈택스 비밀번호가 입력되지 않았습니다.",
+        },
+      };
+    case -50404:
+      return {
+        error: {
+          code: -50404,
+          message:
+            "홈택스 로그인에 실패하였습니다. 아이디, 비밀번호를 확인해 주시기 바랍니다.",
+        },
+      };
+    case -50405:
+      return {
+        error: {
+          code: -50405,
+          message:
+            "바로빌에 등록된 공동인증서가 홈택스에 등록된 공동인증서가 아닙니다.",
+        },
+      };
+    case -50406:
+      return {
+        error: {
+          code: -50406,
+          message: "홈택스 전자세금계산서 전용 부서사용자 아이디가 아닙니다.",
+        },
+      };
+    case -50407:
+      return {
+        error: {
+          code: -50407,
+          message: "홈택스 현금영수증자료조회용 부서사용자 아이디가 아닙니다.",
+        },
+      };
+    case -50408:
+      return {
+        error: { code: -50408, message: "다른 사업자의 홈택스 계정입니다." },
+      };
+    case -50409:
+      return {
+        error: {
+          code: -50409,
+          message:
+            "홈택스 로그인에 실패하였습니다. 잠시 후 다시 시도해 주시기 바랍니다.",
+        },
       };
 
     default:
