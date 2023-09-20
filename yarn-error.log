@@ -1,5 +1,5 @@
 Arguments: 
-  /Users/heujoonkim/.nvm/versions/node/v16.18.0/bin/node /Users/heujoonkim/.nvm/versions/node/v16.18.0/bin/yarn
+  /Users/heujoonkim/.nvm/versions/node/v16.18.0/bin/node /Users/heujoonkim/.nvm/versions/node/v16.18.0/bin/yarn add openai
 
 PATH: 
   /Users/heujoonkim/.pyenv/shims:/Users/heujoonkim/.nvm/versions/node/v16.18.0/bin:/Library/Frameworks/Python.framework/Versions/3.11/bin:/Library/Frameworks/Python.framework/Versions/3.9/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Applications/VMware Fusion.app/Contents/Public:/Library/Apple/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/Library/Frameworks/Python.framework/Versions/3.11/bin:/Library/Frameworks/Python.framework/Versions/3.9/bin:/opt/homebrew/bin:/opt/homebrew/sbin
@@ -25,7 +25,8 @@ npm manifest:
     "type": "module",
     "scripts": {
       "test": "echo \"Error: no test specified\" && exit 1",
-      "start": "nodemon app"
+      "dev": "nodemon app",
+      "start": "node app"
     },
     "author": "Dream Coding Academy",
     "license": "ISC",
