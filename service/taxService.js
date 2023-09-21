@@ -1,6 +1,7 @@
 import soap from "soap";
 import { config } from "../config.js";
 import * as taxData from "../data/taxLogData.js";
+import errorCase from "../middleware/baroError.js";
 
 const certKey = config.baro.testCertKey;
 
@@ -37,31 +38,28 @@ export async function getPeriodTaxInvoiceSalesListAsync(req) {
     CountPerPage: 100,
     CurrentPage: currentPage,
   };
-
   let cntLog = 100;
   while (cntLog === 100) {
     const response = await client.GetPeriodTaxInvoiceSalesListAsync(reqBaro);
     const result = response[0].GetPeriodTaxInvoiceSalesListResult;
-
     if (result.CurrentPage < 0) {
       console.log("CurrentPage: ", errorCase(result.CurrentPage));
       // 호출 실패
       return result.CurrentPage;
     } else {
-    }
-  }
-
-  if (result.CurrentPage < 0) {
-    // 호출 실패
-    console.log("result.CurrentPage::::", result.CurrentPage);
-    return result.CurrentPage;
-  } else {
-    const simpleTaxInvoices = !result.SimpleTaxInvoiceExList
-      ? []
-      : result.SimpleTaxInvoiceExList.SimpleTaxInvoiceEx;
-
-    for (const simpleTaxInvoice of simpleTaxInvoices) {
-      taxData.regTaxLog(simpleTaxInvoice, { corpNum, corpName, userId, user });
+      const logs = !result.SimpleTaxInvoiceExList
+        ? []
+        : result.SimpleTaxInvoiceExList.SimpleTaxInvoiceEx;
+      console.log("simpleTaxInvoices::::", logs);
+      for (const simpleTaxInvoice of logs) {
+        taxData.regTaxLog(simpleTaxInvoice, {
+          corpNum,
+          corpName,
+          userId,
+          user,
+        });
+      }
+      return logs.length + 1;
     }
   }
 }

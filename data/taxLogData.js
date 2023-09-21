@@ -11,11 +11,11 @@ export async function regTaxLog(data, userInfo) {
     if (existingData) {
       return;
     }
-    return await new AccountLogModel({
-      user: data.user,
-      userId: data.userId,
-      corpName: data.corpName,
-      corpNum: data.corpNum,
+    return await new TaxLogModel({
+      user: userInfo.user,
+      userId: userInfo.userId,
+      corpName: userInfo.corpName,
+      corpNum: userInfo.corpNum,
       ntsSendKey: data.NTSSendKey,
       ntsSendDT: strToDate(data.NTSSendDT),
       issueDT: strToDate(data.IssueDT),
