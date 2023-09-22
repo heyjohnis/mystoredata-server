@@ -69,7 +69,7 @@ export async function updateUser(req) {
 
 export async function updateUserHometaxInfo(req) {
   const { _id, hometaxID, HometaxPWD, hometaxLoginMethod } = req.body;
-  return await UserModel.updateOne(
+  return await UserModel.findOneAndUpdate(
     { _id },
     {
       $set: {
@@ -144,4 +144,8 @@ export async function createCategoryRule(req) {
 
   console.log("result", result);
   return result;
+}
+
+export async function getHomeTaxUsers() {
+  return await UserModel.find({ hometaxID: { $ne: null } });
 }

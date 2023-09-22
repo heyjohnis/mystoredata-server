@@ -1,6 +1,5 @@
 import TaxLogModel from "../model/taxLogModel.js";
 import { strToDate } from "../utils/date.js";
-import { assetFilter } from "../utils/filter.js";
 
 export async function regTaxLog(data, userInfo) {
   try {
@@ -11,18 +10,24 @@ export async function regTaxLog(data, userInfo) {
     if (existingData) {
       return;
     }
+
+    const tradeTypeCode = userInfo.corpNum === data.InvoicerCorpNum ? 1 : -1;
+    const tradeType =
+      userInfo.corpNum === data.InvoicerCorpNum ? "매출" : "매입";
     return await new TaxLogModel({
       user: userInfo.user,
       userId: userInfo.userId,
       corpName: userInfo.corpName,
       corpNum: userInfo.corpNum,
       ntsSendKey: data.NTSSendKey,
+      tradeType,
+      tradeTypeCode,
       ntsSendDT: strToDate(data.NTSSendDT),
       issueDT: strToDate(data.IssueDT),
       writeDate: data.WriteDate,
-      modifyCode: data.ModifyCode,
-      taxType: data.TaxType,
-      purposeType: data.PurposeType,
+      modifyCode: parseInt(data.ModifyCode),
+      taxType: parseInt(data.TaxType),
+      purposeType: parseInt(data.PurposeType),
       invoicerCorpNum: data.InvoicerCorpNum,
       invoicerTaxRegID: data.InvoicerTaxRegID,
       invoicerCorpName: data.InvoicerCorpName,
@@ -50,9 +55,9 @@ export async function regTaxLog(data, userInfo) {
       brokerBizClass: data.BrokerBizClass,
       brokerContactName: data.BrokerContactName,
       brokerEmail: data.BrokerEmail,
-      amountTotal: parseInt(data.AmountTotal),
-      taxTotal: parseInt(data.TaxTotal),
-      totalAmount: parseInt(data.TotalAmount),
+      amountTotal: parseInt(data.AmountTotal) * tradeTypeCode,
+      taxTotal: parseInt(data.TaxTotal) * tradeTypeCode,
+      totalAmount: parseInt(data.TotalAmount) * tradeTypeCode,
       cash: data.cash,
       itemName: data.ItemName,
       taxRegID: data.TaxRegID,
@@ -66,7 +71,7 @@ export async function regTaxLog(data, userInfo) {
   }
 }
 
-export async function getAccountLogs(req) {
+export async function getTaxLogs(req) {
   const filter = {};
   if (req.query?.corpNum || req.body?.corpNum)
     filter.corpNum = req.query?.corpNum || req.body?.corpNum;
@@ -83,6 +88,31 @@ export async function getAccountLogs(req) {
       $lte: new Date(toAt),
     };
   }
-  console.log("getAccountLogs filter: ", filter);
-  return await AccountLogModel.find(filter).sort({ transDate: -1 });
+  console.log("getTax filter: ", filter);
+  return await TaxLogModel.find(filter).sort({ issueDT: -1 });
+}
+
+export async function notUseCanceledTaxLog(user) {
+  const canceledTaxlogs = await TaxLogModel.find({
+    user: user.user,
+    modifyCode: { $gte: 1 },
+  });
+  console.log("canceledTaxlogs: ", canceledTaxlogs);
+  for (const log of canceledTaxlogs) {
+    const canceledLog = await TaxLogModel.findOneAndUpdate(
+      {
+        itemName: log.itemName,
+        totalAmount: log.totalAmount * -1,
+        issueDT: { $lte: log.issueDT },
+      },
+      { $set: { useYn: false } },
+      { sort: { issueDT: -1 } }
+    );
+    console.log("canceledLog2: ", canceledLog);
+    await TaxLogModel.findOneAndUpdate(
+      { _id: log._id },
+      { $set: { useYn: false } }
+    );
+    console.log("canceledLog1: ", canceledLog);
+  }
 }

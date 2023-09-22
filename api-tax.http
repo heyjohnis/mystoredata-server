@@ -22,8 +22,8 @@ Authorization: Bearer {{jwt}}
 }
 
 
-### 세금계산서 발행 로그 조회
-POST {{baseUrl}}/tax/log HTTP/1.1
+### 세금계산서 발행 로그 저장
+POST {{baseUrl}}/tax/reg-log HTTP/1.1
 Content-Type: application/json; charset=UTF-8
 Authorization: Bearer {{jwt}}
 
@@ -32,6 +32,6 @@ Authorization: Bearer {{jwt}}
     "corpName": "비더린",
     "userId": "bethelean",
     "user": "64d1d8b4a2cda8881e979356",
-    "fromAt": "20230701",
-    "toAt": "20230830"
+    "fromAt": "20230501",
+    "toAt": "20230930"
 }

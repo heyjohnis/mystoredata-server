@@ -19,12 +19,12 @@ export async function registTaxInvoiceScrapAsync(req) {
     HometaxID: hometaxID,
     HometaxPWD: hometaxPWD,
   });
-
+  console.log("response: ", baroError(response[0].RegistTaxInvoiceScrapResult));
   return response[0].RegistTaxInvoiceScrapResult;
 }
 
-export async function getPeriodTaxInvoiceSalesListAsync(req) {
-  const { corpNum, corpName, userId, user, fromAt, toAt } = req.body;
+export async function getPeriodTaxInvoiceSalesListAsync(userInfo) {
+  const { corpNum, corpName, userId, user, fromAt, toAt } = userInfo;
 
   let currentPage = 1;
   const reqBaro = {
@@ -51,8 +51,53 @@ export async function getPeriodTaxInvoiceSalesListAsync(req) {
         ? []
         : result.SimpleTaxInvoiceExList.SimpleTaxInvoiceEx;
       console.log("simpleTaxInvoices::::", logs);
-      for (const simpleTaxInvoice of logs) {
-        taxData.regTaxLog(simpleTaxInvoice, {
+      cntLog = logs.length;
+      for (const log of logs) {
+        taxData.regTaxLog(log, {
+          corpNum,
+          corpName,
+          userId,
+          user,
+        });
+      }
+      return logs.length + 1;
+    }
+  }
+}
+
+export async function getPeriodTaxInvoicePurchaseListAsync(userInfo) {
+  const { corpNum, corpName, userId, user, fromAt, toAt } = userInfo;
+
+  let currentPage = 1;
+  const reqBaro = {
+    CERTKEY: certKey,
+    CorpNum: corpNum,
+    UserID: userId,
+    TaxType: 1,
+    DateType: 1,
+    StartDate: fromAt,
+    EndDate: toAt,
+    CountPerPage: 100,
+    CurrentPage: currentPage,
+  };
+  let cntLog = 100;
+  while (cntLog === 100) {
+    const response = await client.GetPeriodTaxInvoicePurchaseListAsync(reqBaro);
+    const result = response[0].GetPeriodTaxInvoicePurchaseListResult;
+    if (result.CurrentPage < 0) {
+      console.log("CurrentPage: ", errorCase(result.CurrentPage));
+      // 호출 실패
+      return result.CurrentPage;
+    } else {
+      // 호출 성공
+      const logs = !result.SimpleTaxInvoiceExList
+        ? []
+        : result.SimpleTaxInvoiceExList.SimpleTaxInvoiceEx;
+
+      console.log("simpleTaxInvoices::::", logs);
+      cntLog = logs.length;
+      for (const log of logs) {
+        taxData.regTaxLog(log, {
           corpNum,
           corpName,
           userId,

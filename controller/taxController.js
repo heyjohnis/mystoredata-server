@@ -1,12 +1,14 @@
 import * as taxService from "../service/taxService.js";
 import * as userData from "../data/userData.js";
+import * as taxData from "../data/taxLogData.js";
 import errorCase from "../middleware/baroError.js";
 
 export async function regTaxScrap(req, res) {
   try {
     const resCode = await taxService.registTaxInvoiceScrapAsync(req);
 
-    userData.updateUserHometaxInfo(req);
+    const regHomeTax = await userData.updateUserHometaxInfo(req);
+    console.log("regHomeTax: ", regHomeTax);
 
     res.status(200).json(errorCase(resCode));
   } catch (error) {
@@ -15,9 +17,36 @@ export async function regTaxScrap(req, res) {
   }
 }
 
-export async function getTaxList(req, res) {
+export async function regTaxLog(req, res) {
   try {
-    const data = await taxService.getPeriodTaxInvoiceSalesListAsync(req);
+    const homeTaxUsers = await userData.getHomeTaxUsers();
+    const fromAt =
+      req.body.fromAt ||
+      (new Date().toISOString().slice(0, 7) + "-01").replaceAll("-", "");
+    const toAt =
+      req.body.toAt ||
+      new Date().toISOString().slice(0, 10).replaceAll("-", "");
+    for (const user of homeTaxUsers) {
+      user.fromAt = fromAt;
+      user.toAt = toAt;
+      user.user = user._id;
+      console.log("user: ", user.fromAt, user.toAt);
+      const cntSales = await taxService.getPeriodTaxInvoiceSalesListAsync(user);
+      const cntPurchase = await taxService.getPeriodTaxInvoicePurchaseListAsync(
+        user
+      );
+      await taxData.notUseCanceledTaxLog(user);
+      res.status(200).json(cntSales + cntPurchase);
+    }
+  } catch (error) {
+    console.error(error);
+    res.sendStatus(500);
+  }
+}
+
+export async function getTaxLogs(req, res) {
+  try {
+    const data = await taxData.getTaxLogs(req);
     res.status(200).json(data);
   } catch (error) {
     console.error(error);

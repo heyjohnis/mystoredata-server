@@ -115,6 +115,7 @@ export async function regAcountLog(req) {
         ? []
         : result.BankAccountLogList.BankAccountLogEx;
       console.log("cntLog: ", cntLog, "page", currentPage);
+      cntLog = logs.length;
       for (let i = 0; i < logs.length; i++) {
         const words = `${logs[i].TransRemark}`;
         const keyword = await keywordGen(words);
