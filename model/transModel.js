@@ -41,6 +41,8 @@ const schema = new Mongoose.Schema(
     category: { type: String, required: false },
     categoryName: { type: String, required: false },
     keyword: { type: Array, required: false },
+    finClassCode: { type: String, required: false },
+    finClassName: { type: String, required: false },
     useYn: { type: Boolean, required: true, default: true },
   },
   { timestamps: true }

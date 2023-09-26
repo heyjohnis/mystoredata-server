@@ -1,6 +1,7 @@
 import * as cardLogData from "../data/cardLogData.js";
 import * as accountLogData from "../data/accountLogData.js";
 import * as transData from "../data/transData.js";
+import * as finClassData from "../data/finClassData.js";
 import { findById } from "../data/userData.js";
 
 export async function mergeTrans(req, res) {
@@ -45,12 +46,11 @@ export async function mergeAccountAndCard(req) {
     await transData.mergeTransMoney(card).catch((error) => console.log(error));
   }
   await autoCancelCard(req);
+  await finClassify(req);
 }
 
 async function autoCancelCard(req) {
-  const fromAt =
-    req.body.fromAt || new Date().toISOString().slice(0, 7) + "-01";
-  const toAt = req.body.toAt || new Date().toISOString().slice(0, 10);
+  const { fromAt, toAt } = fromToDateForMerge(req);
   const transLogs = await transData.getTransMoney({
     body: {
       fromAt,
@@ -64,4 +64,24 @@ async function autoCancelCard(req) {
   for (const log of canceledLogs) {
     await transData.upateCancelLog(log);
   }
+}
+
+async function finClassify(req) {
+  const { fromAt, toAt } = fromToDate(req);
+  const transLogs = await transData.getTransMoney({
+    body: {
+      fromAt,
+      toAt,
+    },
+  });
+  for (const log of transLogs) {
+    await finClassData.updateFinClass(log);
+  }
+}
+
+function fromToDateForMerge(req) {
+  const fromAt =
+    req.body.fromAt || new Date().toISOString().slice(0, 7) + "-01";
+  const toAt = req.body.toAt || new Date().toISOString().slice(0, 10);
+  return { fromAt, toAt };
 }
