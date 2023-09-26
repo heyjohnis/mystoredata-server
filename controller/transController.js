@@ -66,12 +66,14 @@ async function autoCancelCard(req) {
   }
 }
 
-async function finClassify(req) {
-  const { fromAt, toAt } = fromToDate(req);
+export async function finClassify(req) {
+  const { userId, fromAt, toAt } = fromToDateForMerge(req);
   const transLogs = await transData.getTransMoney({
     body: {
+      userId,
       fromAt,
       toAt,
+      category: "900",
     },
   });
   for (const log of transLogs) {

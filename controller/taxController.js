@@ -53,3 +53,14 @@ export async function getTaxLogs(req, res) {
     res.sendStatus(500);
   }
 }
+
+export async function isTaxReciptLog(req, res) {
+  const log = req.body;
+  try {
+    const data = await taxData.isTaxRecipt(log);
+    res.status(200).json(data);
+  } catch (error) {
+    console.error(error);
+    res.sendStatus(500);
+  }
+}

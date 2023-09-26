@@ -10,4 +10,6 @@ router.get("/log", isAuth, controller.mergeTransLogs);
 
 router.put("/update/:id", isAuth, controller.updateTrans);
 
+router.post("/fin-class", isAuth, controller.finClassify);
+
 export default router;

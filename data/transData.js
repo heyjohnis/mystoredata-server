@@ -1,7 +1,11 @@
 import CategoryRuleModel from "../model/categoryRule.js";
 import TransModel from "../model/transModel.js";
 import mongoose from "mongoose";
-import { DefaultPersonalCategory, DefaultCorpCategory } from "../cmmCode.js";
+import {
+  DefaultPersonalCategory,
+  DefaultCorpCategory,
+  FinClassCode,
+} from "../cmmCode.js";
 import { keywordCategory } from "../data/categoryData.js";
 import { nowDate } from "../utils/date.js";
 import { assetFilter } from "../utils/filter.js";
@@ -95,11 +99,15 @@ async function autosetCategoryAndUseKind(asset) {
   const registedRemark = await registedRemarkForCategory(asset);
   if (registedRemark) {
     const { useKind, category, categoryName } = registedRemark;
+    // 거래분류 (번것, 쓴것, 빌린것, 갚은것, 나머지)
+    const { finClassCode, finClassName } = getFinClassCodeByCategory(category);
     await updateKeywordCategoryRule({
       asset,
       category,
       categoryName,
       useKind,
+      finClassCode,
+      finClassName,
     });
     console.log(
       `${nowDate()}: set category by remark: ${asset.transAssetNum} ${
@@ -110,11 +118,15 @@ async function autosetCategoryAndUseKind(asset) {
     const DefaultCategory =
       asset.useKind === "BIZ" ? DefaultCorpCategory : DefaultPersonalCategory;
     const code = (await getAutosetCategoryCode(asset)) || "900";
+    // 거래분류 (번것, 쓴것, 빌린것, 갚은것, 나머지)
+    const { finClassCode, finClassName } = getFinClassCodeByCategory(code);
     await updateKeywordCategoryRule({
       asset,
       category: code,
       categoryName: DefaultCategory.find((cate) => cate.code === code).name,
       useKind: asset.useKind,
+      finClassCode,
+      finClassName,
     });
     console.log(
       `${nowDate()}: set category by keyword: ${asset.transAssetNum} ${
@@ -122,6 +134,12 @@ async function autosetCategoryAndUseKind(asset) {
       } ${asset.transRemark} ${asset.useStoreName}`
     );
   }
+}
+
+function getFinClassCodeByCategory(category) {
+  const codes = [...DefaultPersonalCategory, ...DefaultCorpCategory];
+  const finClassCode = codes.find((code) => code.code === category).finClass;
+  return { finClassCode, finClassName: FinClassCode[finClassCode] };
 }
 
 async function registedRemarkForCategory(asset) {
@@ -138,6 +156,8 @@ async function updateKeywordCategoryRule({
   category,
   categoryName,
   useKind,
+  finClassCode,
+  finClassName,
 }) {
   await TransModel.updateOne(
     { _id: asset._id },
@@ -146,6 +166,8 @@ async function updateKeywordCategoryRule({
         category,
         categoryName,
         useKind,
+        finClassCode,
+        finClassName,
       },
     }
   );

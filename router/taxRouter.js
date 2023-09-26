@@ -10,4 +10,6 @@ router.post("/reg-log", isAuth, controller.regTaxLog);
 
 router.post("/logs", isAuth, controller.getTaxLogs);
 
+router.post("/isTax", isAuth, controller.isTaxReciptLog);
+
 export default router;

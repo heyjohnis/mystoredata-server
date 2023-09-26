@@ -116,3 +116,27 @@ export async function notUseCanceledTaxLog(user) {
     console.log("canceledLog1: ", canceledLog);
   }
 }
+
+export async function isTaxRecipt(log) {
+  const existingData = await TaxLogModel.find();
+  const item = existingData.reduce((acc, cur) => {
+    return new Set([
+      ...acc,
+      regexWord(cur.invoicerCorpName),
+      regexWord(cur.invoiceeCEOName),
+      regexWord(cur.invoiceeCorpName),
+      regexWord(cur.invoiceeCEOName),
+    ]);
+  }, new Set());
+  console.log("regexWord(log.transRemark): ", regexWord(log.transRemark));
+  const isIncluded = [...item].includes(regexWord(log.transRemark));
+
+  console.log("existingData items: ", isIncluded);
+  return isIncluded;
+}
+
+function regexWord(word) {
+  if (!word) return "";
+  const regex = /주식회사|\(주\)|\(주|주\)/gi;
+  return word.replace(regex, "").trim();
+}
