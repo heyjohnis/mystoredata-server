@@ -3,7 +3,7 @@ import TransModel from "../model/transModel.js";
 
 export async function getKeywordCategoryRule(req) {
   try {
-    const categoryRule = await KeywordRuleModel.find();
+    const categoryRule = await KeywordRuleModel.find().sort({ order: 1 });
     return categoryRule;
   } catch (error) {
     console.log({ error });
@@ -52,7 +52,7 @@ export async function getNonCategory(req) {
     const nonAccountCategories = await TransModel.aggregate([
       {
         $match: {
-          category: "900",
+          category: "999",
         },
       },
       {
@@ -72,7 +72,7 @@ export async function getNonCategory(req) {
     const nonCardCategories = await TransModel.aggregate([
       {
         $match: {
-          category: "900",
+          category: "999",
         },
       },
       {

@@ -1,5 +1,5 @@
 import { strToDate, fromAtDate, toAtDate } from "./date.js";
-
+import { DefaultPersonalCategory, DefaultCorpCategory } from "../cmmCode.js";
 export function assetFilter(req) {
   if (!req?.body && !req?.query) return;
   const { corpNum, userId, fromAt, toAt, category } =
@@ -19,4 +19,15 @@ export function assetFilter(req) {
     };
   }
   return filter;
+}
+
+export function regexCorpName(word) {
+  if (!word) return "";
+  const regex = /주식회사|\(주\)|\(주|주\)/gi;
+  return word.replace(regex, "").trim();
+}
+
+export function commmonCodeName(code) {
+  const codes = [...DefaultPersonalCategory, ...DefaultCorpCategory];
+  return codes.find((c) => c.code === code)?.name || "";
 }

@@ -117,7 +117,7 @@ async function autosetCategoryAndUseKind(asset) {
   } else {
     const DefaultCategory =
       asset.useKind === "BIZ" ? DefaultCorpCategory : DefaultPersonalCategory;
-    const code = (await getAutosetCategoryCode(asset)) || "900";
+    const code = (await getAutosetCategoryCode(asset)) || "999";
     // 거래분류 (번것, 쓴것, 빌린것, 갚은것, 나머지)
     const { finClassCode, finClassName } = getFinClassCodeByCategory(code);
     await updateKeywordCategoryRule({

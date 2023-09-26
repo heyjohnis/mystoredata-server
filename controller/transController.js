@@ -73,7 +73,7 @@ export async function finClassify(req) {
       userId,
       fromAt,
       toAt,
-      category: "900",
+      category: "999",
     },
   });
   for (const log of transLogs) {
