@@ -41,10 +41,10 @@ export function nowDate() {
 
 export function fromAtDate(str) {
   const fromAt = strToDate(str);
-  return new Date(fromAt.setHours(fromAt.getHours()));
+  return new Date(fromAt?.setHours(fromAt.getHours()));
 }
 
 export function toAtDate(str) {
   const toAt = strToDate(str);
-  return new Date(toAt.setHours(toAt.getHours() + 24));
+  return new Date(toAt?.setHours(toAt.getHours() + 24));
 }

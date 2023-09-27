@@ -1,5 +1,6 @@
 import TaxLogModel from "../model/taxLogModel.js";
 import { strToDate } from "../utils/date.js";
+import { regexCorpName } from "../utils/filter.js";
 
 export async function regTaxLog(data, userInfo) {
   try {
@@ -122,21 +123,18 @@ export async function isTaxRecipt(log) {
   const item = existingData.reduce((acc, cur) => {
     return new Set([
       ...acc,
-      regexWord(cur.invoicerCorpName),
-      regexWord(cur.invoiceeCEOName),
-      regexWord(cur.invoiceeCorpName),
-      regexWord(cur.invoiceeCEOName),
+      regexCorpName(cur.invoicerCorpName),
+      regexCorpName(cur.invoiceeCEOName),
+      regexCorpName(cur.invoiceeCorpName),
+      regexCorpName(cur.invoiceeCEOName),
     ]);
   }, new Set());
-  console.log("regexWord(log.transRemark): ", regexWord(log.transRemark));
-  const isIncluded = [...item].includes(regexWord(log.transRemark));
+  console.log(
+    "regexCorpName(log.transRemark): ",
+    regexCorpName(log.transRemark)
+  );
+  const isIncluded = [...item].includes(regexCorpName(log.transRemark));
 
   console.log("existingData items: ", isIncluded);
   return isIncluded;
-}
-
-function regexWord(word) {
-  if (!word) return "";
-  const regex = /주식회사|\(주\)|\(주|주\)/gi;
-  return word.replace(regex, "").trim();
 }

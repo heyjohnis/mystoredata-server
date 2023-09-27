@@ -60,7 +60,7 @@ Content-Type: application/json; charset=UTF-8
 Authorization: Bearer {{jwt}}
 
 {
-    "corpNum": "6348702350" 
+    "userId": "stepjudy" 
 }
 
 ### 카드목록

@@ -9,6 +9,7 @@ export const RuleSchema = new Mongoose.Schema(
     useKind: { type: String, required: false },
     keyword: { type: [String], required: false },
     order: { type: Number, required: false },
+    finClass: { type: String, required: false },
   },
   { timestamps: true }
 );
