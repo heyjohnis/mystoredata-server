@@ -50,6 +50,7 @@ export async function getCategory(req, res) {
 export async function getUserCategory(req, res) {
   try {
     const data = await userData.getUserCategory(req);
+    console.log({ data });
     res.status(200).json(data);
   } catch (error) {
     console.log({ error });

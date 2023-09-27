@@ -1,3 +1,4 @@
+import { DefaultCorpCategory, DefaultPersonalCategory } from "../cmmCode.js";
 import KeywordRuleModel from "../model/keywordRule.js";
 import TransModel from "../model/transModel.js";
 
@@ -49,10 +50,14 @@ export async function keywordCategory(asset) {
 export async function getNonCategory(req) {
   try {
     const { userId } = req.query;
+    const defaultCate = [...DefaultCorpCategory, ...DefaultPersonalCategory];
+    const notCate = defaultCate.map((item) => item.code);
+    console.log({ notCate });
+
     const nonAccountCategories = await TransModel.aggregate([
       {
         $match: {
-          category: "900",
+          category: { $not: notCate },
         },
       },
       {
@@ -69,10 +74,11 @@ export async function getNonCategory(req) {
         },
       },
     ]);
+
     const nonCardCategories = await TransModel.aggregate([
       {
         $match: {
-          category: "900",
+          category: { $not: notCate },
         },
       },
       {
