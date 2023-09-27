@@ -37,7 +37,7 @@ export async function keywordCategory(asset) {
     const categoryObj = {};
     categorys.forEach((cate) => {
       cate.keyword.forEach((key) => {
-        categoryObj[key] = cate.code;
+        if (key) categoryObj[key] = cate.code;
       });
     });
     return categoryObj;

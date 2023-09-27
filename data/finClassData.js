@@ -82,7 +82,7 @@ async function setCategory(code, log) {
         await createCategory({
           user: log.user,
           code: category,
-          name: log.transRemark || log.useStoreName,
+          name: log.transRemark || log.useStoreName || log.transOffice,
           finClass: code,
         });
       } else {
@@ -97,7 +97,7 @@ async function setCategory(code, log) {
             return acc > parseInt(cur.code) ? acc : parseInt(cur.code);
           }, 0);
           category = maxCode + 1 + "";
-          categoryName = log.transRemark || log.useStoreName;
+          categoryName = log.transRemark || log.useStoreName || log.transOffice;
           await createCategory({
             user: log.user,
             code: category,
