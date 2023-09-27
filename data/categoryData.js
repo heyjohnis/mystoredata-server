@@ -71,6 +71,7 @@ export async function getNonCategory(req) {
           userId: { $last: "$userId" },
           corpName: { $last: "$corpName" },
           useKind: { $last: "$useKind" },
+          finClass: { $last: "$finClassCode" },
         },
       },
     ]);
@@ -91,6 +92,8 @@ export async function getNonCategory(req) {
           lastDate: { $last: "$transDate" },
           userId: { $last: "$userId" },
           corpName: { $last: "$corpName" },
+          useKind: { $last: "$useKind" },
+          finClass: { $last: "$finClassCode" },
         },
       },
     ]);
