@@ -5,6 +5,7 @@ import { DefaultCorpCategory, DefaultPersonalCategory } from "../cmmCode.js";
 import CategoryRuleModel from "../model/categoryRule.js";
 import TransModel from "../model/transModel.js";
 import KeywordRuleModel from "../model/keywordRule.js";
+import { getFinClassByCategory } from "./finClassData.js";
 
 export async function getUserList(req) {
   const userType =
@@ -99,7 +100,7 @@ export async function getCategory(req) {
 }
 
 export async function getUserCategory(req) {
-  const _id = mongoose.Types.ObjectId(req.params.user);
+  const _id = mongoose.Types.ObjectId(req.params.user || req.body.user);
   const userInfo = await UserModel.findOne({ _id });
   console.log(userInfo.userCategory);
   return {
@@ -119,6 +120,7 @@ export async function createCategoryRule(req) {
     useKind,
     userId,
   } = req.body;
+  const { finClassCode, finClassName } = await getFinClassByCategory(req);
   const query = { user };
 
   query.$or = query.$or || [];
@@ -132,15 +134,19 @@ export async function createCategoryRule(req) {
   if (existingData) {
     await CategoryRuleModel.updateOne(
       { _id: existingData._id },
-      { category, categoryName, useKind, userId }
+      { category, categoryName, useKind, userId, finClassCode, finClassName }
     );
   } else {
-    const addRule = await new CategoryRuleModel({ ...req.body }).save();
+    const addRule = await new CategoryRuleModel({
+      ...req.body,
+      finClassCode,
+      finClassName,
+    }).save();
     console.log("addRule", addRule);
   }
 
   const result = await TransModel.updateMany(query, {
-    $set: { category, useKind, categoryName },
+    $set: { category, useKind, categoryName, finClassCode, finClassName },
   });
 
   console.log("result", result);

@@ -1,6 +1,7 @@
 import TransModel from "../model/transModel.js";
 import UserModel from "../model/userModel.js";
 import * as taxLogData from "./taxLogData.js";
+import * as userData from "./userData.js";
 import { FinClassCode, KoreanFamilyName } from "../cmmCode.js";
 import { commmonCodeName, regexCorpName } from "../utils/filter.js";
 
@@ -134,4 +135,19 @@ function isHumanName(word) {
     KoreanFamilyName.includes(word[0])
   );
   return word?.length === 3 && KoreanFamilyName.includes(word[0]);
+}
+
+export async function getFinClassByCategory(req) {
+  const category = req.body.category;
+  const categories = await userData.getUserCategory(req);
+  const allCate = [
+    ...categories.corpCategory,
+    ...categories.personalCategory,
+    ...categories.userCategory,
+  ];
+  const selectedCategory = allCate.find((cate) => cate.code === category);
+  return {
+    finClassCode: selectedCategory.finClass || "",
+    finClassName: FinClassCode[selectedCategory.finClass] || "",
+  };
 }

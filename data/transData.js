@@ -9,7 +9,7 @@ import {
 import { keywordCategory } from "../data/categoryData.js";
 import { nowDate } from "../utils/date.js";
 import { assetFilter } from "../utils/filter.js";
-
+import { getFinClassByCategory } from "./finClassData.js";
 export async function mergeTransMoney(log) {
   const asset = convertTransAsset(log);
   // 중복 거래 확인(카드만 등록, 계좌만 등록, 기 등록된 거래인지?)
@@ -203,11 +203,20 @@ export async function getTransMoney(req) {
 
 export async function updateTransMoney(req) {
   const _id = mongoose.Types.ObjectId(req.params.id);
-  const { useKind, category, categoryName, useYn } = req.body;
-  console.log({ _id, useKind, category, categoryName, useYn });
+  const { user, useKind, category, categoryName, useYn } = req.body;
+  const { finClassCode, finClassName } = await getFinClassByCategory(req);
   return TransModel.updateOne(
     { _id },
-    { $set: { useKind, category, categoryName, useYn } }
+    {
+      $set: {
+        useKind,
+        category,
+        categoryName,
+        useYn,
+        finClassCode,
+        finClassName,
+      },
+    }
   );
 }
 

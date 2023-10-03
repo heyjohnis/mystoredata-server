@@ -14,6 +14,8 @@ export const RuleSchema = new Mongoose.Schema(
     categoryName: { type: String, required: false },
     useKind: { type: String, required: false },
     transMoney: { type: String, required: false },
+    finClassCode: { type: String, required: false },
+    finClassName: { type: String, required: false },
   },
   { timestamps: true }
 );

@@ -1,0 +1,22 @@
+@baseUrl = http://localhost:8089
+@jwt = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NGQxZDhiNGEyY2RhODg4MWU5NzkzNTYiLCJpYXQiOjE2OTYyNTgyNTQsImV4cCI6MTY5NjQzMTA1NH0.-Rc14UhIHKZElkkOE78oN7roDyrZBKWE-WSa_sV0Ujg
+
+### 로그인
+POST {{baseUrl}}/auth/login HTTP/1.1
+Content-Type: application/json; charset=UTF-8
+
+{
+    "userId": "bethelean", 
+    "password": "12345678"
+}
+
+### 거래분류
+POST {{baseUrl}}/fin-status/amount HTTP/1.1
+Content-Type: application/json; charset=UTF-8
+Authorization: Bearer {{jwt}}
+
+{
+    "userId": "bethelean",
+    "fromAt": "20230801",
+    "toAt": "20230930"
+}

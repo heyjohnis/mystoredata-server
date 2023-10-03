@@ -21,6 +21,7 @@ import finItemRouter from "./router/finItemRouter.js";
 import batchTestRouter from "./router/batchTestRouter.js";
 import taxRouter from "./router/taxRouter.js";
 import openAiRouter from "./router/openAiRouter.js";
+import finStatusRouter from "./router/finStatusRouter.js";
 import { syncBaroData } from "./controller/batchController.js";
 
 import { config } from "./config.js";
@@ -52,6 +53,7 @@ app.use("/trans", transRouter);
 app.use("/rule", ruleRouter);
 app.use("/category", categoryRouter);
 app.use("/fin-item", finItemRouter);
+app.use("/fin-status", finStatusRouter);
 app.use("/batch", batchTestRouter);
 app.use("/tax", taxRouter);
 app.use("/openai", openAiRouter);
