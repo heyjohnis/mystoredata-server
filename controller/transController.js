@@ -27,6 +27,10 @@ export async function updateTrans(req, res) {
   res.status(200).json(data);
 }
 
+export async function updateCategory(req, res) {
+  const data = await transData.updateCategory(req);
+}
+
 export async function mergeAccountAndCard(req) {
   const accountLogs = await accountLogData
     .getAccountLogs(req)

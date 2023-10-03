@@ -88,7 +88,8 @@ async function setCategory(code, log) {
         });
       } else {
         const userCate = userCates.find(
-          (c) => c.name === (log.transRemark || log.useStoreName)
+          (c) =>
+            c.name === (log.transRemark || log.useStoreName || log.transOffice)
         );
         if (userCate) {
           category = userCate.code;
@@ -138,7 +139,7 @@ function isHumanName(word) {
 }
 
 export async function getFinClassByCategory(req) {
-  const category = req.body.category;
+  const category = req.body.changeCategory || req.body.category;
   const categories = await userData.getUserCategory(req);
   const allCate = [
     ...categories.corpCategory,

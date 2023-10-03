@@ -102,7 +102,6 @@ export async function getCategory(req) {
 export async function getUserCategory(req) {
   const _id = mongoose.Types.ObjectId(req.params.user || req.body.user);
   const userInfo = await UserModel.findOne({ _id });
-  console.log(userInfo.userCategory);
   return {
     personalCategory: userInfo.personalCategory,
     corpCategory: userInfo.corpCategory,

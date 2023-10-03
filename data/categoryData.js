@@ -57,7 +57,7 @@ export async function getNonCategory(req) {
     const nonAccountCategories = await TransModel.aggregate([
       {
         $match: {
-          category: { $ne: notCate },
+          category: { $nin: notCate },
         },
       },
       {
@@ -65,10 +65,12 @@ export async function getNonCategory(req) {
           _id: {
             remark: "$transRemark",
             useKind: "$useKind",
+            category: "$category",
           },
           total: { $sum: 1 },
           lastDate: { $last: "$transDate" },
           userId: { $last: "$userId" },
+          user: { $last: "$user" },
           corpName: { $last: "$corpName" },
           useKind: { $last: "$useKind" },
           finClass: { $last: "$finClassCode" },
@@ -79,7 +81,7 @@ export async function getNonCategory(req) {
     const nonCardCategories = await TransModel.aggregate([
       {
         $match: {
-          category: { $ne: notCate },
+          category: { $nin: notCate },
         },
       },
       {
@@ -87,10 +89,12 @@ export async function getNonCategory(req) {
           _id: {
             remark: "$useStoreName",
             useKind: "$useKind",
+            category: "$category",
           },
           total: { $sum: 1 },
           lastDate: { $last: "$transDate" },
           userId: { $last: "$userId" },
+          user: { $last: "$user" },
           corpName: { $last: "$corpName" },
           useKind: { $last: "$useKind" },
           finClass: { $last: "$finClassCode" },

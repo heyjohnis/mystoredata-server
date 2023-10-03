@@ -220,6 +220,18 @@ export async function updateTransMoney(req) {
   );
 }
 
+export async function updateCategory(req) {
+  const { userId, category, changeCategory } = req.body;
+  const { finClassCode, finClassName } = await getFinClassByCategory(req);
+  return TransModel.updateMany(
+    {
+      userId,
+      category,
+    },
+    { $set: { category: changeCategory, finClassCode, finClassName } }
+  );
+}
+
 function convertTransAsset(asset) {
   const isCanceled = ["취소", "거절"].includes(asset.cardApprovalType);
   const cardData = {
