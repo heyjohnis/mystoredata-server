@@ -10,7 +10,7 @@ Content-Type: application/json; charset=UTF-8
     "password": "12345678"
 }
 
-### 세금계산서 등록
+### 세금계산서 사용 등록
 POST {{baseUrl}}/tax/reg HTTP/1.1
 Content-Type: application/json; charset=UTF-8
 Authorization: Bearer {{jwt}}
@@ -21,6 +21,15 @@ Authorization: Bearer {{jwt}}
     "hometaxPWD": "hj@28480404"
 }
 
+### 세금계산서 사용 재등록
+POST {{baseUrl}}/tax/re-reg HTTP/1.1
+Content-Type: application/json; charset=UTF-8
+Authorization: Bearer {{jwt}}
+
+{
+    "corpNum": "6348702350"
+}
+
 
 ### 세금계산서 발행 로그 저장
 POST {{baseUrl}}/tax/reg-log HTTP/1.1
@@ -28,23 +37,6 @@ Content-Type: application/json; charset=UTF-8
 Authorization: Bearer {{jwt}}
 
 {
-    "corpNum": "6348702350",
-    "corpName": "비더린",
-    "userId": "bethelean",
-    "user": "64d1d8b4a2cda8881e979356",
-    "fromAt": "20230501",
-    "toAt": "20230930"
-}
-
-### 세금계산서 발행 업체명 및 대표 이름 확인 
-POST {{baseUrl}}/tax/isTax HTTP/1.1
-Content-Type: application/json; charset=UTF-8
-Authorization: Bearer {{jwt}}
-
-{
-    "userId": "bethelean",
-    "fromAt": "20230801",
-    "toAt": "20230930"
 }
 
 ### 세금계산서 발행 업체명 및 대표 이름 확인 

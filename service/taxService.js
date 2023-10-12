@@ -23,6 +23,33 @@ export async function registTaxInvoiceScrapAsync(req) {
   return response[0].RegistTaxInvoiceScrapResult;
 }
 
+export async function ReRegistTaxInvoiceScrapAsync(req) {
+  const { corpNum } = req.body;
+  const response = await client.ReRegistTaxInvoiceScrapAsync({
+    CERTKEY: certKey,
+    CorpNum: corpNum,
+  });
+
+  const result = response[0].ReRegistTaxInvoiceScrapResult;
+
+  console.log("response: ", result);
+
+  return result;
+}
+
+export async function CancelStopTaxInvoiceScrapAsync(req) {
+  const { corpNum } = req.body;
+  const response = await client.CancelStopTaxInvoiceScrapAsync({
+    CERTKEY: certKey,
+    CorpNum: corpNum,
+  });
+  const result = response[0].CancelStopTaxInvoiceScrapResult;
+
+  console.log("response: ", result);
+
+  return result;
+}
+
 export async function getPeriodTaxInvoiceSalesListAsync(userInfo) {
   const { corpNum, corpName, userId, user, fromAt, toAt } = userInfo;
 

@@ -2,6 +2,7 @@ import * as taxService from "../service/taxService.js";
 import * as userData from "../data/userData.js";
 import * as taxData from "../data/taxLogData.js";
 import errorCase from "../middleware/baroError.js";
+import { nowDate } from "../utils/date.js";
 
 export async function regTaxScrap(req, res) {
   try {
@@ -10,6 +11,17 @@ export async function regTaxScrap(req, res) {
     const regHomeTax = await userData.updateUserHometaxInfo(req);
     console.log("regHomeTax: ", regHomeTax);
 
+    res.status(200).json(errorCase(resCode));
+  } catch (error) {
+    console.error(error);
+    res.sendStatus(500);
+  }
+}
+
+export async function reRegTaxScrap(req, res) {
+  try {
+    const resCode = await taxService.ReRegistTaxInvoiceScrapAsync(req);
+    console.log("resCode: ", resCode);
     res.status(200).json(errorCase(resCode));
   } catch (error) {
     console.error(error);

@@ -6,6 +6,8 @@ const router = express.Router();
 
 router.post("/reg", isAuth, controller.regTaxScrap);
 
+router.post("/re-reg", isAuth, controller.reRegTaxScrap);
+
 router.post("/reg-log", isAuth, controller.regTaxLog);
 
 router.post("/logs", isAuth, controller.getTaxLogs);
