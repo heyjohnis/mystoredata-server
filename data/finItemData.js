@@ -1,7 +1,9 @@
-import FinItemtModel from "../model/finItemModel.js";
+import FinItemModel from "../model/finItemModel.js";
 import { BankCorpCode, FinItemCode } from "../cmmCode.js";
 import mongoose from "mongoose";
 import UserModel from "../model/userModel.js";
+import FinItemLogModel from "../model/finItemLogModel.js";
+
 export async function regFinItem(req) {
   console.log("regFinItem: ", req?.body || req);
   const {
@@ -50,7 +52,7 @@ export async function regFinItem(req) {
   };
   console.log("regFinItem item: ", item);
   try {
-    return await new FinItemtModel(item).save().then((result) => result);
+    return await new FinItemModel(item).save().then((result) => result);
   } catch (error) {
     console.log({ error });
     return { error };
@@ -63,7 +65,7 @@ export async function listFinItem(req) {
     const query = {};
     if (user) query.user = user;
     if (userId) query.userId = userId;
-    const finItems = await FinItemtModel.find(query).sort({ itemName: 1 });
+    const finItems = await FinItemModel.find(query).sort({ itemName: 1 });
     return finItems;
   } catch (error) {
     console.log({ error });
@@ -89,12 +91,12 @@ export async function updateFinItem(req) {
       transDate,
       useYn,
     } = req.body;
-    const result = await FinItemtModel.updateOne(
+    const result = await FinItemModel.updateOne(
       { _id },
       {
         $set: {
           amount,
-          account,
+          account: mongoose.Types.ObjectId(account),
           accountNum,
           card,
           itemKind,
@@ -120,7 +122,17 @@ export async function updateFinItem(req) {
 export function deleteFinItem(req) {
   const _id = req.params._id;
   try {
-    return FinItemtModel.deleteOne({ _id });
+    return FinItemModel.deleteOne({ _id });
+  } catch (error) {
+    console.log({ error });
+    return { error };
+  }
+}
+
+export function regFinItemLog(req) {
+  const _id = req;
+  try {
+    return new FinItemLogModel(req.body).save();
   } catch (error) {
     console.log({ error });
     return { error };

@@ -40,3 +40,13 @@ export async function deleteFinItem(req, res) {
     res.sendStatus(500);
   }
 }
+
+export async function regFinItemLog(req, res) {
+  try {
+    const data = await finItemData.regFinItemLog(req);
+    res.status(200).json(data);
+  } catch (error) {
+    console.error(error);
+    res.sendStatus(500);
+  }
+}

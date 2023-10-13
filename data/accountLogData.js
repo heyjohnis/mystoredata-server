@@ -15,7 +15,7 @@ export async function regAccountLog(data) {
     if (existingData) {
       return;
     }
-    return await new AccountLogModel({
+    await new AccountLogModel({
       ...data,
       transDate: strToDate(data.transDT),
       transMoney: parseInt(data.deposit) || parseInt(data.withdraw) * -1,

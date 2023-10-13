@@ -2,7 +2,7 @@ import UserModel from "../model/userModel.js";
 import AccountLogModel from "../model/accountLogModel.js";
 import AccountModel from "../model/accountModel.js";
 import { assetFilter } from "../utils/filter.js";
-import FinItemtModel from "../model/finItemModel.js";
+import FinItemModel from "../model/finItemModel.js";
 import * as finItemData from "./finItemData.js";
 import mongoose from "mongoose";
 export async function getAccountList(req) {
@@ -34,7 +34,7 @@ export async function regAccount(_id, newAccount) {
       { $push: { accounts: registedAccount } },
       { returnOriginal: false }
     );
-    const hasFinItem = await FinItemtModel.findOne({
+    const hasFinItem = await FinItemModel.findOne({
       user: userInfo._id,
       account: registedAccount._id,
     });
@@ -87,7 +87,7 @@ export async function updateAccountAmount(req) {
   );
   console.log({ lastTran });
   const balance = parseInt(lastTran.balance || 0);
-  const result = await FinItemtModel.updateOne(
+  const result = await FinItemModel.updateOne(
     { account: lastTran.account },
     { $set: { amount: balance, transDate: lastTran.transDate } }
   );

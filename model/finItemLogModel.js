@@ -2,8 +2,9 @@ import Mongoose from "mongoose";
 import { useVirtualId } from "../database/database.js";
 
 const types = Mongoose.Types;
-export const FinItemSchema = new Mongoose.Schema(
+export const FinItemLogSchema = new Mongoose.Schema(
   {
+    itemId: { type: types.ObjectId, ref: `finitem`, required: true },
     user: { type: types.ObjectId, ref: `user`, required: true },
     userId: { type: String, required: true },
     account: { type: Object, required: false, ref: `account` },
@@ -19,12 +20,12 @@ export const FinItemSchema = new Mongoose.Schema(
     amount: { type: Number, required: true },
     isFixed: { type: Boolean, required: true, default: false },
     useYn: { type: Boolean, required: true, default: true },
-    logDate: { type: Date, required: false },
+    logDate: { type: Date, required: true },
   },
   { timestamps: true }
 );
 
-useVirtualId(FinItemSchema);
-const FinItemModel = Mongoose.model(`finitem`, FinItemSchema);
+useVirtualId(FinItemLogSchema);
+const FinItemLogModel = Mongoose.model(`finitemLog`, FinItemLogSchema);
 
-export default FinItemModel;
+export default FinItemLogModel;

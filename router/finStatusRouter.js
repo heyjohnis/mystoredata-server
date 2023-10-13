@@ -6,4 +6,8 @@ const router = express.Router();
 
 router.post("/amount", isAuth, controller.getFinStatusAmountData);
 
+router.post("/tax", isAuth, controller.getFinStatusTaxData);
+
+router.post("/asset", isAuth, controller.getFinStatusAssetData);
+
 export default router;
