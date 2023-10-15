@@ -14,7 +14,7 @@ export async function updateFinClass(log) {
   return isTax;
 }
 
-// 내 상점 기보정보에 해당되는 거래에 대해 자동분류
+// 내 상점 기본정보에 해당되는 거래에 대해 자동분류
 export async function resultFinCodeByMyStoreBasicInfo(log) {
   const myInfo = await UserModel.findOne({ _id: log.user });
   const corpName = regexCorpName(myInfo.corpName || " ");
@@ -23,7 +23,13 @@ export async function resultFinCodeByMyStoreBasicInfo(log) {
   console.log("myInfo: ", corpName, userName, ceoName);
   let isIncluded = false;
   for (const word of regexCorpName(`${log.transRemark}`).split(" ")) {
-    isIncluded += [corpName, userName, ceoName].includes(word);
+    const corpType = myInfo.corpType || "";
+    // 법인의 경우에는 법인명만 해당됨(대표자명, 상호명은 해당안됨)
+    if (corpType === "C") {
+      isIncluded += [corpName].includes(word);
+    } else {
+      isIncluded += [corpName, userName, ceoName].includes(word);
+    }
   }
   if (!isIncluded) return false;
   const finClassCode = log.transMoney > 0 ? "IN3" : "OUT3";

@@ -12,6 +12,7 @@ const schema = new Mongoose.Schema(
     password: { type: String, required: true },
     corpNum: { type: String, required: false },
     corpName: { type: String },
+    corpType: { type: String, required: true },
     userType: { type: String, required: true },
     ceoName: { type: String, required: false },
     bizType: { type: String, required: false },
