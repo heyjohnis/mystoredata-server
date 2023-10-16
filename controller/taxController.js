@@ -43,10 +43,10 @@ export async function regTaxLog(req, res) {
       user.toAt = toAt;
       user.user = user._id;
       console.log("user: ", user.fromAt, user.toAt);
-      const cntSales = await taxService.getPeriodTaxInvoiceSalesListAsync(user);
-      const cntPurchase = await taxService.getPeriodTaxInvoicePurchaseListAsync(
-        user
-      );
+      const cntSales =
+        (await taxService.getPeriodTaxInvoiceSalesListAsync(user)) || 0;
+      const cntPurchase =
+        (await taxService.getPeriodTaxInvoicePurchaseListAsync(user)) || 0;
       await taxData.notUseCanceledTaxLog(user);
       res.status(200).json(cntSales + cntPurchase);
     }

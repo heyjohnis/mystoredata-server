@@ -15,15 +15,17 @@ export async function updateFinClass(log) {
 }
 
 async function resultFinClassCode(log) {
-  const finClassCode1 = log.transMoney > 0 ? "IN" : "OUT";
-  let finClassCode2 = "";
-  if (isUserCorp(log, myInfo)) finClassCode2 = "3";
+  const inOut = log.transMoney > 0 ? "IN" : "OUT";
+  if (isUserCorp(log)) return inOut + "3";
   if (isKoreanName(log)) {
-    if (isCeoNameOrUserName(log)) finClassCode2 = "3";
+    if (await isCeoNameOrUserName(log)) return inOut + "2";
+    // TODO: 직원
+    if (await hasEmployee(log)) return inOut + "1";
+    if (await isDebt(log)) return inOut + "4";
   }
 }
 
-function isUserCorp(log, myInfo) {
+function isUserCorp(log) {
   for (const word of regexCorpName(`${log.transRemark}`).split(" ")) {
     if (log.corpName.indexOf(word) > -1) return true;
   }
@@ -46,6 +48,10 @@ async function isCeoNameOrUserName(log) {
 }
 
 async function hasEmployee(log) {
+  return false;
+}
+
+async function isDebt(log) {
   return false;
 }
 
@@ -83,25 +89,25 @@ export async function resultFinCodeByMyStoreBasicInfo(log) {
 }
 
 // 세금계산서 발행내역에 해당되는 거래에 대해 자동분류
-export async function resultFinClassCode(log) {
-  let finClassCode = log.transMoney > 0 ? "IN" : "OUT";
-  // 세금계산서 발행내역에 해당되는 거래에 대해 자동분류
-  const isTax = await taxLogData.isTaxRecipt(log);
-  finClassCode += isTax ? "1" : isKoreanName(log.transRemark) ? "2" : "3";
-  const { category, categoryName } = await setCategory(finClassCode, log);
+// export async function resultFinClassCode(log) {
+//   let finClassCode = log.transMoney > 0 ? "IN" : "OUT";
+//   // 세금계산서 발행내역에 해당되는 거래에 대해 자동분류
+//   const isTax = await taxLogData.isTaxRecipt(log);
+//   finClassCode += isTax ? "1" : isKoreanName(log.transRemark) ? "2" : "3";
+//   const { category, categoryName } = await setCategory(finClassCode, log);
 
-  return await TransModel.findOneAndUpdate(
-    { _id: log._id },
-    {
-      $set: {
-        finClassCode,
-        finClassName: FinClassCode[finClassCode],
-        category,
-        categoryName,
-      },
-    }
-  );
-}
+//   return await TransModel.findOneAndUpdate(
+//     { _id: log._id },
+//     {
+//       $set: {
+//         finClassCode,
+//         finClassName: FinClassCode[finClassCode],
+//         category,
+//         categoryName,
+//       },
+//     }
+//   );
+// }
 
 async function setCategory(code, log) {
   let category = "";

@@ -82,11 +82,20 @@ export async function getPeriodTaxInvoiceSalesListAsync(userInfo) {
       cntLog = logs.length;
       for (const log of logs) {
         let tradeCorpInfo = await TradeCorpModel.findOne({
-          tradeCorpNum: log.invoiceeCorpNum,
+          tradeCorpNum: log.InvoiceeCorpNum,
         });
-        //TODO: 거래처 추가 등록
+        console.log("tradeCorpInfo: ", tradeCorpInfo);
         if (!tradeCorpInfo) {
-          // tradeCorpInfo = await TradeCorpModel;
+          tradeCorpInfo = await new TradeCorpModel({
+            user,
+            userId,
+            corpName,
+            corpNum,
+            tradeType: "매출",
+            tradeTypeCode: 1,
+            tradeCorpNum: log.InvoiceeCorpNum,
+            tradeCorpName: log.InvoiceeCorpName,
+          }).save();
         }
         await taxData.regTaxLog(
           log,
@@ -136,12 +145,33 @@ export async function getPeriodTaxInvoicePurchaseListAsync(userInfo) {
       console.log("simpleTaxInvoices::::", logs);
       cntLog = logs.length;
       for (const log of logs) {
-        taxData.regTaxLog(log, {
-          corpNum,
-          corpName,
-          userId,
-          user,
+        let tradeCorpInfo = await TradeCorpModel.findOne({
+          tradeCorpNum: log.InvoicerCorpNum,
         });
+        console.log("tradeCorpInfo: ", tradeCorpInfo);
+
+        if (!tradeCorpInfo) {
+          tradeCorpInfo = await new TradeCorpModel({
+            user,
+            userId,
+            corpName,
+            corpNum,
+            tradeType: "매입",
+            tradeTypeCode: -1,
+            tradeCorpNum: log.InvoicerCorpNum,
+            tradeCorpName: log.InvoicerCorpName,
+          }).save();
+        }
+        await taxData.regTaxLog(
+          log,
+          {
+            corpNum,
+            corpName,
+            userId,
+            user,
+          },
+          tradeCorpInfo._id
+        );
       }
       return logs.length + 1;
     }
