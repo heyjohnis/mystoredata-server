@@ -2,7 +2,7 @@ import TaxLogModel from "../model/taxLogModel.js";
 import { strToDate } from "../utils/date.js";
 import { regexCorpName } from "../utils/filter.js";
 
-export async function regTaxLog(data, userInfo) {
+export async function regTaxLog(data, userInfo, tradeCorp) {
   try {
     const existingData = await TaxLogModel.findOne({
       user: userInfo.user,
@@ -23,6 +23,7 @@ export async function regTaxLog(data, userInfo) {
       ntsSendKey: data.NTSSendKey,
       tradeType,
       tradeTypeCode,
+      tradeCorp,
       ntsSendDT: strToDate(data.NTSSendDT),
       issueDT: strToDate(data.IssueDT),
       writeDate: data.WriteDate,

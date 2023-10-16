@@ -5,6 +5,7 @@ const types = Mongoose.Types;
 export const TaxLogSchema = new Mongoose.Schema(
   {
     user: { type: types.ObjectId, ref: `user`, required: true },
+    tradeCorp: { type: types.ObjectId, ref: `tradecorp`, required: false },
     userId: { type: String, required: true },
     corpName: { type: String, required: true },
     corpNum: { type: String, required: true },

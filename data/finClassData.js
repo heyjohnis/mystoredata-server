@@ -14,6 +14,41 @@ export async function updateFinClass(log) {
   return isTax;
 }
 
+async function resultFinClassCode(log) {
+  const finClassCode1 = log.transMoney > 0 ? "IN" : "OUT";
+  let finClassCode2 = "";
+  if (isUserCorp(log, myInfo)) finClassCode2 = "3";
+  if (isKoreanName(log)) {
+    if (isCeoNameOrUserName(log)) finClassCode2 = "3";
+  }
+}
+
+function isUserCorp(log, myInfo) {
+  for (const word of regexCorpName(`${log.transRemark}`).split(" ")) {
+    if (log.corpName.indexOf(word) > -1) return true;
+  }
+  return false;
+}
+
+async function isCeoNameOrUserName(log) {
+  const myInfo = await UserModel.findOne({ _id: log.user });
+  // 법인의 경우 해당 안됨gghl
+  if (!log?.transRemark) return false;
+  if (myInfo.corpType === "C") return false;
+
+  const userName = myInfo.userName || "     ";
+  const ceoName = myInfo.ceoName || "     ";
+
+  return (
+    log.transRemark.indexOf(userName) > -1 ||
+    log.transRemark.indexOf(ceoName) > -1
+  );
+}
+
+async function hasEmployee(log) {
+  return false;
+}
+
 // 내 상점 기본정보에 해당되는 거래에 대해 자동분류
 export async function resultFinCodeByMyStoreBasicInfo(log) {
   const myInfo = await UserModel.findOne({ _id: log.user });
@@ -52,7 +87,7 @@ export async function resultFinClassCode(log) {
   let finClassCode = log.transMoney > 0 ? "IN" : "OUT";
   // 세금계산서 발행내역에 해당되는 거래에 대해 자동분류
   const isTax = await taxLogData.isTaxRecipt(log);
-  finClassCode += isTax ? "1" : isHumanName(log.transRemark) ? "2" : "3";
+  finClassCode += isTax ? "1" : isKoreanName(log.transRemark) ? "2" : "3";
   const { category, categoryName } = await setCategory(finClassCode, log);
 
   return await TransModel.findOneAndUpdate(
@@ -134,7 +169,7 @@ async function createCategory({ user, code, name, finClass }) {
 }
 
 // 사람 이름인지 확인
-function isHumanName(word) {
+function isKoreanName(word) {
   if (!word) return false;
   console.log(
     "KoreanFamilyName.includes(word[0]): ",

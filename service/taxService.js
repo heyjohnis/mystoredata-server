@@ -2,6 +2,7 @@ import soap from "soap";
 import { config } from "../config.js";
 import * as taxData from "../data/taxLogData.js";
 import errorCase from "../middleware/baroError.js";
+import TradeCorpModel from "../model/tradeCorpModel.js";
 
 const certKey = config.baro.testCertKey;
 
@@ -80,12 +81,23 @@ export async function getPeriodTaxInvoiceSalesListAsync(userInfo) {
       console.log("simpleTaxInvoices::::", logs);
       cntLog = logs.length;
       for (const log of logs) {
-        taxData.regTaxLog(log, {
-          corpNum,
-          corpName,
-          userId,
-          user,
+        let tradeCorpInfo = await TradeCorpModel.findOne({
+          tradeCorpNum: log.invoiceeCorpNum,
         });
+        //TODO: 거래처 추가 등록
+        if (!tradeCorpInfo) {
+          // tradeCorpInfo = await TradeCorpModel;
+        }
+        await taxData.regTaxLog(
+          log,
+          {
+            corpNum,
+            corpName,
+            userId,
+            user,
+          },
+          tradeCorpInfo._id
+        );
       }
       return logs.length + 1;
     }
