@@ -212,6 +212,16 @@ export async function getTradeLogs(req) {
   });
 }
 
+export async function getEmployeeLogs(req) {
+  const { userId, employee } = req.body;
+  console.log("employee: ", employee);
+  if (!employee) return;
+  return TransModel.find({
+    userId,
+    employee: mongoose.Types.ObjectId(employee),
+  });
+}
+
 export async function updateTransMoney(req) {
   const _id = mongoose.Types.ObjectId(req.params.id);
   const { user, useKind, category, categoryName, useYn } = req.body;

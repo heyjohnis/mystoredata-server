@@ -6,4 +6,6 @@ const router = express.Router();
 
 router.post("/reg", isAuth, controller.regEmployeeInfo);
 
+router.post("/list", isAuth, controller.getEmployeeList);
+
 export default router;

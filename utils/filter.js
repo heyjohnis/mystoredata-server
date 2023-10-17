@@ -14,6 +14,7 @@ export function assetFilter(req) {
     category,
     finClassCode,
     tradeCorp,
+    employee,
   } = Object.keys(req.body).length > 0 ? req.body : req.query;
 
   const filter = {};
@@ -37,6 +38,10 @@ export function assetFilter(req) {
       $lte: toAtDate(toAt),
     };
   }
+  if (employee) {
+    filter.employee = employee;
+  }
+
   if (tradeCorp) filter.tradeCorp = tradeCorp;
   return filter;
 }

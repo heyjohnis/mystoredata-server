@@ -10,6 +10,8 @@ router.post("/log", isAuth, controller.mergeTransLogs);
 
 router.post("/trade-log", isAuth, controller.getTradeLogs);
 
+router.post("/emp-log", isAuth, controller.getEmployeeLogs);
+
 router.put("/update/:id", isAuth, controller.updateTrans);
 
 router.put("/update-category", isAuth, controller.updateCategory);

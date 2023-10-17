@@ -25,6 +25,12 @@ export async function getTradeLogs(req, res) {
     .catch((error) => console.log(error));
   res.status(200).json(data);
 }
+export async function getEmployeeLogs(req, res) {
+  const data = await transData
+    .getEmployeeLogs(req)
+    .catch((error) => console.log(error));
+  res.status(200).json(data);
+}
 
 export async function updateTrans(req, res) {
   const data = await transData
