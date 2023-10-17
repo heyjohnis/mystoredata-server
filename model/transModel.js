@@ -43,6 +43,10 @@ const schema = new Mongoose.Schema(
     keyword: { type: Array, required: false },
     finClassCode: { type: String, required: false },
     finClassName: { type: String, required: false },
+    tradeCorp: { type: Object, required: false, ref: "tradeCorp" },
+    tradeCorpNum: { type: String, required: false },
+    tradeCorpName: { type: String, required: false },
+    employee: { type: Object, required: false, ref: "employee" },
     useYn: { type: Boolean, required: true, default: true },
   },
   { timestamps: true }

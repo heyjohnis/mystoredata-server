@@ -71,9 +71,15 @@ export async function getPeriodTaxInvoiceSalesListAsync(userInfo) {
     const response = await client.GetPeriodTaxInvoiceSalesListAsync(reqBaro);
     const result = response[0].GetPeriodTaxInvoiceSalesListResult;
     if (result.CurrentPage < 0) {
-      console.log("CurrentPage: ", errorCase(result.CurrentPage));
+      console.log(
+        "tax-log 조회: ",
+        corpName,
+        corpNum,
+        userId,
+        errorCase(result.CurrentPage)
+      );
       // 호출 실패
-      return result.CurrentPage;
+      return 0;
     } else {
       const logs = !result.SimpleTaxInvoiceExList
         ? []
@@ -133,9 +139,15 @@ export async function getPeriodTaxInvoicePurchaseListAsync(userInfo) {
     const response = await client.GetPeriodTaxInvoicePurchaseListAsync(reqBaro);
     const result = response[0].GetPeriodTaxInvoicePurchaseListResult;
     if (result.CurrentPage < 0) {
-      console.log("CurrentPage: ", errorCase(result.CurrentPage));
+      console.log(
+        "tax-log 조회: ",
+        corpName,
+        corpNum,
+        userId,
+        errorCase(result.CurrentPage)
+      );
       // 호출 실패
-      return result.CurrentPage;
+      return 0;
     } else {
       // 호출 성공
       const logs = !result.SimpleTaxInvoiceExList

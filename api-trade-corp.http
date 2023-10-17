@@ -1,0 +1,16 @@
+@baseUrl = http://localhost:8089
+@jwt = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NGQxZDhiNGEyY2RhODg4MWU5NzkzNTYiLCJpYXQiOjE2OTUxODU2NDUsImV4cCI6MTY5Nzc3NzY0NX0.4nltAIBxj57jX2J2QnjqsWTkEr0MC9BWYCK70-BNHX8
+
+### 로그인
+POST {{baseUrl}}/auth/login HTTP/1.1
+Content-Type: application/json; charset=UTF-8
+
+{
+    "userId": "bethelean", 
+    "password": "12345678"
+}
+
+### 거래처 조회
+POST {{baseUrl}}/trade-corp/list HTTP/1.1
+Content-Type: application/json; charset=UTF-8
+Authorization: Bearer {{jwt}}

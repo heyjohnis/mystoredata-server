@@ -9,7 +9,7 @@ import {
 import { keywordCategory } from "../data/categoryData.js";
 import { nowDate } from "../utils/date.js";
 import { assetFilter } from "../utils/filter.js";
-import { getFinClassByCategory } from "./finClassData.js";
+import { getFinClassByCategory, updateFinClass } from "./finClassData.js";
 export async function mergeTransMoney(log) {
   const asset = convertTransAsset(log);
   // 중복 거래 확인(카드만 등록, 계좌만 등록, 기 등록된 거래인지?)
@@ -42,7 +42,8 @@ export async function mergeTransMoney(log) {
     );
   }
   // 카테고리 자동설정
-  await autosetCategoryAndUseKind(resultAsset);
+  await updateFinClass(resultAsset);
+  // await autosetCategoryAndUseKind(resultAsset);
 }
 
 function isRegistedTrans(asset, duplAsset) {
@@ -201,6 +202,16 @@ export async function getTransMoney(req) {
   return TransModel.find(filter).sort({ transDate: -1 });
 }
 
+export async function getTradeLogs(req) {
+  const { userId, tradeCorp } = req.body;
+  console.log("tradeCorp: ", tradeCorp);
+  if (!tradeCorp) return;
+  return TransModel.find({
+    userId,
+    tradeCorp: mongoose.Types.ObjectId(tradeCorp),
+  });
+}
+
 export async function updateTransMoney(req) {
   const _id = mongoose.Types.ObjectId(req.params.id);
   const { user, useKind, category, categoryName, useYn } = req.body;
@@ -328,4 +339,19 @@ export async function upateCancelLog(req) {
     console.log({ error });
     return { error };
   }
+}
+
+export async function updateTransMoneyForEmployee(req, data) {
+  return await TransModel.updateMany(
+    { userId: req.body.userId, transRemark: req.body.transRemark },
+    {
+      $set: {
+        employee: data._id,
+        category: "630",
+        categoryName: "급여",
+        finClassCode: "OUT1",
+        finClassName: "쓴것(비용+)",
+      },
+    }
+  ).then((result) => result);
 }

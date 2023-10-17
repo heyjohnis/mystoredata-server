@@ -90,6 +90,8 @@ export async function getTaxLogs(req) {
       $lte: new Date(toAt),
     };
   }
+  if (req.query?.tradeCorp || req.body?.tradeCorp)
+    filter.tradeCorp = req.query?.tradeCorp || req.body?.tradeCorp;
   console.log("getTax filter: ", filter);
   return await TaxLogModel.find(filter).sort({ issueDT: -1 });
 }

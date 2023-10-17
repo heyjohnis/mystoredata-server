@@ -2,7 +2,6 @@ import * as cardLogData from "../data/cardLogData.js";
 import * as accountLogData from "../data/accountLogData.js";
 import * as transData from "../data/transData.js";
 import * as finClassData from "../data/finClassData.js";
-import { findById } from "../data/userData.js";
 
 export async function mergeTrans(req, res) {
   try {
@@ -16,6 +15,13 @@ export async function mergeTrans(req, res) {
 export async function mergeTransLogs(req, res) {
   const data = await transData
     .getTransMoney(req)
+    .catch((error) => console.log(error));
+  res.status(200).json(data);
+}
+
+export async function getTradeLogs(req, res) {
+  const data = await transData
+    .getTradeLogs(req)
     .catch((error) => console.log(error));
   res.status(200).json(data);
 }
@@ -45,12 +51,14 @@ export async function mergeAccountAndCard(req) {
   const cardLogs = await cardLogData
     .getCardLogs(req)
     .catch((error) => console.log(error));
+
+  // 통장개래와 카드거래를 합치기
   for (const card of cardLogs) {
     console.log("card: ", card.useStoreNum);
     await transData.mergeTransMoney(card).catch((error) => console.log(error));
   }
+  // 취소거래 삭제처리
   await autoCancelCard(req);
-  await finClassify(req);
 }
 
 async function autoCancelCard(req) {
@@ -77,7 +85,7 @@ export async function finClassify(req) {
       userId,
       fromAt,
       toAt,
-      category: "999",
+      // category: "999",
     },
   });
   for (const log of transLogs) {

@@ -30,6 +30,8 @@ export async function reRegTaxScrap(req, res) {
 }
 
 export async function regTaxLog(req, res) {
+  let cntSales = 0;
+  let cntPurchase = 0;
   try {
     const homeTaxUsers = await userData.getHomeTaxUsers();
     const fromAt =
@@ -43,13 +45,13 @@ export async function regTaxLog(req, res) {
       user.toAt = toAt;
       user.user = user._id;
       console.log("user: ", user.fromAt, user.toAt);
-      const cntSales =
+      cntSales +=
         (await taxService.getPeriodTaxInvoiceSalesListAsync(user)) || 0;
-      const cntPurchase =
+      cntPurchase +=
         (await taxService.getPeriodTaxInvoicePurchaseListAsync(user)) || 0;
       await taxData.notUseCanceledTaxLog(user);
-      res.status(200).json(cntSales + cntPurchase);
     }
+    res.status(200).json(cntSales + cntPurchase);
   } catch (error) {
     console.error(error);
     res.sendStatus(500);

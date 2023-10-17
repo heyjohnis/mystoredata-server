@@ -1,31 +1,58 @@
 import TransModel from "../model/transModel.js";
 import UserModel from "../model/userModel.js";
-import * as taxLogData from "./taxLogData.js";
+import * as empData from "./empData.js";
 import * as userData from "./userData.js";
-import { FinClassCode, KoreanFamilyName } from "../cmmCode.js";
-import { commmonCodeName, regexCorpName } from "../utils/filter.js";
+import * as tradeCorpData from "./tradeCorpData.js";
+import { FinClassCode } from "../cmmCode.js";
+import {
+  commmonCodeName,
+  regexCorpName,
+  isKoreanName,
+} from "../utils/filter.js";
 
 export async function updateFinClass(log) {
+  const finClassCode = await resultFinClassCode(log);
+  console.log("finClassCode: ", finClassCode);
+  await TransModel.findOneAndUpdate(
+    { _id: log._id },
+    { finClassCode: finClassCode, finClassName: FinClassCode[finClassCode] }
+  );
   // 내 상점 기초정보에 해당되는 거래에 대해 자동분류
-  const isMyInfo = await resultFinCodeByMyStoreBasicInfo(log);
-  if (isMyInfo) return isMyInfo;
-  // 세금계산서 발행내역에 해당되는 거래에 대해 자동분류
-  const isTax = await resultFinClassCode(log);
-  return isTax;
+
+  //const isMyInfo = await resultFinCodeByMyStoreBasicInfo(log);
+  // if (isMyInfo) return isMyInfo;
+  // return finClassCode;
 }
 
 async function resultFinClassCode(log) {
   const inOut = log.transMoney > 0 ? "IN" : "OUT";
+  // 사용자 회사명의 경우
   if (isUserCorp(log)) return inOut + "3";
-  if (isKoreanName(log)) {
-    if (await isCeoNameOrUserName(log)) return inOut + "2";
-    // TODO: 직원
+  // 한국사람 이름인 경우
+  if (isKoreanName(log.transRemark)) {
+    // 개인사업자의 경우 대표자나 사용자 이름인 경우
+    if (await isCeoNameOrUserName(log)) return inOut + "3";
+    // 직원명이 경우
     if (await hasEmployee(log)) return inOut + "1";
-    if (await isDebt(log)) return inOut + "4";
+    // 차입금의 경우
+    if (await isBorrow(log)) return inOut + "2";
+    // 대여금의 경우
+    if (await isLoan(log)) return inOut + "3";
+    // 미분류의 경우
+    return inOut + "4";
   }
+  // 금융회사의 경우
+  if (await isFinCorp(log)) return inOut + "2";
+  // 정부기관의 경우
+  if (await isGov(log)) return inOut + "1";
+  // 매출/매입의 경우
+  if (await isTax(log)) return inOut + "1";
+  // 기타의 경우
+  return inOut + "3";
 }
 
 function isUserCorp(log) {
+  console.log("isUserCorp: ", log.corpName, log.transRemark);
   for (const word of regexCorpName(`${log.transRemark}`).split(" ")) {
     if (log.corpName.indexOf(word) > -1) return true;
   }
@@ -33,6 +60,7 @@ function isUserCorp(log) {
 }
 
 async function isCeoNameOrUserName(log) {
+  console.log("isCeoNameOrUserName: ", log.transRemark, log.corpName);
   const myInfo = await UserModel.findOne({ _id: log.user });
   // 법인의 경우 해당 안됨gghl
   if (!log?.transRemark) return false;
@@ -48,11 +76,55 @@ async function isCeoNameOrUserName(log) {
 }
 
 async function hasEmployee(log) {
+  const employeeInfo = await empData.getEmployeeInfo(log);
+  if (!employeeInfo) return false;
+
+  await TransModel.updateOne(
+    {
+      _id: log._id,
+    },
+    {
+      employee: employeeInfo._id,
+      category: "630",
+      categoryName: "급여",
+    }
+  );
+  return true;
+}
+
+async function isBorrow(log) {
   return false;
 }
 
-async function isDebt(log) {
+async function isLoan(log) {
   return false;
+}
+
+async function isFinCorp(log) {
+  return false;
+}
+
+async function isGov(log) {
+  return false;
+}
+
+async function isTax(log) {
+  const tradeCorpInfo = await tradeCorpData.getTradeCorpInfo(log);
+  console.log("tradeCorpInfo: ", tradeCorpInfo, log.transRemark);
+  if (!tradeCorpInfo) return false;
+  await TransModel.updateOne(
+    {
+      _id: log._id,
+    },
+    {
+      $set: {
+        tradeCorp: tradeCorpInfo.tradeCorp,
+        tradeCorpNum: tradeCorpInfo.tradeCorpNum,
+        tradeCorpName: tradeCorpInfo.tradeCorpName,
+      },
+    }
+  );
+  return tradeCorpInfo !== null;
 }
 
 // 내 상점 기본정보에 해당되는 거래에 대해 자동분류
@@ -172,17 +244,6 @@ async function createCategory({ user, code, name, finClass }) {
       },
     }
   );
-}
-
-// 사람 이름인지 확인
-function isKoreanName(word) {
-  if (!word) return false;
-  console.log(
-    "KoreanFamilyName.includes(word[0]): ",
-    word[0],
-    KoreanFamilyName.includes(word[0])
-  );
-  return word?.length === 3 && KoreanFamilyName.includes(word[0]);
 }
 
 export async function getFinClassByCategory(req) {

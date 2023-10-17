@@ -2,7 +2,7 @@ import Mongoose from "mongoose";
 import { useVirtualId } from "../database/database.js";
 
 const types = Mongoose.Types;
-export const EmployeeSchema = new Mongoose.Schema(
+export const EmpSchema = new Mongoose.Schema(
   {
     user: { type: types.ObjectId, ref: `user`, required: true },
     userId: { type: String, required: true },
@@ -15,7 +15,7 @@ export const EmployeeSchema = new Mongoose.Schema(
   { timestamps: true }
 );
 
-useVirtualId(TaxLogSchema);
-const TaxLogModel = Mongoose.model(`employee`, EmployeeSchema);
+useVirtualId(EmpSchema);
+const EmpModel = Mongoose.model(`employee`, EmpSchema);
 
-export default TaxLogModel;
+export default EmpModel;
