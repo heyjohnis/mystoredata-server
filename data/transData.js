@@ -365,3 +365,40 @@ export async function updateTransMoneyForEmployee(req, data) {
     }
   ).then((result) => result);
 }
+
+export async function updateTransMoneyForDebt(req, data) {
+  const { userId, transRemark, finClassName, debtTypeCode } = req.body;
+  const category = debtTypeCode === "LOAN" ? "470" : "480";
+  const categoryName = debtTypeCode === "LOAN" ? "대여금" : "차입금";
+
+  // 입금의 경우
+  const updated = await TransModel.updateMany(
+    { userId, transRemark, transMoney: { $gt: 0 } },
+    {
+      $set: {
+        debt: data._id,
+        category,
+        categoryName,
+        finClassCode: debtTypeCode === "LOAN" ? "IN3" : "IN2",
+        finClassName:
+          debtTypeCode === "LOAN" ? "나머지(자산-)" : "빌린것(부채+)",
+      },
+    }
+  );
+  // 출금의 경우
+  const updated2 = await TransModel.updateMany(
+    { userId, transRemark, transMoney: { $lt: 0 } },
+    {
+      $set: {
+        debt: data._id,
+        category,
+        categoryName,
+        finClassCode: debtTypeCode === "LOAN" ? "OUT3" : "OUT2",
+        finClassName:
+          debtTypeCode === "LOAN" ? "나머지(자산+)" : "갚은것(부채-)",
+      },
+    }
+  );
+
+  return { ...updated, ...updated2 };
+}

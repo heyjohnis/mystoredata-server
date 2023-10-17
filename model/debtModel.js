@@ -11,12 +11,15 @@ export const DebtSchema = new Mongoose.Schema(
     debtTypeName: { type: String, required: true },
     debtTypeCode: { type: String, required: true },
     debtName: { type: String, required: true },
-    transRemark: { type: String, required: false },
+    transRemark: { type: String, required: true },
     useYn: { type: Boolean, default: true },
   },
   { timestamps: true }
 );
-
+DebtSchema.index(
+  { userId: 1, transRemark: 1, debtTypeCode: 1 },
+  { unique: true }
+);
 useVirtualId(DebtSchema);
 const DedtModel = Mongoose.model(`debt`, DebtSchema);
 
