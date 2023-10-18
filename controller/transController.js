@@ -1,7 +1,7 @@
 import * as cardLogData from "../data/cardLogData.js";
 import * as accountLogData from "../data/accountLogData.js";
 import * as transData from "../data/transData.js";
-import * as finClassData from "../data/finClassData.js";
+import * as categoryData from "../data/categoryData.js";
 
 export async function mergeTrans(req, res) {
   try {
@@ -28,6 +28,13 @@ export async function getTradeLogs(req, res) {
 export async function getEmployeeLogs(req, res) {
   const data = await transData
     .getEmployeeLogs(req)
+    .catch((error) => console.log(error));
+  res.status(200).json(data);
+}
+
+export async function getDebtLogs(req, res) {
+  const data = await transData
+    .getDebtLogs(req)
     .catch((error) => console.log(error));
   res.status(200).json(data);
 }
@@ -61,10 +68,15 @@ export async function mergeAccountAndCard(req) {
   // 통장개래와 카드거래를 합치기
   for (const card of cardLogs) {
     console.log("card: ", card.useStoreNum);
+    // 거래분류 업데이트 처리 병행
     await transData.mergeTransMoney(card).catch((error) => console.log(error));
   }
   // 취소거래 삭제처리
   await autoCancelCard(req);
+  // 자동 카테고리 설정처리
+  await autoSetCategory(req);
+  // 미분류 카테고리 설정처리
+  await autoSetNoneCategory(req);
 }
 
 async function autoCancelCard(req) {
@@ -84,24 +96,36 @@ async function autoCancelCard(req) {
   }
 }
 
-export async function finClassify(req) {
+export async function autoSetCategory(req) {
+  const { fromAt, toAt } = fromToDateForMerge(req);
+  req.body.fromAt = fromAt;
+  req.body.toAt = toAt;
+  const transLogs = await transData.getNoneCategoryTransMoney(req);
+  for (const log of transLogs) {
+    await transData.autosetCategoryAndUseKind(log);
+  }
+}
+
+export async function autoSetNoneCategory(req) {
   const { userId, fromAt, toAt } = fromToDateForMerge(req);
   const transLogs = await transData.getTransMoney({
     body: {
       userId,
       fromAt,
       toAt,
-      // category: "999",
+      category: "999",
     },
   });
+  console.log("미분류 category: ", transLogs);
   for (const log of transLogs) {
-    await finClassData.updateFinClass(log);
+    await categoryData.setCategory(log);
   }
 }
 
 function fromToDateForMerge(req) {
+  const userId = req.body.userId;
   const fromAt =
     req.body.fromAt || new Date().toISOString().slice(0, 7) + "-01";
   const toAt = req.body.toAt || new Date().toISOString().slice(0, 10);
-  return { fromAt, toAt };
+  return { fromAt, toAt, userId };
 }

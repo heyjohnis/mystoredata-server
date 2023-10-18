@@ -1,17 +1,17 @@
-import * as debtData from "../data/debtData.js";
+import * as assetData from "../data/assetData.js";
 import * as transData from "../data/transData.js";
 
-export async function regDebtInfo(req, res) {
+export async function regAssetInfo(req, res) {
   try {
-    const hasDebt = await debtData.getDebtInfo(req);
-    if (hasDebt) {
+    const hasAsset = await assetData.getAssetInfo(req);
+    if (hasAsset) {
       res
         .status(300)
         .json({ error: { code: "10", message: "이미 등록되었습니다." } });
       return;
     }
-    const debtInfo = await debtData.regDebtInfo(req);
-    const cntUpdated = await transData.updateTransMoneyForDebt(req, debtInfo);
+    const assetInfo = await assetData.regAssetInfo(req);
+    const cntUpdated = await transData.updateTransMoneyForAsset(req, assetInfo);
     res.status(200).json(cntUpdated);
   } catch (error) {
     console.error(error);
@@ -19,9 +19,9 @@ export async function regDebtInfo(req, res) {
   }
 }
 
-export async function getDebtList(req, res) {
+export async function getAssetList(req, res) {
   try {
-    const debts = await debtData.getDebtList(req);
+    const debts = await assetData.getAssetList(req);
     res.status(200).json(debts);
   } catch (error) {
     console.error(error);

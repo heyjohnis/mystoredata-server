@@ -1,7 +1,7 @@
-import debtModel from "../model/debtModel.js";
+import assetModel from "../model/assetModel.js";
 import { assetFilter } from "../utils/filter.js";
 
-export async function regDebtInfo(req) {
+export async function regAssetInfo(req) {
   const {
     user,
     userId,
@@ -14,7 +14,7 @@ export async function regDebtInfo(req) {
   } = req.body;
 
   try {
-    const debt = new debtModel({
+    const asset = new assetModel({
       user,
       userId,
       corpNum,
@@ -24,19 +24,19 @@ export async function regDebtInfo(req) {
       finName,
       transRemark,
     }).save();
-    return debt;
+    return asset;
   } catch (error) {
     console.log({ error });
     return { error };
   }
 }
 
-export async function getDebtList(req) {
+export async function getAssetList(req) {
   const filter = assetFilter(req);
-  return debtModel.find(filter);
+  return assetModel.find(filter);
 }
 
-export async function getDebtInfo(req) {
+export async function getAssetInfo(req) {
   const { userId, transRemark } = req.body;
-  return await debtModel.findOne({ userId, finName: transRemark });
+  return await assetModel.findOne({ userId, finName: transRemark });
 }

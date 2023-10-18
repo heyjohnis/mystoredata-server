@@ -8,14 +8,15 @@ export const DebtSchema = new Mongoose.Schema(
     userId: { type: String, required: true },
     corpNum: { type: String, required: true },
     corpName: { type: String, required: true },
-    finItemCode: { type: String, required: true },
     finItemName: { type: String, required: true },
+    finItemCode: { type: String, required: true },
     finName: { type: String, required: true },
     transRemark: { type: String, required: true },
     useYn: { type: Boolean, default: true },
   },
   { timestamps: true }
 );
+
 useVirtualId(DebtSchema);
 const DedtModel = Mongoose.model(`debt`, DebtSchema);
 

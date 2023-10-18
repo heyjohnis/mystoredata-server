@@ -1,5 +1,6 @@
 import CategoryRuleModel from "../model/categoryRule.js";
 import TransModel from "../model/transModel.js";
+import DebtModel from "../model/debtModel.js";
 import mongoose from "mongoose";
 import {
   DefaultPersonalCategory,
@@ -10,6 +11,7 @@ import { keywordCategory } from "../data/categoryData.js";
 import { nowDate } from "../utils/date.js";
 import { assetFilter } from "../utils/filter.js";
 import { getFinClassByCategory, updateFinClass } from "./finClassData.js";
+
 export async function mergeTransMoney(log) {
   const asset = convertTransAsset(log);
   // 중복 거래 확인(카드만 등록, 계좌만 등록, 기 등록된 거래인지?)
@@ -41,7 +43,7 @@ export async function mergeTransMoney(log) {
       } ${resultAsset.transRemark} ${resultAsset.useStoreName}`
     );
   }
-  // 카테고리 자동설정
+  // 거래분류 업데이트
   await updateFinClass(resultAsset);
   // await autosetCategoryAndUseKind(resultAsset);
 }
@@ -95,20 +97,16 @@ async function extractDuplAsset(asset) {
   return await TransModel.findOne(query);
 }
 
-async function autosetCategoryAndUseKind(asset) {
+export async function autosetCategoryAndUseKind(asset) {
   // 기 등록된 적요를 통해 카테고리 자동 설정
   const registedRemark = await registedRemarkForCategory(asset);
   if (registedRemark) {
     const { useKind, category, categoryName } = registedRemark;
-    // 거래분류 (번것, 쓴것, 빌린것, 갚은것, 나머지)
-    const { finClassCode, finClassName } = getFinClassCodeByCategory(category);
     await updateKeywordCategoryRule({
       asset,
       category,
       categoryName,
       useKind,
-      finClassCode,
-      finClassName,
     });
     console.log(
       `${nowDate()}: set category by remark: ${asset.transAssetNum} ${
@@ -118,16 +116,14 @@ async function autosetCategoryAndUseKind(asset) {
   } else {
     const DefaultCategory =
       asset.useKind === "BIZ" ? DefaultCorpCategory : DefaultPersonalCategory;
+
+    // 키워드 및 형태소 분석을 통해 카테고리 자동 설정
     const code = (await getAutosetCategoryCode(asset)) || "999";
-    // 거래분류 (번것, 쓴것, 빌린것, 갚은것, 나머지)
-    const { finClassCode, finClassName } = getFinClassCodeByCategory(code);
     await updateKeywordCategoryRule({
       asset,
       category: code,
       categoryName: DefaultCategory.find((cate) => cate.code === code).name,
       useKind: asset.useKind,
-      finClassCode,
-      finClassName,
     });
     console.log(
       `${nowDate()}: set category by keyword: ${asset.transAssetNum} ${
@@ -135,12 +131,6 @@ async function autosetCategoryAndUseKind(asset) {
       } ${asset.transRemark} ${asset.useStoreName}`
     );
   }
-}
-
-function getFinClassCodeByCategory(category) {
-  const codes = [...DefaultPersonalCategory, ...DefaultCorpCategory];
-  const finClassCode = codes.find((code) => code.code === category).finClass;
-  return { finClassCode, finClassName: FinClassCode[finClassCode] };
 }
 
 async function registedRemarkForCategory(asset) {
@@ -157,8 +147,6 @@ async function updateKeywordCategoryRule({
   category,
   categoryName,
   useKind,
-  finClassCode,
-  finClassName,
 }) {
   await TransModel.updateOne(
     { _id: asset._id },
@@ -167,13 +155,12 @@ async function updateKeywordCategoryRule({
         category,
         categoryName,
         useKind,
-        finClassCode,
-        finClassName,
       },
     }
   );
 }
 
+// 키워드 및 형태소 분석을 통해 카테고리 자동 설정
 async function getAutosetCategoryCode(asset) {
   const cateObj = await keywordCategory(asset);
   let code = "";
@@ -219,6 +206,16 @@ export async function getEmployeeLogs(req) {
   return TransModel.find({
     userId,
     employee: mongoose.Types.ObjectId(employee),
+  });
+}
+
+export async function getDebtLogs(req) {
+  const { userId, debt } = req.body;
+  console.log("debt: ", debt);
+  if (!debt) return;
+  return TransModel.find({
+    userId,
+    debt: mongoose.Types.ObjectId(debt),
   });
 }
 
@@ -367,9 +364,9 @@ export async function updateTransMoneyForEmployee(req, data) {
 }
 
 export async function updateTransMoneyForDebt(req, data) {
-  const { userId, transRemark, finClassName, debtTypeCode } = req.body;
-  const category = debtTypeCode === "LOAN" ? "470" : "480";
-  const categoryName = debtTypeCode === "LOAN" ? "대여금" : "차입금";
+  const { userId, transRemark, finClassName, finItemCode } = req.body;
+  const category = finItemCode === "BORR" ? "480" : "";
+  const categoryName = finItemCode === "BORR" ? "차입금" : "";
 
   // 입금의 경우
   const updated = await TransModel.updateMany(
@@ -379,9 +376,8 @@ export async function updateTransMoneyForDebt(req, data) {
         debt: data._id,
         category,
         categoryName,
-        finClassCode: debtTypeCode === "LOAN" ? "IN3" : "IN2",
-        finClassName:
-          debtTypeCode === "LOAN" ? "나머지(자산-)" : "빌린것(부채+)",
+        finClassCode: finItemCode === "BORR" ? "IN2" : "",
+        finClassName: finItemCode === "BORR" ? "빌린것(부채+)" : "",
       },
     }
   );
@@ -393,12 +389,55 @@ export async function updateTransMoneyForDebt(req, data) {
         debt: data._id,
         category,
         categoryName,
-        finClassCode: debtTypeCode === "LOAN" ? "OUT3" : "OUT2",
-        finClassName:
-          debtTypeCode === "LOAN" ? "나머지(자산+)" : "갚은것(부채-)",
+        finClassCode: finItemCode === "BORR" ? "OUT2" : "",
+        finClassName: finItemCode === "BORR" ? "갚은것(부채-)" : "",
       },
     }
   );
 
   return { ...updated, ...updated2 };
+}
+
+export async function updateTransMoneyForAsset(req, data) {
+  const { userId, transRemark, finClassName, debtTypeCode } = req.body;
+  const category = finItemCode === "LOAN" ? "470" : "";
+  const categoryName = finItemCode === "LOAN" ? "대여금" : "";
+
+  // 입금의 경우
+  const updated = await TransModel.updateMany(
+    { userId, transRemark, transMoney: { $gt: 0 } },
+    {
+      $set: {
+        debt: data._id,
+        category,
+        categoryName,
+        finClassCode: finItemCode === "LOAN" ? "IN3" : "",
+        finClassName: finItemCode === "LOAN" ? "나머지(자산-)" : "",
+      },
+    }
+  );
+  // 출금의 경우
+  const updated2 = await TransModel.updateMany(
+    { userId, transRemark, transMoney: { $lt: 0 } },
+    {
+      $set: {
+        debt: data._id,
+        category,
+        categoryName,
+        finClassCode: debtTypeCode === "LOAN" ? "OUT3" : "",
+        finClassName: debtTypeCode === "LOAN" ? "나머지(자산+)" : "",
+      },
+    }
+  );
+
+  return { ...updated, ...updated2 };
+}
+
+export async function getNoneCategoryTransMoney(req) {
+  const { userId, fromAt, toAt } = req.body;
+  return await TransModel.find({
+    userId,
+    transDate: { $gte: fromAt, $lte: toAt },
+    category: null,
+  });
 }

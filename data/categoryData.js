@@ -1,6 +1,7 @@
 import { DefaultCorpCategory, DefaultPersonalCategory } from "../cmmCode.js";
 import KeywordRuleModel from "../model/keywordRule.js";
 import TransModel from "../model/transModel.js";
+import UserModel from "../model/userModel.js";
 
 export async function getKeywordCategoryRule(req) {
   try {
@@ -108,4 +109,55 @@ export async function getNonCategory(req) {
     console.log({ error });
     return { error };
   }
+}
+
+export async function setCategory(log) {
+  let category = "";
+  let categoryName = "";
+
+  const myInfo = await UserModel.findOne({ _id: log.user });
+  const userCates = myInfo.userCategory;
+  // 등록된 카테고리가 하나도 없는 경우
+  if (userCates && userCates?.length === 0) {
+    category = "1000";
+    await createCategory({
+      user: log.user,
+      code: category,
+      name: log.transRemark || log.useStoreName || log.transOffice,
+    });
+  } else {
+    const userCate = userCates.find(
+      (c) => c.name === (log.transRemark || log.useStoreName || log.transOffice)
+    );
+    if (userCate) {
+      category = userCate.code;
+      categoryName = userCate.name;
+    } else {
+      const maxCode = userCates.reduce((acc, cur) => {
+        return acc > parseInt(cur.code) ? acc : parseInt(cur.code);
+      }, 0);
+      category = maxCode + 1 + "";
+      categoryName = log.transRemark || log.useStoreName || log.transOffice;
+      await createCategory({
+        user: log.user,
+        code: category,
+        name: categoryName,
+      });
+    }
+  }
+  return { category, categoryName };
+}
+
+async function createCategory({ user, code, name, finClass }) {
+  await UserModel.updateOne(
+    { _id: user },
+    {
+      $push: {
+        userCategory: {
+          code,
+          name,
+        },
+      },
+    }
+  );
 }
