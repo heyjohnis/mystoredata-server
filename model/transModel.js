@@ -48,6 +48,7 @@ const schema = new Mongoose.Schema(
     tradeCorpName: { type: String, required: false },
     employee: { type: Object, required: false, ref: "employee" },
     debt: { type: Object, required: false, ref: "debt" },
+    asset: { type: Object, required: false, ref: "asset" },
     useYn: { type: Boolean, required: true, default: true },
   },
   { timestamps: true }

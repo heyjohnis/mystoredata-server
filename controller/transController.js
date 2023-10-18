@@ -39,6 +39,13 @@ export async function getDebtLogs(req, res) {
   res.status(200).json(data);
 }
 
+export async function getAssetLogs(req, res) {
+  const data = await transData
+    .getAssetLogs(req)
+    .catch((error) => console.log(error));
+  res.status(200).json(data);
+}
+
 export async function updateTrans(req, res) {
   const data = await transData
     .updateTransMoney(req)
@@ -102,7 +109,7 @@ export async function autoSetCategory(req) {
   req.body.toAt = toAt;
   const transLogs = await transData.getNoneCategoryTransMoney(req);
   for (const log of transLogs) {
-    await transData.autosetCategoryAndUseKind(log);
+    await transData.autoSetCategoryAndUseKind(log);
   }
 }
 

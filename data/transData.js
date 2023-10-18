@@ -45,7 +45,6 @@ export async function mergeTransMoney(log) {
   }
   // 거래분류 업데이트
   await updateFinClass(resultAsset);
-  // await autosetCategoryAndUseKind(resultAsset);
 }
 
 function isRegistedTrans(asset, duplAsset) {
@@ -97,7 +96,7 @@ async function extractDuplAsset(asset) {
   return await TransModel.findOne(query);
 }
 
-export async function autosetCategoryAndUseKind(asset) {
+export async function autoSetCategoryAndUseKind(asset) {
   // 기 등록된 적요를 통해 카테고리 자동 설정
   const registedRemark = await registedRemarkForCategory(asset);
   if (registedRemark) {
@@ -216,6 +215,16 @@ export async function getDebtLogs(req) {
   return TransModel.find({
     userId,
     debt: mongoose.Types.ObjectId(debt),
+  });
+}
+
+export async function getAssetLogs(req) {
+  const { userId, asset } = req.body;
+  console.log("asset: ", asset);
+  if (!asset) return;
+  return TransModel.find({
+    userId,
+    asset: mongoose.Types.ObjectId(asset),
   });
 }
 
@@ -399,7 +408,7 @@ export async function updateTransMoneyForDebt(req, data) {
 }
 
 export async function updateTransMoneyForAsset(req, data) {
-  const { userId, transRemark, finClassName, debtTypeCode } = req.body;
+  const { userId, transRemark, finItemCode } = req.body;
   const category = finItemCode === "LOAN" ? "470" : "";
   const categoryName = finItemCode === "LOAN" ? "대여금" : "";
 
@@ -408,7 +417,7 @@ export async function updateTransMoneyForAsset(req, data) {
     { userId, transRemark, transMoney: { $gt: 0 } },
     {
       $set: {
-        debt: data._id,
+        asset: data._id,
         category,
         categoryName,
         finClassCode: finItemCode === "LOAN" ? "IN3" : "",
@@ -421,11 +430,11 @@ export async function updateTransMoneyForAsset(req, data) {
     { userId, transRemark, transMoney: { $lt: 0 } },
     {
       $set: {
-        debt: data._id,
+        asset: data._id,
         category,
         categoryName,
-        finClassCode: debtTypeCode === "LOAN" ? "OUT3" : "",
-        finClassName: debtTypeCode === "LOAN" ? "나머지(자산+)" : "",
+        finClassCode: finItemCode === "LOAN" ? "OUT3" : "",
+        finClassName: finItemCode === "LOAN" ? "나머지(자산+)" : "",
       },
     }
   );

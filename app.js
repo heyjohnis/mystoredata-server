@@ -25,6 +25,7 @@ import finStatusRouter from "./router/finStatusRouter.js";
 import tradeCorpRouter from "./router/tradeCorpRouter.js";
 import empRouter from "./router/empRouter.js";
 import debtRouter from "./router/debtRouter.js";
+import assetRouter from "./router/assetRouter.js";
 import { syncBaroData } from "./controller/batchController.js";
 
 import { config } from "./config.js";
@@ -63,6 +64,7 @@ app.use("/openai", openAiRouter);
 app.use("/trade-corp", tradeCorpRouter);
 app.use("/emp", empRouter);
 app.use("/debt", debtRouter);
+app.use("/asset", assetRouter);
 
 syncBaroData();
 

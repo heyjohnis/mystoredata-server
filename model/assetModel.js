@@ -18,6 +18,6 @@ export const DebtSchema = new Mongoose.Schema(
 );
 
 useVirtualId(DebtSchema);
-const DedtModel = Mongoose.model(`debt`, DebtSchema);
+const DedtModel = Mongoose.model(`asset`, DebtSchema);
 
 export default DedtModel;
