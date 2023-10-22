@@ -3,6 +3,8 @@ import UserModel from "../model/userModel.js";
 import * as empData from "./empData.js";
 import * as userData from "./userData.js";
 import * as tradeCorpData from "./tradeCorpData.js";
+import * as debtData from "./debtData.js";
+import * as assetData from "./assetData.js";
 import { FinClassCode } from "../cmmCode.js";
 import {
   commmonCodeName,
@@ -89,11 +91,35 @@ async function hasEmployee(log) {
 }
 
 async function isBorrow(log) {
-  return false;
+  const borrowInfo = await debtData.getDebtInfo(log);
+  if (!borrowInfo) return false;
+  await TransModel.updateOne(
+    {
+      _id: log._id,
+    },
+    {
+      debt: borrowInfo._id,
+      category: "480",
+      categoryName: "차입금",
+    }
+  );
+  return true;
 }
 
 async function isLoan(log) {
-  return false;
+  const loanInfo = await assetData.getAssetInfo(log);
+  if (!loanInfo) return false;
+  await TransModel.updateOne(
+    {
+      _id: log._id,
+    },
+    {
+      asset: loanInfo._id,
+      category: "470",
+      categoryName: "대여금",
+    }
+  );
+  return true;
 }
 
 async function isFinCorp(log) {

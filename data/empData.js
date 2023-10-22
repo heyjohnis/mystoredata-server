@@ -22,7 +22,7 @@ export async function regEmployeeInfo(req) {
 
 export async function getEmployeeInfo(log) {
   const { userId, transRemark } = log;
-  return EmpModel.findOne({ userId, empName: transRemark });
+  return EmpModel.findOne({ userId, transRemark: transRemark });
 }
 
 export async function getEmployeeList(req) {

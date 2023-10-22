@@ -36,7 +36,7 @@ export async function getDebtList(req) {
   return debtModel.find(filter);
 }
 
-export async function getDebtInfo(req) {
-  const { userId, transRemark } = req.body;
-  return await debtModel.findOne({ userId, finName: transRemark });
+export async function getDebtInfo(data) {
+  const { userId, transRemark } = data;
+  return await debtModel.findOne({ userId, transRemark });
 }

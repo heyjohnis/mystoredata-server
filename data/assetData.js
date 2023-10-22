@@ -36,7 +36,7 @@ export async function getAssetList(req) {
   return assetModel.find(filter);
 }
 
-export async function getAssetInfo(req) {
-  const { userId, transRemark } = req.body;
-  return await assetModel.findOne({ userId, finName: transRemark });
+export async function getAssetInfo(data) {
+  const { userId, transRemark } = data;
+  return await assetModel.findOne({ userId, transRemark: transRemark });
 }
