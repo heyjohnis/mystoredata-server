@@ -67,6 +67,8 @@ export const DefaultPersonalCategory = [
 ];
 
 export const DefaultCorpCategory = [
+
+  { order: 400, code: "390", name: "이체", finClass: "IN3"},
   { order: 400, code: "400", name: "매출", finClass: "IN1"},
   { order: 410, code: "410", name: "매입", finClass: "OUT1"},
   { order: 420, code: "420", name: "이자수익", finClass: "IN1"},

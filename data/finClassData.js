@@ -23,7 +23,7 @@ export async function updateFinClass(req) {
     const finClassCode = await resultFinClassCode(item);
     console.log("finClassCode: ", finClassCode);
     await TransModel.findOneAndUpdate(
-      { _id: req.body._id },
+      { _id: item._id },
       { finClassCode: finClassCode, finClassName: FinClassCode[finClassCode] }
     );
   }
@@ -66,8 +66,8 @@ async function isUserCorp(log, inOut) {
           _id: log._id,
         },
         {
-          category: inOut === "IN" ? "400" : "410",
-          categoryName: inOut === "IN" ? "매입" : "매출",
+          category: "300",
+          categoryName: "이체",
         }
       );
       return true;

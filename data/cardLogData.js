@@ -26,7 +26,7 @@ export async function regCardLog(data) {
 
 export async function getCardLogs(req) {
   console.log("getCardLogs filter: ", req?.body);
-  const filter = {};
+  const filter = { cardApprovalType: { $ne: "거절" } };
   if (req.query?.corpNum || req.body?.corpNum)
     filter.corpNum = req.query?.corpNum || req.body?.corpNum;
   if (req.query?.userId || req.body?.userId)
