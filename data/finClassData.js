@@ -25,7 +25,7 @@ export async function updateFinClass(log) {
 async function resultFinClassCode(log) {
   const inOut = log.transMoney > 0 ? "IN" : "OUT";
   // 사용자 회사명의 경우
-  if (isUserCorp(log)) return inOut + "3";
+  if (await isUserCorp(log, inOut)) return inOut + "3";
   // 한국사람 이름인 경우
   if (isKoreanName(log.transRemark)) {
     // 개인사업자의 경우 대표자나 사용자 이름인 경우
@@ -49,10 +49,21 @@ async function resultFinClassCode(log) {
   return inOut + "3";
 }
 
-function isUserCorp(log) {
+async function isUserCorp(log, inOut) {
   console.log("isUserCorp: ", log.corpName, log.transRemark);
   for (const word of regexCorpName(`${log.transRemark}`).split(" ")) {
-    if (log.corpName.indexOf(word) > -1) return true;
+    if (log.corpName.indexOf(word) > -1) {
+      await TransModel.updateOne(
+        {
+          _id: log._id,
+        },
+        {
+          category: inOut === "IN" ? "400" : "410",
+          categoryName: inOut === "IN" ? "매입" : "매출",
+        }
+      );
+      return true;
+    }
   }
   return false;
 }

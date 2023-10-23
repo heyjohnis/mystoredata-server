@@ -442,11 +442,22 @@ export async function updateTransMoneyForAsset(req, data) {
   return { ...updated, ...updated2 };
 }
 
-export async function getNoneCategoryTransMoney(req) {
-  const { userId, fromAt, toAt } = req.body;
-  return await TransModel.find({
-    userId,
-    transDate: { $gte: fromAt, $lte: toAt },
-    category: null,
-  });
+export async function getNoneCategoryTransMoney(req, cateCd) {
+  const filter = assetFilter(req);
+  filter.category = cateCd;
+  console.log("getNonCategoryTransMoney: ", filter);
+  return TransModel.find(filter).sort({ transDate: -1 });
+}
+
+export async function updateCategoryNoneCategory(log, categorySet) {
+  const { category, categoryName } = categorySet;
+  await TransModel.updateOne(
+    { _id: log._id },
+    {
+      $set: {
+        category,
+        categoryName,
+      },
+    }
+  );
 }

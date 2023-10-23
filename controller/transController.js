@@ -2,7 +2,7 @@ import * as cardLogData from "../data/cardLogData.js";
 import * as accountLogData from "../data/accountLogData.js";
 import * as transData from "../data/transData.js";
 import * as categoryData from "../data/categoryData.js";
-
+import { fromToDateForMerge } from "../utils/date.js";
 export async function mergeTrans(req, res) {
   try {
     await mergeAccountAndCard(req);
@@ -107,32 +107,28 @@ export async function autoSetCategory(req) {
   const { fromAt, toAt } = fromToDateForMerge(req);
   req.body.fromAt = fromAt;
   req.body.toAt = toAt;
-  const transLogs = await transData.getNoneCategoryTransMoney(req);
+  const transLogs = await transData.getNoneCategoryTransMoney(req, null);
   for (const log of transLogs) {
     await transData.autoSetCategoryAndUseKind(log);
   }
 }
 
 export async function autoSetNoneCategory(req) {
-  const { userId, fromAt, toAt } = fromToDateForMerge(req);
-  const transLogs = await transData.getTransMoney({
-    body: {
-      userId,
-      fromAt,
-      toAt,
-      category: "999",
-    },
-  });
+  const { fromAt, toAt } = fromToDateForMerge(req);
+  req.body.fromAt = fromAt;
+  req.body.toAt = toAt;
+  const transLogs = await transData.getNoneCategoryTransMoney(req, "999");
   console.log("미분류 category: ", transLogs);
   for (const log of transLogs) {
-    await categoryData.setCategory(log);
+    const categorySet = await categoryData.setCategory(log);
+    await transData.updateCategoryNoneCategory(log, categorySet);
   }
 }
 
-function fromToDateForMerge(req) {
-  const userId = req.body.userId;
-  const fromAt =
-    req.body.fromAt || new Date().toISOString().slice(0, 7) + "-01";
-  const toAt = req.body.toAt || new Date().toISOString().slice(0, 10);
-  return { fromAt, toAt, userId };
-}
+// function fromToDateForMerge(req) {
+//   const userId = req.body.userId;
+//   const fromAt =
+//     req.body.fromAt || new Date().toISOString().slice(0, 7) + "-01";
+//   const toAt = req.body.toAt || new Date().toISOString().slice(0, 10);
+//   return { fromAt, toAt, userId };
+// }

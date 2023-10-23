@@ -8,6 +8,10 @@ router.post("/amount", isAuth, controller.getFinStatusAmountData);
 
 router.post("/tax", isAuth, controller.getFinStatusTaxData);
 
+router.post("/account", isAuth, controller.getFinStatusAccountData);
+
 router.post("/asset", isAuth, controller.getFinStatusAssetData);
+
+router.post("/debt", isAuth, controller.getFinStatusDebtData);
 
 export default router;

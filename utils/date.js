@@ -48,3 +48,12 @@ export function toAtDate(str) {
   const toAt = strToDate(str);
   return new Date(toAt?.setHours(toAt.getHours() + 24));
 }
+
+export function fromToDateForMerge(req) {
+  const userId = req.body.userId;
+  const fromAt =
+    req.body.fromAt || new Date().toISOString().slice(0, 7) + "-01";
+  const toAt = req.body.toAt || new Date().toISOString().slice(0, 10);
+  console.log("fromToDateForMerge: ", fromAt, toAt);
+  return { fromAt, toAt, userId };
+}

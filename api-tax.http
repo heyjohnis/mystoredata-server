@@ -1,5 +1,5 @@
 @baseUrl = http://localhost:8089
-@jwt = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NGQxZDhiNGEyY2RhODg4MWU5NzkzNTYiLCJpYXQiOjE2OTUxODU2NDUsImV4cCI6MTY5Nzc3NzY0NX0.4nltAIBxj57jX2J2QnjqsWTkEr0MC9BWYCK70-BNHX8
+@jwt = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NGQxZDhiNGEyY2RhODg4MWU5NzkzNTYiLCJpYXQiOjE2OTgwNDA0NDEsImV4cCI6MTcwMDYzMjQ0MX0.MwAlQLXCIxxMwMDgfcNXdLtGTtgNG9retpaeGS61ork
 
 ### 로그인
 POST {{baseUrl}}/auth/login HTTP/1.1
@@ -37,8 +37,8 @@ Content-Type: application/json; charset=UTF-8
 Authorization: Bearer {{jwt}}
 
 {
-    "fromAt": "20230801",
-    "toAt": "20230930"
+    "fromAt": "20230501",
+    "toAt": "20230831"
 }
 
 ### 세금계산서 발행 업체명 및 대표 이름 확인 
