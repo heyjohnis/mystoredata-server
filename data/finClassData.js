@@ -11,15 +11,22 @@ import {
   regexCorpName,
   isKoreanName,
 } from "../utils/filter.js";
+import debtModel from "../model/debtModel.js";
+import assetModel from "../model/assetModel.js";
+import { assetFilter } from "../utils/filter.js";
 
-export async function updateFinClass(log) {
-  // 거래분류 업데이트
-  const finClassCode = await resultFinClassCode(log);
-  console.log("finClassCode: ", finClassCode);
-  await TransModel.findOneAndUpdate(
-    { _id: log._id },
-    { finClassCode: finClassCode, finClassName: FinClassCode[finClassCode] }
-  );
+export async function updateFinClass(req) {
+  const filter = assetFilter(req);
+  filter.finClassCode = null;
+  const items = await TransModel.find(filter);
+  for (const item of items) {
+    const finClassCode = await resultFinClassCode(item);
+    console.log("finClassCode: ", finClassCode);
+    await TransModel.findOneAndUpdate(
+      { _id: req.body._id },
+      { finClassCode: finClassCode, finClassName: FinClassCode[finClassCode] }
+    );
+  }
 }
 
 async function resultFinClassCode(log) {
@@ -37,7 +44,7 @@ async function resultFinClassCode(log) {
     // 대여금의 경우
     if (await isLoan(log)) return inOut + "3";
     // 미분류의 경우
-    return inOut + "4";
+    return await defaultFinClassCode(log, inOut);
   }
   // 금융회사의 경우
   if (await isFinCorp(log)) return inOut + "2";
@@ -46,7 +53,8 @@ async function resultFinClassCode(log) {
   // 매출/매입의 경우
   if (await isTax(log)) return inOut + "1";
   // 기타의 경우
-  return inOut + "3";
+
+  return inOut + "1";
 }
 
 async function isUserCorp(log, inOut) {
@@ -173,4 +181,65 @@ export async function getFinClassByCategory(req) {
     finClassCode: selectedCategory.finClass || "",
     finClassName: FinClassCode[selectedCategory.finClass] || "",
   };
+}
+
+async function defaultFinClassCode(log, inOut) {
+  // 카드정보가 있으면 비용으로 간주
+  console.log("defaultFinClassCode 카드정보: ", log.card);
+  if (log.card) {
+    return inOut + "1";
+  }
+  if (inOut == "IN") {
+    try {
+      const debtInfo = await new debtModel({
+        user: log.user,
+        userId: log.userId,
+        corpNum: log.corpNum,
+        corpName: log.corpName,
+        finItemCode: "BORR",
+        finItemName: "차입금",
+        finName: log.transRemark,
+        transRemark: log.transRemark,
+      }).save();
+      await TransModel.updateOne(
+        {
+          _id: log._id,
+        },
+        {
+          category: "480",
+          categoryName: "차입금",
+          debt: debtInfo._id,
+        }
+      );
+      return "IN2";
+    } catch (error) {
+      console.log("error: ", error);
+    }
+  } else {
+    try {
+      const assetInfo = await new assetModel({
+        user: log.user,
+        userId: log.userId,
+        corpNum: log.corpNum,
+        corpName: log.corpName,
+        finItemCode: "LOAN",
+        finItemName: "대여금",
+        finName: log.transRemark,
+        transRemark: log.transRemark,
+      }).save();
+      await TransModel.updateOne(
+        {
+          _id: log._id,
+        },
+        {
+          category: "470",
+          categoryName: "대여금",
+          asset: assetInfo._id,
+        }
+      );
+      return "OUT3";
+    } catch (error) {
+      console.log("error: ", error);
+    }
+  }
 }

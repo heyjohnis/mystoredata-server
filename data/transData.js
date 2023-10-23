@@ -43,8 +43,6 @@ export async function mergeTransMoney(log) {
       } ${resultAsset.transRemark} ${resultAsset.useStoreName}`
     );
   }
-  // 거래분류 업데이트
-  await updateFinClass(resultAsset);
 }
 
 function isRegistedTrans(asset, duplAsset) {
