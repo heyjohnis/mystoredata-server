@@ -11,6 +11,8 @@ const schema = new Mongoose.Schema(
     card: { type: Object, required: false, ref: `card` },
     cardCompany: { type: String, required: true },
     cardNum: { type: String, required: true },
+    cardType: { type: String, required: true },
+    payType: { type: String, required: true },
     useKind: { type: String, required: true },
     useDT: { type: String, required: false },
     transDate: { type: Date, required: true },

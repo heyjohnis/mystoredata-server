@@ -268,6 +268,8 @@ function convertTransAsset(asset) {
     card: asset.card,
     cardCompany: asset.cardCompany,
     cardNum: asset.cardNum,
+    cardType: asset.cardType,
+    payType: asset.payType,
     useKind: asset.useKind,
     useDT: asset.useDT,
     transDate: asset.transDate,

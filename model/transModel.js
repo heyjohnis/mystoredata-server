@@ -23,6 +23,8 @@ const schema = new Mongoose.Schema(
     transRefKey: { type: String, required: false },
     mgtRemark1: { type: String, required: false },
     mgtRemark2: { type: String, required: false },
+    cardType: { type: String, required: false },
+    payType: { type: String, required: false },
     cardCompany: { type: String, required: false },
     cardNum: { type: String, required: false },
     cardApprovalType: { type: String, required: false },

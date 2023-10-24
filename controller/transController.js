@@ -80,10 +80,8 @@ export async function mergeAccountAndCard(req) {
     // 거래분류 업데이트 처리 병행
     await transData.mergeTransMoney(card).catch((error) => console.log(error));
   }
-
   // 거래분류 업데이트
   await updateFinClass(req);
-
   // 취소거래 삭제처리
   await autoCancelCard(req);
   // 자동 카테고리 설정처리
