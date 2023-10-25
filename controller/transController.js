@@ -41,6 +41,13 @@ export async function getDebtLogs(req, res) {
   res.status(200).json(data);
 }
 
+export async function getCreditCardLogs(req, res) {
+  const data = await transData
+    .getCreditCardLogs(req)
+    .catch((error) => console.log(error));
+  res.status(200).json(data);
+}
+
 export async function getAssetLogs(req, res) {
   const data = await transData
     .getAssetLogs(req)

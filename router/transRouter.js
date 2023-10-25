@@ -14,6 +14,8 @@ router.post("/debt-log", isAuth, controller.getDebtLogs);
 
 router.post("/asset-log", isAuth, controller.getAssetLogs);
 
+router.post("/credit-log", isAuth, controller.getCreditCardLogs);
+
 router.post("/emp-log", isAuth, controller.getEmployeeLogs);
 
 router.put("/update/:id", isAuth, controller.updateTrans);

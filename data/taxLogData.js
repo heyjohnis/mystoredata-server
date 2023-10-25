@@ -67,7 +67,7 @@ export async function regTaxLog(data, userInfo, tradeCorp) {
       ceoName: data.CEOName,
     })
       .save()
-      .then((res) => res._id);
+      .then((res) => res);
   } catch (error) {
     throw error;
   }

@@ -5,7 +5,7 @@ import * as userData from "./userData.js";
 import * as tradeCorpData from "./tradeCorpData.js";
 import * as debtData from "./debtData.js";
 import * as assetData from "./assetData.js";
-import { FinClassCode } from "../cmmCode.js";
+import { FinClassCode, FinCardCorpKeyword } from "../cmmCode.js";
 import {
   commmonCodeName,
   regexCorpName,
@@ -142,6 +142,22 @@ async function isLoan(log) {
 }
 
 async function isFinCorp(log) {
+  // 1000 원 미만의 값은 제외
+  if (Math.abs(log.transMoney) < 1000) return false;
+  // 카드사의 경우
+  if (FinCardCorpKeyword.includes(log.transRemark)) {
+    await TransModel.updateOne(
+      {
+        _id: log._id,
+      },
+      {
+        payType: "CREDIT",
+        category: "500",
+        categoryName: "카드대금",
+      }
+    );
+    return true;
+  }
   return false;
 }
 

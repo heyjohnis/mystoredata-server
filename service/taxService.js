@@ -1,6 +1,7 @@
 import soap from "soap";
 import { config } from "../config.js";
 import * as taxData from "../data/taxLogData.js";
+import * as transData from "../data/transData.js";
 import errorCase from "../middleware/baroError.js";
 import TradeCorpModel from "../model/tradeCorpModel.js";
 
@@ -92,6 +93,7 @@ export async function getPeriodTaxInvoiceSalesListAsync(userInfo) {
         });
         console.log("tradeCorpInfo: ", tradeCorpInfo);
         if (!tradeCorpInfo) {
+          // 거래처 등록
           tradeCorpInfo = await new TradeCorpModel({
             user,
             userId,
@@ -103,7 +105,8 @@ export async function getPeriodTaxInvoiceSalesListAsync(userInfo) {
             tradeCorpName: log.InvoiceeCorpName,
           }).save();
         }
-        await taxData.regTaxLog(
+        // 로그 데이터 추가
+        const taxLogInfo = await taxData.regTaxLog(
           log,
           {
             corpNum,
@@ -113,6 +116,19 @@ export async function getPeriodTaxInvoiceSalesListAsync(userInfo) {
           },
           tradeCorpInfo._id
         );
+        if (taxLogInfo) {
+          await transData.regTaxLogToTransLog(
+            {
+              corpNum,
+              corpName,
+              userId,
+              user,
+              fromAt,
+              toAt,
+            },
+            taxLogInfo
+          );
+        }
       }
       return logs.length + 1;
     }
@@ -174,7 +190,7 @@ export async function getPeriodTaxInvoicePurchaseListAsync(userInfo) {
             tradeCorpName: log.InvoicerCorpName,
           }).save();
         }
-        await taxData.regTaxLog(
+        const taxLogInfo = await taxData.regTaxLog(
           log,
           {
             corpNum,
@@ -184,6 +200,19 @@ export async function getPeriodTaxInvoicePurchaseListAsync(userInfo) {
           },
           tradeCorpInfo._id
         );
+        if (taxLogInfo) {
+          await transData.regTaxLogToTransLog(
+            {
+              corpNum,
+              corpName,
+              userId,
+              user,
+              fromAt,
+              toAt,
+            },
+            taxLogInfo
+          );
+        }
       }
       return logs.length + 1;
     }

@@ -1,6 +1,7 @@
 import CategoryRuleModel from "../model/categoryRule.js";
 import TransModel from "../model/transModel.js";
 import DebtModel from "../model/debtModel.js";
+
 import mongoose from "mongoose";
 import {
   DefaultPersonalCategory,
@@ -8,7 +9,7 @@ import {
   FinClassCode,
 } from "../cmmCode.js";
 import { keywordCategory } from "../data/categoryData.js";
-import { nowDate } from "../utils/date.js";
+import { nowDate, strToDate } from "../utils/date.js";
 import { assetFilter } from "../utils/filter.js";
 import { getFinClassByCategory, updateFinClass } from "./finClassData.js";
 
@@ -203,6 +204,7 @@ export async function getEmployeeLogs(req) {
   return TransModel.find({
     userId,
     employee: mongoose.Types.ObjectId(employee),
+    useYn: true,
   });
 }
 
@@ -213,6 +215,7 @@ export async function getDebtLogs(req) {
   return TransModel.find({
     userId,
     debt: mongoose.Types.ObjectId(debt),
+    useYn: true,
   });
 }
 
@@ -223,7 +226,25 @@ export async function getAssetLogs(req) {
   return TransModel.find({
     userId,
     asset: mongoose.Types.ObjectId(asset),
+    useYn: true,
   });
+}
+
+export async function getCreditCardLogs(req) {
+  const filter = assetFilter(req);
+  filter.payType = "CREDIT";
+  filter.useYn = true;
+  filter.finClassCode = "OUT1";
+  console.log("getCreditCardLogs: ", filter);
+  return TransModel.find(filter);
+}
+
+export async function getCashedPayableLogs(req) {
+  const filter = assetFilter(req);
+  filter.payType = "CREDIT";
+  filter.finClassCode = "OUT2";
+  filter.useYn = true;
+  return TransModel.find(filter);
 }
 
 export async function updateTransMoney(req) {
@@ -324,6 +345,40 @@ function convertTransAsset(asset) {
   };
 
   return asset.cardNum ? cardData : accountData;
+}
+
+export async function regTaxLogToTransLog(data, taxLog) {
+  const { user, userId, corpNum, corpName } = data;
+  console.log("taxLog: ", taxLog);
+  const taxData = {
+    user,
+    userId,
+    corpNum,
+    corpName,
+    transRemark:
+      taxLog.totalAmount > 0
+        ? taxLog.invoiceeCorpName
+        : taxLog.invoicerCorpName,
+    tax: taxLog._id,
+    transMoney: taxLog.totalAmount,
+    transDate: taxLog.issueDT,
+    finClassCode: taxLog.totalAmount > 0 ? "IN1" : "OUT1",
+    finClassName: taxLog.totalAmount > 0 ? "번것(수익+)" : "쓴것(비용+)",
+    useYn: taxLog.useYn,
+    category: taxLog.totalAmount > 0 ? "550" : "540",
+    categoryName: taxLog.totalAmount > 0 ? "매출채권" : "미지급금",
+    payType: "BILL",
+  };
+
+  try {
+    await new TransModel(taxData).save();
+    taxData.transMoney = taxLog.taxTotal;
+    await new TransModel(taxData).save();
+    return taxLog;
+  } catch (error) {
+    console.log({ error });
+    return { error };
+  }
 }
 
 export async function upateCancelLog(req) {

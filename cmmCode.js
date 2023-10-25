@@ -67,7 +67,6 @@ export const DefaultPersonalCategory = [
 ];
 
 export const DefaultCorpCategory = [
-
   { order: 400, code: "390", name: "이체", finClass: "IN3"},
   { order: 400, code: "400", name: "매출", finClass: "IN1"},
   { order: 410, code: "410", name: "매입", finClass: "OUT1"},
@@ -78,11 +77,11 @@ export const DefaultCorpCategory = [
   { order: 480, code: "470", name: "대여금", finClass: "IN3"},
   { order: 480, code: "480", name: "차입금", finClass: "OUT3"},
   { order: 490, code: "490", name: "회사채", finClass: "IN2"},
-  { order: 500, code: "500", name: "장기차입금", finClass: "IN2"},
+  { order: 160, code: "500", name: "카드대금", finClass: "OUT2"},
   { order: 510, code: "510", name: "보통예금", finClass: "OUT3"},
   { order: 520, code: "520", name: "정기적금", finClass: "OUT3"},
   { order: 530, code: "530", name: "정기예금", finClass: "OUT3"},
-  { order: 540, code: "540", name: "단기투자자산", finClass: "OUT3"},
+  { order: 540, code: "540", name: "미지급금", finClass: "OUT3"},
   { order: 550, code: "550", name: "매출채권", finClass: "OUT3"},
   { order: 560, code: "560", name: "기타당좌자산", finClass: "OUT3"},
   { order: 570, code: "570", name: "투자증권", finClass: "OUT3"},
@@ -228,3 +227,4 @@ export const FinClassCode = {
 
 export const KoreanFamilyName = ["김","이","박","최","정","강","조","윤","장","임","한","오","서","신","권","황","안","송","전","홍","유","고","문","양","손","배","조","백","허","유","남","심","노","정","하","곽","성","차","주","우","구","신","임","전","민","유","류","나","진","지","엄","채","원","천","방","공","강","현","함","변","염","양","변","여","추","노","도","소","신","석","선","설","마","길","주","연","방","위","표","명","기","반","라","왕","금","옥","육","인","맹","제","모","장","남","탁","국","여","진","어"];
 
+export const FinCardCorpKeyword = ["하나카드기업"];
