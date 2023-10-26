@@ -110,6 +110,9 @@ export const DefaultCorpCategory = [
   { order: 800, code: "800", name: "이자비용", finClass: "OUT1"},
   { order: 810, code: "810", name: "외환차손", finClass: "OUT1"},
   { order: 820, code: "820", name: "외환환산손실", finClass: "OUT1"},
+  { order: 830, code: "830", name: "부가가치세", finClass: "OUT2"},
+  { order: 830, code: "840", name: "부가세(내야할)", finClass: "IN2"},
+  { order: 830, code: "850", name: "부가세(미리낸)", finClass: "OUT3"},
   { order: 900, code: "999", name: "미분류", finClass: ""},
 ];
 

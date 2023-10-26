@@ -360,19 +360,25 @@ export async function regTaxLogToTransLog(data, taxLog) {
         ? taxLog.invoiceeCorpName
         : taxLog.invoicerCorpName,
     tax: taxLog._id,
-    transMoney: taxLog.totalAmount,
+    transMoney: taxLog.amountTotal,
     transDate: taxLog.issueDT,
-    finClassCode: taxLog.totalAmount > 0 ? "IN1" : "OUT1",
-    finClassName: taxLog.totalAmount > 0 ? "번것(수익+)" : "쓴것(비용+)",
+    finClassCode: taxLog.amountTotal > 0 ? "IN1" : "OUT1",
+    finClassName: taxLog.amountTotal > 0 ? "번것(수익+)" : "쓴것(비용+)",
     useYn: taxLog.useYn,
-    category: taxLog.totalAmount > 0 ? "550" : "540",
-    categoryName: taxLog.totalAmount > 0 ? "매출채권" : "미지급금",
+    category: taxLog.amountTotal > 0 ? "550" : "540",
+    categoryName: taxLog.amountTotal > 0 ? "매출채권" : "미지급금",
     payType: "BILL",
   };
 
   try {
     await new TransModel(taxData).save();
     taxData.transMoney = taxLog.taxTotal;
+    taxData.finClassCode = taxLog.taxTotal > 0 ? "IN2" : "OUT3";
+    taxData.finClassName =
+      taxLog.taxTotal > 0 ? "빌린것(부채+)" : "나머지(자산+)";
+    taxData.category = taxLog.taxTotal > 0 ? "850" : "840";
+    taxData.categoryName =
+      taxLog.taxTotal > 0 ? "부가세(내야할)" : "차입금(미리낸)";
     await new TransModel(taxData).save();
     return taxLog;
   } catch (error) {

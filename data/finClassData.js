@@ -51,7 +51,9 @@ async function resultFinClassCode(log) {
   // 정부기관의 경우
   if (await isGov(log)) return inOut + "1";
   // 매출/매입의 경우
-  if (await isTax(log)) return inOut + "1";
+  if (await isVAT(log)) return inOut + "1";
+  // 부가세 납부의 경우
+  if (await isTax(log)) return inOut + "2";
   // 기타의 경우
 
   return inOut + "1";
@@ -162,6 +164,26 @@ async function isFinCorp(log) {
 }
 
 async function isGov(log) {
+  return false;
+}
+
+async function isVAT(log) {
+  // 부가가치세
+  const taxKeyword = "부가가치세";
+  const transRemark = log.transRemark;
+  if (transRemark.indexOf(taxKeyword) > -1) {
+    await TransModel.updateOne(
+      {
+        _id: log._id,
+      },
+      {
+        tax: taxInfo._id,
+        category: "830",
+        categoryName: "부가가치세",
+      }
+    );
+    return true;
+  }
   return false;
 }
 
