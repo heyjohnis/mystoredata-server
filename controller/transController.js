@@ -132,14 +132,13 @@ export async function autoSetNoneCategory(req) {
   console.log("미분류 category: ", transLogs);
   for (const log of transLogs) {
     const categorySet = await categoryData.setCategory(log);
-    await transData.updateCategoryNoneCategory(log, categorySet);
+    await transData.updateCategoryTempCategory(log, categorySet);
   }
 }
 
-// function fromToDateForMerge(req) {
-//   const userId = req.body.userId;
-//   const fromAt =
-//     req.body.fromAt || new Date().toISOString().slice(0, 7) + "-01";
-//   const toAt = req.body.toAt || new Date().toISOString().slice(0, 10);
-//   return { fromAt, toAt, userId };
-// }
+export async function getTransCategoryByClass(req, res) {
+  const data = await transData
+    .getTransCategoryByClass(req)
+    .catch((error) => console.log(error));
+  res.status(200).json(data);
+}

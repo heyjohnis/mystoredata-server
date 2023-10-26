@@ -1,5 +1,5 @@
 @baseUrl = http://localhost:8089
-@jwt = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NGQxZDhiNGEyY2RhODg4MWU5NzkzNTYiLCJpYXQiOjE2OTUxODU2NDUsImV4cCI6MTY5Nzc3NzY0NX0.4nltAIBxj57jX2J2QnjqsWTkEr0MC9BWYCK70-BNHX8
+@jwt = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NGQxZDhiNGEyY2RhODg4MWU5NzkzNTYiLCJpYXQiOjE2OTgzMzI2MTUsImV4cCI6MTY5ODUwNTQxNX0.0jQ_6xc30yFU2_IKriHwq6mBH4f6PNhqpzPDuzZkSpY
 
 ### 로그인
 POST {{baseUrl}}/auth/login HTTP/1.1
@@ -19,4 +19,15 @@ Authorization: Bearer {{jwt}}
     "userId": "bethelean",
     "fromAt": "20230801",
     "toAt": "20230930"
+}
+
+### 거래분류별 카테고리 
+POST {{baseUrl}}/trans/class-category HTTP/1.1
+Content-Type: application/json; charset=UTF-8
+Authorization: Bearer {{jwt}}
+
+{
+    "userId": "bethelean",
+    "fromAt": "2023-10-15",
+    "toAt": "2023-10-30"
 }

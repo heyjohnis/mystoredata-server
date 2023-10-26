@@ -15,6 +15,8 @@ export function assetFilter(req) {
     finClassCode,
     tradeCorp,
     employee,
+    useKind,
+    useYn,
   } = Object.keys(req.body).length > 0 ? req.body : req.query;
 
   const filter = {};
@@ -41,8 +43,15 @@ export function assetFilter(req) {
   if (employee) {
     filter.employee = employee;
   }
-
-  if (tradeCorp) filter.tradeCorp = tradeCorp;
+  if (useKind) {
+    filter.useKind = useKind;
+  }
+  if (useYn) {
+    filter.useYn = useYn;
+  }
+  if (tradeCorp) {
+    filter.tradeCorp = tradeCorp;
+  }
   return filter;
 }
 

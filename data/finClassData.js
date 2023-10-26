@@ -32,7 +32,7 @@ export async function updateFinClass(req) {
 async function resultFinClassCode(log) {
   const inOut = log.transMoney > 0 ? "IN" : "OUT";
   // 사용자 회사명의 경우
-  if (await isUserCorp(log, inOut)) return inOut + "3";
+  if (await isUserCorp(log)) return inOut + "3";
   // 한국사람 이름인 경우
   if (isKoreanName(log.transRemark)) {
     // 개인사업자의 경우 대표자나 사용자 이름인 경우
@@ -50,16 +50,16 @@ async function resultFinClassCode(log) {
   if (await isFinCorp(log)) return inOut + "2";
   // 정부기관의 경우
   if (await isGov(log)) return inOut + "1";
-  // 매출/매입의 경우
-  if (await isVAT(log)) return inOut + "1";
   // 부가세 납부의 경우
-  if (await isTax(log)) return inOut + "2";
+  if (await isVAT(log)) return inOut + "2";
+  // 매출/매입의 경우(거래처명이 있는 경우)
+  if (await isTax(log)) return inOut + "3";
   // 기타의 경우
 
   return inOut + "1";
 }
 
-async function isUserCorp(log, inOut) {
+async function isUserCorp(log) {
   console.log("isUserCorp: ", log.corpName, log.transRemark);
   for (const word of regexCorpName(`${log.transRemark}`).split(" ")) {
     if (log.corpName.indexOf(word) > -1) {
@@ -170,14 +170,13 @@ async function isGov(log) {
 async function isVAT(log) {
   // 부가가치세
   const taxKeyword = "부가가치세";
-  const transRemark = log.transRemark;
+  const transRemark = log?.transRemark || "";
   if (transRemark.indexOf(taxKeyword) > -1) {
     await TransModel.updateOne(
       {
         _id: log._id,
       },
       {
-        tax: taxInfo._id,
         category: "830",
         categoryName: "부가가치세",
       }
@@ -200,6 +199,8 @@ async function isTax(log) {
         tradeCorp: tradeCorpInfo.tradeCorp,
         tradeCorpNum: tradeCorpInfo.tradeCorpNum,
         tradeCorpName: tradeCorpInfo.tradeCorpName,
+        category: log.transMoney > 0 ? "550" : "540",
+        categoryName: log.transMoney > 0 ? "매출채권" : "미지급금",
       },
     }
   );

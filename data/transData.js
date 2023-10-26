@@ -13,6 +13,7 @@ import { nowDate, strToDate } from "../utils/date.js";
 import { assetFilter } from "../utils/filter.js";
 import { getFinClassByCategory, updateFinClass } from "./finClassData.js";
 
+/* 거래내역 계좌/카드 합치기 */
 export async function mergeTransMoney(log) {
   const asset = convertTransAsset(log);
   // 중복 거래 확인(카드만 등록, 계좌만 등록, 기 등록된 거래인지?)
@@ -45,7 +46,7 @@ export async function mergeTransMoney(log) {
     );
   }
 }
-
+/* 기 등록된 거래인지 확인 */
 function isRegistedTrans(asset, duplAsset) {
   let isRegisted = false;
   if (
@@ -65,6 +66,7 @@ function isRegistedTrans(asset, duplAsset) {
   return isRegisted;
 }
 
+/* 중복 거래 확인(카드만 등록, 계좌만 등록, 기 등록된 거래인지?) */
 async function extractDuplAsset(asset) {
   const query = {};
   query.corpNum = asset.corpNum;
@@ -95,6 +97,7 @@ async function extractDuplAsset(asset) {
   return await TransModel.findOne(query);
 }
 
+/* 자동으로 카테고리와 사용처 설정 */
 export async function autoSetCategoryAndUseKind(asset) {
   // 기 등록된 적요를 통해 카테고리 자동 설정
   const registedRemark = await registedRemarkForCategory(asset);
@@ -131,6 +134,7 @@ export async function autoSetCategoryAndUseKind(asset) {
   }
 }
 
+/* 기 등록된 적요를 통해 카테고리 자동 설정 */
 async function registedRemarkForCategory(asset) {
   const query = { user: asset.user, useKind: asset.useKind, $or: [] };
   const { useStoreName, transRemark } = asset;
@@ -140,6 +144,7 @@ async function registedRemarkForCategory(asset) {
   return await CategoryRuleModel.findOne(query);
 }
 
+/* 카테고리 설정 */
 async function updateKeywordCategoryRule({
   asset,
   category,
@@ -158,7 +163,7 @@ async function updateKeywordCategoryRule({
   );
 }
 
-// 키워드 및 형태소 분석을 통해 카테고리 자동 설정
+/* 키워드 및 형태소 분석을 통해 카테고리 자동 설정 */
 async function getAutosetCategoryCode(asset) {
   const cateObj = await keywordCategory(asset);
   let code = "";
@@ -170,7 +175,7 @@ async function getAutosetCategoryCode(asset) {
   });
 
   if (!code) {
-    // 적요, 상점명, 업태의 내용에 키워드 포함 여부를 통한 카테고리 자동 설정s
+    // 적요, 상점명, 업태의 내용에 키워드 포함 여부를 통한 카테고리 자동 설정
     const words = `${asset.transRemark} ${asset.useStoreName} ${asset.useStoreBizType}`;
     Object.keys(cateObj).forEach((key) => {
       if (words.includes(key)) {
@@ -181,12 +186,14 @@ async function getAutosetCategoryCode(asset) {
   return code;
 }
 
+/* 거래내역 조회 */
 export async function getTransMoney(req) {
   const filter = assetFilter(req);
   console.log({ filter });
   return TransModel.find(filter).sort({ transDate: -1 });
 }
 
+/* 거래처 거래내역 조회 */
 export async function getTradeLogs(req) {
   const { userId, tradeCorp } = req.body;
   console.log("tradeCorp: ", tradeCorp);
@@ -197,6 +204,7 @@ export async function getTradeLogs(req) {
   });
 }
 
+/* 직원급여 거래내역 조회 */
 export async function getEmployeeLogs(req) {
   const { userId, employee } = req.body;
   console.log("employee: ", employee);
@@ -208,6 +216,7 @@ export async function getEmployeeLogs(req) {
   });
 }
 
+/* 부채 거래내역 조회 */
 export async function getDebtLogs(req) {
   const { userId, debt } = req.body;
   console.log("debt: ", debt);
@@ -219,6 +228,7 @@ export async function getDebtLogs(req) {
   });
 }
 
+/* 자산 거래내역 조회 */
 export async function getAssetLogs(req) {
   const { userId, asset } = req.body;
   console.log("asset: ", asset);
@@ -230,6 +240,7 @@ export async function getAssetLogs(req) {
   });
 }
 
+/* 신용카드 거래내역 조회 */
 export async function getCreditCardLogs(req) {
   const filter = assetFilter(req);
   filter.payType = "CREDIT";
@@ -239,6 +250,7 @@ export async function getCreditCardLogs(req) {
   return TransModel.find(filter);
 }
 
+/* 카드대금 조회 */
 export async function getCashedPayableLogs(req) {
   const filter = assetFilter(req);
   filter.payType = "CREDIT";
@@ -247,6 +259,7 @@ export async function getCashedPayableLogs(req) {
   return TransModel.find(filter);
 }
 
+/* 거래내역 수정 */
 export async function updateTransMoney(req) {
   const _id = mongoose.Types.ObjectId(req.params.id);
   const { user, useKind, category, categoryName, useYn } = req.body;
@@ -278,6 +291,7 @@ export async function updateCategory(req) {
   );
 }
 
+/* 계좌/카드 데이터 조합(interface) */
 function convertTransAsset(asset) {
   const isCanceled = ["취소", "거절"].includes(asset.cardApprovalType);
   const cardData = {
@@ -347,6 +361,7 @@ function convertTransAsset(asset) {
   return asset.cardNum ? cardData : accountData;
 }
 
+/* 세금계산서를 거래내역에 등록 */
 export async function regTaxLogToTransLog(data, taxLog) {
   const { user, userId, corpNum, corpName } = data;
   console.log("taxLog: ", taxLog);
@@ -365,9 +380,10 @@ export async function regTaxLogToTransLog(data, taxLog) {
     finClassCode: taxLog.amountTotal > 0 ? "IN1" : "OUT1",
     finClassName: taxLog.amountTotal > 0 ? "번것(수익+)" : "쓴것(비용+)",
     useYn: taxLog.useYn,
-    category: taxLog.amountTotal > 0 ? "550" : "540",
-    categoryName: taxLog.amountTotal > 0 ? "매출채권" : "미지급금",
+    category: taxLog.amountTotal > 0 ? "400" : "410",
+    categoryName: taxLog.amountTotal > 0 ? "매출" : "매입",
     payType: "BILL",
+    useKind: "BIZ",
   };
 
   try {
@@ -387,6 +403,7 @@ export async function regTaxLogToTransLog(data, taxLog) {
   }
 }
 
+/* 거래 취소된 내역 업데이트(취소처리) */
 export async function upateCancelLog(req) {
   try {
     const _id = mongoose.Types.ObjectId(req._id);
@@ -418,6 +435,7 @@ export async function upateCancelLog(req) {
   }
 }
 
+/* 급여 거래내역 처리 */
 export async function updateTransMoneyForEmployee(req, data) {
   return await TransModel.updateMany(
     { userId: req.body.userId, transRemark: req.body.transRemark },
@@ -433,6 +451,7 @@ export async function updateTransMoneyForEmployee(req, data) {
   ).then((result) => result);
 }
 
+/* 부채 거래내역 처리 */
 export async function updateTransMoneyForDebt(req, data) {
   const { userId, transRemark, finClassName, finItemCode } = req.body;
   const category = finItemCode === "BORR" ? "480" : "";
@@ -468,6 +487,7 @@ export async function updateTransMoneyForDebt(req, data) {
   return { ...updated, ...updated2 };
 }
 
+/* 자산 거래내역 처리 */
 export async function updateTransMoneyForAsset(req, data) {
   const { userId, transRemark, finItemCode } = req.body;
   const category = finItemCode === "LOAN" ? "470" : "";
@@ -503,6 +523,7 @@ export async function updateTransMoneyForAsset(req, data) {
   return { ...updated, ...updated2 };
 }
 
+/* 미분류 카테고리 거래내역 조회 */
 export async function getNoneCategoryTransMoney(req, cateCd) {
   const filter = assetFilter(req);
   filter.category = cateCd;
@@ -510,7 +531,8 @@ export async function getNoneCategoryTransMoney(req, cateCd) {
   return TransModel.find(filter).sort({ transDate: -1 });
 }
 
-export async function updateCategoryNoneCategory(log, categorySet) {
+/* 임시카테고리 적용 */
+export async function updateCategoryTempCategory(log, categorySet) {
   const { category, categoryName } = categorySet;
   await TransModel.updateOne(
     { _id: log._id },
@@ -521,4 +543,39 @@ export async function updateCategoryNoneCategory(log, categorySet) {
       },
     }
   );
+}
+
+/* 거래분류별 카테고리 합산 */
+export async function getTransCategoryByClass(req) {
+  const { userId, fromAt, toAt } = req.body;
+  return await TransModel.aggregate([
+    {
+      $match: {
+        userId,
+        transDate: {
+          $gte: strToDate(fromAt),
+          $lte: strToDate(toAt),
+        },
+        useYn: true,
+        useKind: "BIZ",
+      },
+    },
+    {
+      $group: {
+        _id: { category: "$category", finClassCode: "$finClassCode" },
+        categoryName: { $first: "$categoryName" },
+        transMoney: { $sum: "$transMoney" },
+        transDate: { $first: "$transDate" },
+      },
+    },
+    {
+      $project: {
+        category: "$_id.category",
+        finClassCode: "$_id.finClassCode",
+        categoryName: "$categoryName",
+        transMoney: "$transMoney",
+        transDate: "$transDate",
+      },
+    },
+  ]);
 }

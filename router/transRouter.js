@@ -22,4 +22,6 @@ router.put("/update/:id", isAuth, controller.updateTrans);
 
 router.put("/update-category", isAuth, controller.updateCategory);
 
+router.post("/class-category", isAuth, controller.getTransCategoryByClass);
+
 export default router;
