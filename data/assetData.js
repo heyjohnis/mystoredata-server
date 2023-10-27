@@ -12,8 +12,11 @@ export async function regAssetInfo(req) {
     finItemName,
     transRemark,
   } = req.body;
-
   try {
+    const hasAsset = await getAssetInfo(req.body);
+    if (hasAsset) {
+      return hasAsset;
+    }
     const asset = new assetModel({
       user,
       userId,

@@ -24,4 +24,6 @@ router.put("/update-category", isAuth, controller.updateCategory);
 
 router.post("/class-category", isAuth, controller.getTransCategoryByClass);
 
+router.post("/reg-credit-debt", isAuth, controller.createCreditCardDebt);
+
 export default router;

@@ -52,6 +52,7 @@ const schema = new Mongoose.Schema(
     debt: { type: Object, required: false, ref: "debt" },
     asset: { type: Object, required: false, ref: "asset" },
     tax: { type: Object, required: false, ref: "tax" },
+    item: { type: Object, required: false, ref: "item" },
     useYn: { type: Boolean, required: true, default: true },
   },
   { timestamps: true }

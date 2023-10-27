@@ -95,6 +95,8 @@ export async function mergeAccountAndCard(req) {
   await autoSetCategory(req);
   // 미분류 카테고리 설정처리
   await autoSetNoneCategory(req);
+  // 신용카드 미지급금 처리
+  await createCreditCardDebt(req);
 }
 
 async function autoCancelCard(req) {
@@ -141,4 +143,15 @@ export async function getTransCategoryByClass(req, res) {
     .getTransCategoryByClass(req)
     .catch((error) => console.log(error));
   res.status(200).json(data);
+}
+
+export async function createCreditCardDebt(req) {
+  const trans = await transData.getCreditTransData(req);
+  let cnt = 0;
+  for (const tran of trans) {
+    console.log("tran: ", tran);
+    const hasData = await transData.checkHasDabtAndCreateCreditCardDebt(tran);
+    cnt++;
+  }
+  return cnt;
 }

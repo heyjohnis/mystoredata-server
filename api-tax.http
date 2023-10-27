@@ -48,6 +48,6 @@ Authorization: Bearer {{jwt}}
 
 {
     "userId": "bethelean",
-    "fromAt": "20230801",
-    "toAt": "20230930"
+    "fromAt": "20230501",
+    "toAt": "20231031"
 }

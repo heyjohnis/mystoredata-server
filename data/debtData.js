@@ -14,6 +14,10 @@ export async function regDebtInfo(req) {
   } = req.body;
 
   try {
+    const hasDebt = await getDebtInfo(req.body);
+    if (hasDebt) {
+      return hasDebt;
+    }
     const debt = new debtModel({
       user,
       userId,

@@ -394,7 +394,7 @@ export async function regTaxLogToTransLog(data, taxLog) {
       taxLog.taxTotal > 0 ? "빌린것(부채+)" : "나머지(자산+)";
     taxData.category = taxLog.taxTotal > 0 ? "850" : "840";
     taxData.categoryName =
-      taxLog.taxTotal > 0 ? "부가세(내야할)" : "차입금(미리낸)";
+      taxLog.taxTotal > 0 ? "부가세(내야할)" : "부가세(미리낸)";
     await new TransModel(taxData).save();
     return taxLog;
   } catch (error) {
@@ -446,6 +446,9 @@ export async function updateTransMoneyForEmployee(req, data) {
         categoryName: "급여",
         finClassCode: "OUT1",
         finClassName: "쓴것(비용+)",
+        debt: null,
+        asset: null,
+        item: null,
       },
     }
   ).then((result) => result);
@@ -467,6 +470,9 @@ export async function updateTransMoneyForDebt(req, data) {
         categoryName,
         finClassCode: finItemCode === "BORR" ? "IN2" : "",
         finClassName: finItemCode === "BORR" ? "빌린것(부채+)" : "",
+        asset: null,
+        item: null,
+        employee: null,
       },
     }
   );
@@ -480,6 +486,9 @@ export async function updateTransMoneyForDebt(req, data) {
         categoryName,
         finClassCode: finItemCode === "BORR" ? "OUT2" : "",
         finClassName: finItemCode === "BORR" ? "갚은것(부채-)" : "",
+        asset: null,
+        item: null,
+        employee: null,
       },
     }
   );
@@ -492,7 +501,7 @@ export async function updateTransMoneyForAsset(req, data) {
   const { userId, transRemark, finItemCode } = req.body;
   const category = finItemCode === "LOAN" ? "470" : "";
   const categoryName = finItemCode === "LOAN" ? "대여금" : "";
-
+  console.log("updateTransMoneyForAsset 자산정보: ", data);
   // 입금의 경우
   const updated = await TransModel.updateMany(
     { userId, transRemark, transMoney: { $gt: 0 } },
@@ -503,6 +512,9 @@ export async function updateTransMoneyForAsset(req, data) {
         categoryName,
         finClassCode: finItemCode === "LOAN" ? "IN3" : "",
         finClassName: finItemCode === "LOAN" ? "나머지(자산-)" : "",
+        debt: null,
+        item: null,
+        employee: null,
       },
     }
   );
@@ -516,6 +528,9 @@ export async function updateTransMoneyForAsset(req, data) {
         categoryName,
         finClassCode: finItemCode === "LOAN" ? "OUT3" : "",
         finClassName: finItemCode === "LOAN" ? "나머지(자산+)" : "",
+        debt: null,
+        item: null,
+        employee: null,
       },
     }
   );
@@ -578,4 +593,31 @@ export async function getTransCategoryByClass(req) {
       },
     },
   ]);
+}
+
+export async function getCreditTransData(req) {
+  const filter = assetFilter(req);
+  filter.payType = "CREDIT";
+  filter.useYn = true;
+  filter.finClassCode = "OUT1";
+  return await TransModel.find(filter);
+}
+
+export async function checkHasDabtAndCreateCreditCardDebt(data) {
+  const { cardLog } = data;
+  const hasTran = await DebtModel.findOne({
+    cardLog,
+    category: "500",
+    useYn: true,
+  });
+  if (!hasTran) {
+    const { _id, ...debt } = data._doc;
+    debt.category = "500";
+    debt.categoryName = "카드대금";
+    debt.finClassCode = "IN2";
+    debt.finClassName = "빌린것(부채+)";
+    debt.transMoney = debt.transMoney * -1;
+    console.log("checkHasDabtAndCreateCreditCardDebt: ", debt);
+    return await new TransModel(debt).save();
+  }
 }
