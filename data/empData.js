@@ -16,6 +16,7 @@ export async function regEmployeeInfo(req) {
       corpNum,
       corpName,
       empName: transRemark,
+      transRemark,
       recentPay: Math.abs(transMoney),
     }).save();
     return emp;
@@ -33,4 +34,35 @@ export async function getEmployeeInfo(log) {
 export async function getEmployeeList(req) {
   const filter = assetFilter(req);
   return EmpModel.find(filter);
+}
+
+export async function deleteEmployeeNotUse(req) {
+  const { _id } = req.body;
+
+  const notUseData = await EmpModel.aggregate([
+    {
+      $lookup: {
+        from: "transmoneys",
+        localField: "_id",
+        foreignField: "employee",
+        as: "joinedData",
+      },
+    },
+    {
+      $addFields: {
+        count: { $size: "$joinedData" },
+      },
+    },
+    {
+      $match: {
+        count: 0,
+      },
+    },
+  ]);
+
+  notUseData.forEach(async (data) => {
+    await EmpModel.findByIdAndDelete(data._id);
+  });
+
+  return notUseData;
 }

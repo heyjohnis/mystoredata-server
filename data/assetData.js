@@ -43,3 +43,31 @@ export async function getAssetInfo(data) {
   const { userId, transRemark } = data;
   return await assetModel.findOne({ userId, transRemark: transRemark });
 }
+
+export async function deleteAssetNotUse(req) {
+  const { _id } = req.body;
+
+  const notUseData = await assetModel.aggregate([
+    {
+      $lookup: {
+        from: "transmoneys",
+        localField: "_id",
+        foreignField: "asset",
+        as: "joinedData",
+      },
+    },
+    {
+      $addFields: {
+        count: { $size: "$joinedData" },
+      },
+    },
+    {
+      $match: {
+        count: 0,
+      },
+    },
+  ]);
+
+  const ids = notUseData.map((item) => item._id);
+  return assetModel.deleteMany({ _id: { $in: ids } });
+}

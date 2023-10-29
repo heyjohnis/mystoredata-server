@@ -8,4 +8,6 @@ router.post("/reg", isAuth, controller.regEmployeeInfo);
 
 router.post("/list", isAuth, controller.getEmployeeList);
 
+router.post("/auto-delete", isAuth, controller.deleteEmployeeNotUse);
+
 export default router;

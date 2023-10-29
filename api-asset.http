@@ -1,0 +1,20 @@
+@baseUrl = http://localhost:8089
+@jwt = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NGQxZDhiNGEyY2RhODg4MWU5NzkzNTYiLCJpYXQiOjE2OTcxNTkxOTAsImV4cCI6MTY5OTc1MTE5MH0.bwM8bXg885QzDnuTLPJlia92T9b2oCaj7h_9O437PO0
+
+### 로그인
+POST {{baseUrl}}/auth/login HTTP/1.1
+Content-Type: application/json; charset=UTF-8
+
+{
+    "userId": "bethelean", 
+    "password": "12345678"
+}
+
+### 사용 않는 직원정보 자동 삭제
+POST {{baseUrl}}/asset/auto-delete HTTP/1.1
+Content-Type: application/json; charset=UTF-8
+Authorization: Bearer {{jwt}}
+
+{
+
+}

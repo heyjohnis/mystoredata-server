@@ -24,3 +24,13 @@ export async function getEmployeeList(req, res) {
     res.sendStatus(500);
   }
 }
+
+export async function deleteEmployeeNotUse(req, res) {
+  try {
+    const emps = await empData.deleteEmployeeNotUse(req);
+    res.status(200).json(emps);
+  } catch (error) {
+    console.error(error);
+    res.sendStatus(500);
+  }
+}
