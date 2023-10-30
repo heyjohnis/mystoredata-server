@@ -103,6 +103,8 @@ export async function getPeriodTaxInvoiceSalesListAsync(userInfo) {
             tradeTypeCode: 1,
             tradeCorpNum: log.InvoiceeCorpNum,
             tradeCorpName: log.InvoiceeCorpName,
+            tradeCorpBizType: log.InvoiceeBizType,
+            tradeCorpBizClass: log.InvoiceeBizClass,
           }).save();
         }
         // 로그 데이터 추가
@@ -188,6 +190,8 @@ export async function getPeriodTaxInvoicePurchaseListAsync(userInfo) {
             tradeTypeCode: -1,
             tradeCorpNum: log.InvoicerCorpNum,
             tradeCorpName: log.InvoicerCorpName,
+            tradeCorpBizType: log.InvoicerBizType,
+            tradeCorpBizClass: log.InvoicerBizClass,
           }).save();
         }
         const taxLogInfo = await taxData.regTaxLog(
