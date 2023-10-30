@@ -7,7 +7,8 @@ import DebtModel from "../model/debtModel.js";
 import AssetModel from "../model/assetModel.js";
 
 export async function getFinStatusAmountData(req) {
-  const { userId, fromAt, toAt } = req.body;
+  const { userId, fromAt, toAt, payType } = req.body;
+  const selPayType = payType === "" ? { $ne: null } : payType;
   try {
     const amount = await TransModel.aggregate([
       {
@@ -19,6 +20,7 @@ export async function getFinStatusAmountData(req) {
           },
           useYn: true,
           useKind: "BIZ",
+          payType: selPayType,
         },
       },
       {

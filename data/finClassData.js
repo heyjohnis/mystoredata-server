@@ -53,7 +53,7 @@ async function resultFinClassCode(log) {
   // 부가세 납부의 경우
   if (await isVAT(log)) return inOut + "2";
   // 매출/매입의 경우(거래처명이 있는 경우)
-  if (await isTax(log)) return inOut + "3";
+  if (await isTax(log)) return inOut + (inOut === "OUT" ? "2" : "3");
   // 기타의 경우
 
   return inOut + "1";
