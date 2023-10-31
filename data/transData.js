@@ -1,8 +1,7 @@
+import mongoose from "mongoose";
 import CategoryRuleModel from "../model/categoryRule.js";
 import TransModel from "../model/transModel.js";
 import DebtModel from "../model/debtModel.js";
-
-import mongoose from "mongoose";
 import {
   DefaultPersonalCategory,
   DefaultCorpCategory,
@@ -12,89 +11,70 @@ import { keywordCategory } from "../data/categoryData.js";
 import { nowDate, strToDate } from "../utils/date.js";
 import { assetFilter } from "../utils/filter.js";
 import { getFinClassByCategory, updateFinClass } from "./finClassData.js";
+import { convertTransAsset } from "../model/transInterface.js";
 
-/* 거래내역 계좌/카드 합치기 */
-export async function mergeTransMoney(log) {
-  const asset = convertTransAsset(log);
-  // 중복 거래 확인(카드만 등록, 계좌만 등록, 기 등록된 거래인지?)
-  const duplAsset = await extractDuplAsset(asset);
-  let resultAsset = {};
-  if (duplAsset) {
-    // 기 등록된 거래는 skip
-    if (isRegistedTrans(asset, duplAsset)) return;
-
-    asset.keyword = Array.from(
-      new Set([...(asset.keyword || []), ...(duplAsset.keyword || [])])
-    );
-    resultAsset = await TransModel.findOneAndUpdate(
-      { _id: duplAsset._id },
-      { $set: asset },
-      { new: true }
-    );
-    console.log(
-      `${nowDate()}: trans asset updated: ${resultAsset.transAssetNum} ${
-        resultAsset.transMoney
-      } ${resultAsset.transRemark} ${resultAsset.useStoreName}`
-    );
-  } else {
-    console.log("create log");
-    resultAsset = await new TransModel(asset).save();
-    console.log(
-      `${nowDate()}: trans asset created: ${resultAsset.transAssetNum} ${
-        resultAsset.transMoney
-      } ${resultAsset.transRemark} ${resultAsset.useStoreName}`
-    );
-  }
+export async function checkHasTransLog(id) {
+  return await TransModel.findOne(id);
 }
-/* 기 등록된 거래인지 확인 */
-function isRegistedTrans(asset, duplAsset) {
-  let isRegisted = false;
-  if (
-    (duplAsset.card && duplAsset.card === asset.card) ||
-    (duplAsset.account && duplAsset.account === asset.account)
-  ) {
-    console.log(
-      `${nowDate()}: 기등록한 거래: ${asset.transAssetNum} ${
-        asset.transMoney
-      } ${asset.transRemark} ${asset.useStoreName}`
-    );
-    console.log("신규거래: ", new Date(Number(asset.transDate)));
-    console.log("기등록거래: ", new Date(Number(duplAsset.transDate)));
-    isRegisted = true;
-  }
 
-  return isRegisted;
+/* 통장 거래내역 거래내역에 등록 */
+export async function regTransDataAccount(log) {
+  const asset = convertTransAsset(log);
+  // 통장번호 뒤 4자리 추출
+  const length =
+    asset.bankAccountNum.length > 4 ? 4 : asset.bankAccountNum.length * -1;
+  const bankAccountNumShort = asset.bankAccountNum.slice(length);
+  asset.category = "-" + bankAccountNumShort;
+  asset.categoryName = "보통예금" + bankAccountNumShort;
+  asset.finClassCode = "IN3";
+  asset.finClassName = "나머지(자산-)";
+  // 출금의 경우
+  if (asset.transMoney < 0) {
+    asset.finClassCode = "OUT3";
+    asset.finClassName = "나머지(자산+)";
+  }
+  return await new TransModel(asset).save();
+}
+
+/* 카드 거래내역 거래내역에 등록*/
+export async function regTransDateCard(log) {
+  const asset = convertTransAsset(log);
+  const transData = await new TransModel(asset).save();
+  if (asset.tradeKind === "CREDIT") {
+    log.cardLog = transData._id;
+    console.log("regTransDateCard log: ", log);
+    await checkHasDabtAndCreateCreditCardDebt(log);
+  } else {
+    const linkLog = await linkAccountLogForCheckCard(transData);
+    console.log(
+      "linkLog _id transData._id: ",
+      linkLog,
+      linkLog._id,
+      transData._id
+    );
+    if (!linkLog) {
+      await TransModel.updateOne(
+        { _id: transData._id },
+        { $set: { account: linkLog._id } }
+      );
+    }
+  }
 }
 
 /* 중복 거래 확인(카드만 등록, 계좌만 등록, 기 등록된 거래인지?) */
-async function extractDuplAsset(asset) {
-  const query = {};
-  query.corpNum = asset.corpNum;
-  query.transMoney = asset.transMoney;
-  query.transDate = {
-    $gte: new Date(Number(asset.transDate) - 200000),
-    $lte: new Date(Number(asset.transDate) + 200000),
-  };
-  query.$or = [];
-  if (asset?.bankAccountNum) {
-    query.$or.push({ accountLog: asset.accountLog });
-    query.$or.push({
-      $and: [
-        { accountLog: { $ne: asset.accountLog } },
-        { cardLog: { $ne: null } },
-      ],
-    });
-  }
-  if (asset?.cardNum) {
-    query.$or.push({ cardLog: asset.cardLog });
-    query.$or.push({
-      $and: [
-        { cardLog: { $ne: asset.cardLog } },
-        { accountLog: { $ne: null } },
-      ],
-    });
-  }
-  return await TransModel.findOne(query);
+async function linkAccountLogForCheckCard(asset) {
+  return await TransModel.findByIdAndUpdate(
+    {
+      userId: asset.userId,
+      transMoney: asset.transMoney,
+      cardLog: null,
+      transDate: {
+        $gte: new Date(Number(asset.transDate) - 200000),
+        $lte: new Date(Number(asset.transDate) + 200000),
+      },
+    },
+    { cardLog: asset._id }
+  );
 }
 
 /* 자동으로 카테고리와 사용처 설정 */
@@ -238,7 +218,7 @@ export async function getAssetLogs(req) {
 /* 신용카드 거래내역 조회 */
 export async function getCreditCardLogs(req) {
   const filter = assetFilter(req);
-  filter.payType = "CREDIT";
+  filter.tradeKind = "CREDIT";
   filter.useYn = true;
   filter.finClassCode = "OUT1";
   return TransModel.find(filter);
@@ -247,7 +227,7 @@ export async function getCreditCardLogs(req) {
 /* 카드대금 조회 */
 export async function getCashedPayableLogs(req) {
   const filter = assetFilter(req);
-  filter.payType = "CASH";
+  filter.tradeKind = "CASH";
   filter.finClassCode = "OUT2";
   filter.category = "500";
   filter.useYn = true;
@@ -286,76 +266,6 @@ export async function updateCategory(req) {
   );
 }
 
-/* 계좌/카드 데이터 조합(interface) */
-function convertTransAsset(asset) {
-  const isCanceled = ["취소", "거절"].includes(asset.cardApprovalType);
-  const cardData = {
-    cardLog: asset._id,
-    user: asset.user,
-    userId: asset.userId,
-    corpNum: asset.corpNum,
-    corpName: asset.corpName,
-    card: asset.card,
-    cardCompany: asset.cardCompany,
-    cardNum: asset.cardNum,
-    cardType: asset.cardType,
-    payType: asset.payType,
-    useKind: asset.useKind,
-    useDT: asset.useDT,
-    transDate: asset.transDate,
-    transMoney: asset.transMoney,
-    transAssetNum: asset.transAssetNum,
-    cardApprovalType: asset.cardApprovalType,
-    cardApprovalNum: asset.cardApprovalNum,
-    cardApprovalCost: asset.cardApprovalCost,
-    amount: asset.amount,
-    tax: asset.tax,
-    serviceCharge: asset.serviceCharge,
-    totalAmount: asset.totalAmount,
-    useStoreNum: asset.useStoreNum,
-    useStoreCorpNum: asset.useStoreCorpNum,
-    useStoreName: asset.useStoreName,
-    useStoreAddr: asset.useStoreAddr,
-    useStoreBizType: asset.useStoreBizType,
-    useStoreTel: asset.useStoreTel,
-    useStoreTaxType: asset.useStoreTaxType,
-    paymentPlan: asset.paymentPlan,
-    installmentMonths: asset.installmentMonths,
-    currency: asset.currency,
-    keyword: asset.keyword,
-    useYn: !isCanceled,
-  };
-
-  const accountData = {
-    accountLog: asset._id,
-    user: asset.user,
-    userId: asset.userId,
-    useKind: asset.useKind,
-    bank: asset.bank,
-    corpNum: asset.corpNum,
-    corpName: asset.corpName,
-    bankAccountNum: asset.bankAccountNum,
-    account: asset.account,
-    withdraw: asset.withdraw,
-    deposit: asset.deposit,
-    balance: asset.balance,
-    transDT: asset.transDT,
-    transDate: asset.transDate,
-    transMoney: asset.transMoney,
-    transAssetNum: asset.transAssetNum,
-    transType: asset.transType,
-    transOffice: asset.transOffice,
-    transRemark: asset.transRemark,
-    transRefKey: asset.transRefKey,
-    mgtRemark1: asset.mgtRemark1,
-    mgtRemark2: asset.mgtRemark2,
-    keyword: asset.keyword,
-    useYn: !isCanceled,
-  };
-
-  return asset.cardNum ? cardData : accountData;
-}
-
 /* 세금계산서를 거래내역에 등록 */
 export async function regTaxLogToTransLog(data, taxLog) {
   const { user, userId, corpNum, corpName } = data;
@@ -376,7 +286,7 @@ export async function regTaxLogToTransLog(data, taxLog) {
     useYn: taxLog.useYn,
     category: taxLog.amountTotal > 0 ? "400" : "410",
     categoryName: taxLog.amountTotal > 0 ? "매출" : "매입",
-    payType: "BILL",
+    tradeKind: "BILL",
     useKind: "BIZ",
   };
 
@@ -556,8 +466,8 @@ export async function updateCategoryTempCategory(log, categorySet) {
 
 /* 거래분류별 카테고리 합산 */
 export async function getTransCategoryByClass(req) {
-  const { userId, fromAt, toAt, payType } = req.body;
-  const selPayType = !payType ? { $ne: null } : payType;
+  const { userId, fromAt, toAt, tradeKind } = req.body;
+  const selPayType = !tradeKind ? { $ne: null } : tradeKind;
 
   return await TransModel.aggregate([
     {
@@ -569,7 +479,7 @@ export async function getTransCategoryByClass(req) {
         },
         useYn: true,
         useKind: "BIZ",
-        payType: selPayType,
+        tradeKind: selPayType,
       },
     },
     {
@@ -594,7 +504,7 @@ export async function getTransCategoryByClass(req) {
 
 export async function getCreditTransData(req) {
   const filter = assetFilter(req);
-  filter.payType = "CREDIT";
+  filter.tradeKind = "CREDIT";
   filter.useYn = true;
   filter.finClassCode = "OUT1";
   return await TransModel.find(filter);
