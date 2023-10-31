@@ -9,6 +9,7 @@ export const EmpSchema = new Mongoose.Schema(
     corpName: { type: String, required: true },
     corpNum: { type: String, required: true },
     empName: { type: String, required: false },
+    transRemark: { type: String, required: false },
     recentPay: { type: Number, required: false },
     useYn: { type: Boolean, default: true },
   },

@@ -189,14 +189,12 @@ async function getAutosetCategoryCode(asset) {
 /* 거래내역 조회 */
 export async function getTransMoney(req) {
   const filter = assetFilter(req);
-  console.log({ filter });
   return TransModel.find(filter).sort({ transDate: -1 });
 }
 
 /* 거래처 거래내역 조회 */
 export async function getTradeLogs(req) {
   const { userId, tradeCorp } = req.body;
-  console.log("tradeCorp: ", tradeCorp);
   if (!tradeCorp) return;
   return TransModel.find({
     userId,
@@ -207,7 +205,6 @@ export async function getTradeLogs(req) {
 /* 직원급여 거래내역 조회 */
 export async function getEmployeeLogs(req) {
   const { userId, employee } = req.body;
-  console.log("employee: ", employee);
   if (!employee) return;
   return TransModel.find({
     userId,
@@ -219,7 +216,6 @@ export async function getEmployeeLogs(req) {
 /* 부채 거래내역 조회 */
 export async function getDebtLogs(req) {
   const { userId, debt } = req.body;
-  console.log("debt: ", debt);
   if (!debt) return;
   return TransModel.find({
     userId,
@@ -231,7 +227,6 @@ export async function getDebtLogs(req) {
 /* 자산 거래내역 조회 */
 export async function getAssetLogs(req) {
   const { userId, asset } = req.body;
-  console.log("asset: ", asset);
   if (!asset) return;
   return TransModel.find({
     userId,
@@ -246,15 +241,15 @@ export async function getCreditCardLogs(req) {
   filter.payType = "CREDIT";
   filter.useYn = true;
   filter.finClassCode = "OUT1";
-  console.log("getCreditCardLogs: ", filter);
   return TransModel.find(filter);
 }
 
 /* 카드대금 조회 */
 export async function getCashedPayableLogs(req) {
   const filter = assetFilter(req);
-  filter.payType = "CREDIT";
+  filter.payType = "CASH";
   filter.finClassCode = "OUT2";
+  filter.category = "500";
   filter.useYn = true;
   return TransModel.find(filter);
 }
@@ -364,7 +359,6 @@ function convertTransAsset(asset) {
 /* 세금계산서를 거래내역에 등록 */
 export async function regTaxLogToTransLog(data, taxLog) {
   const { user, userId, corpNum, corpName } = data;
-  console.log("taxLog: ", taxLog);
   const taxData = {
     user,
     userId,

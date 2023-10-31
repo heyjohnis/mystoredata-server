@@ -85,13 +85,11 @@ export async function getPeriodTaxInvoiceSalesListAsync(userInfo) {
       const logs = !result.SimpleTaxInvoiceExList
         ? []
         : result.SimpleTaxInvoiceExList.SimpleTaxInvoiceEx;
-      console.log("simpleTaxInvoices::::", logs);
       cntLog = logs.length;
       for (const log of logs) {
         let tradeCorpInfo = await TradeCorpModel.findOne({
           tradeCorpNum: log.InvoiceeCorpNum,
         });
-        console.log("tradeCorpInfo: ", tradeCorpInfo);
         if (!tradeCorpInfo) {
           // 거래처 등록
           tradeCorpInfo = await new TradeCorpModel({
@@ -178,8 +176,6 @@ export async function getPeriodTaxInvoicePurchaseListAsync(userInfo) {
         let tradeCorpInfo = await TradeCorpModel.findOne({
           tradeCorpNum: log.InvoicerCorpNum,
         });
-        console.log("tradeCorpInfo: ", tradeCorpInfo);
-
         if (!tradeCorpInfo) {
           tradeCorpInfo = await new TradeCorpModel({
             user,

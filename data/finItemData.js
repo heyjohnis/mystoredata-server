@@ -5,7 +5,6 @@ import UserModel from "../model/userModel.js";
 import FinItemLogModel from "../model/finItemLogModel.js";
 
 export async function regFinItem(req) {
-  console.log("regFinItem: ", req?.body || req);
   const {
     user,
     userId,

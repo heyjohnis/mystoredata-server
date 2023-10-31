@@ -131,7 +131,7 @@ export async function autoSetNoneCategory(req) {
   req.body.fromAt = fromAt;
   req.body.toAt = toAt;
   const transLogs = await transData.getNoneCategoryTransMoney(req, "999");
-  console.log("미분류 category: ", transLogs);
+  // console.log("미분류 category: ", transLogs);
   for (const log of transLogs) {
     const categorySet = await categoryData.setCategory(log);
     await transData.updateCategoryTempCategory(log, categorySet);
@@ -149,7 +149,7 @@ export async function createCreditCardDebt(req) {
   const trans = await transData.getCreditTransData(req);
   let cnt = 0;
   for (const tran of trans) {
-    console.log("tran: ", tran);
+    // console.log("tran: ", tran);
     const hasData = await transData.checkHasDabtAndCreateCreditCardDebt(tran);
     cnt++;
   }

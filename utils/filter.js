@@ -3,7 +3,7 @@ import { strToDate, fromAtDate, toAtDate } from "./date.js";
 import { DefaultPersonalCategory, DefaultCorpCategory } from "../cmmCode.js";
 import { KoreanFamilyName } from "../cmmCode.js";
 
-export function assetFilter(req) {
+export function assetFilter(req, fiterName = "") {
   if (!req?.body && !req?.query) return;
   const {
     _id,
@@ -56,7 +56,7 @@ export function assetFilter(req) {
   if (tradeCorp) {
     filter.tradeCorp = tradeCorp;
   }
-  console.log("filter: ", filter);
+  if (fiterName) console.log(`filter ${fiterName}: `, filter);
   return filter;
 }
 

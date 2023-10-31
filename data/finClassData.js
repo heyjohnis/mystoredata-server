@@ -16,12 +16,12 @@ import assetModel from "../model/assetModel.js";
 import { assetFilter } from "../utils/filter.js";
 
 export async function updateFinClass(req) {
-  const filter = assetFilter(req);
+  const filter = assetFilter(req, "updateFinClass");
   filter.finClassCode = null;
   const items = await TransModel.find(filter);
   for (const item of items) {
+    console.log("updateFinClass item: ", item.length);
     const finClassCode = await resultFinClassCode(item);
-    console.log("finClassCode: ", finClassCode);
     await TransModel.findOneAndUpdate(
       { _id: item._id },
       { finClassCode: finClassCode, finClassName: FinClassCode[finClassCode] }
@@ -153,7 +153,7 @@ async function isFinCorp(log) {
         _id: log._id,
       },
       {
-        payType: "CREDIT",
+        payType: "CASH",
         category: "500",
         categoryName: "카드대금",
       }
@@ -188,7 +188,6 @@ async function isVAT(log) {
 
 async function isTax(log) {
   const tradeCorpInfo = await tradeCorpData.getTradeCorpInfo(log);
-  console.log("tradeCorpInfo: ", tradeCorpInfo, log.transRemark);
   if (!tradeCorpInfo) return false;
   await TransModel.updateOne(
     {
