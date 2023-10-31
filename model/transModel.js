@@ -24,7 +24,7 @@ const schema = new Mongoose.Schema(
     mgtRemark1: { type: String, required: false },
     mgtRemark2: { type: String, required: false },
     cardType: { type: String, required: false },
-    payType: { type: String, required: true, default: "CASH" },
+    tradeKind: { type: String, required: true, default: "CASH" },
     cardCompany: { type: String, required: false },
     cardNum: { type: String, required: false },
     cardApprovalType: { type: String, required: false },

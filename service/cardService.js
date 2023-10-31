@@ -141,7 +141,7 @@ export async function regCardLog(req) {
           card: card._id,
           cardCompany: card.cardCompany,
           cardType: card.cardType,
-          payType: card.payType,
+          tradeKind: card.tradeKind,
           cardNum: card.cardNum,
           useKind: card.useKind,
           useDT: cardLogs[i].UseDT,

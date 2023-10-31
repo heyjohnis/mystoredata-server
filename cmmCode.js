@@ -67,6 +67,8 @@ export const DefaultPersonalCategory = [
 ];
 
 export const DefaultCorpCategory = [
+  { order: 380, code: "380", name: "통장입금", finClass: "IN3"},
+  { order: 381, code: "381", name: "통장출금", finClass: "OUT3"},
   { order: 400, code: "390", name: "이체", finClass: "IN3"},
   { order: 400, code: "400", name: "매출", finClass: "IN1"},
   { order: 410, code: "410", name: "매입", finClass: "OUT1"},
@@ -207,7 +209,7 @@ export const SecurityCorpCode = [
 ];
 
 export const FinItemCode = [
-  {name: "자유입출금식 예금", code: "CHKACC"},
+  {name: "보통예금", code: "CHKACC"},
   {name: "정기예금", code: "TIMDEP"},
   {name: "정기적금", code: "INSTSAVACC"},
   {name: "신용카드", code: "CRDCARD"},

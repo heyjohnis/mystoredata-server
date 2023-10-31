@@ -39,7 +39,7 @@ export async function syncTransaction(req) {
     console.log("merge trans userId: ", user.userId);
     const baseMonth = new Date().toISOString().slice(0, 7);
     const baseDate = new Date().toISOString().slice(0, 10);
-    await transController.mergeAccountAndCard({
+    await transController.regAccountAndCard({
       body: {
         corpNum: user.corpNum,
         userId: user.userId,

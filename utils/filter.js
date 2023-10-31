@@ -17,7 +17,7 @@ export function assetFilter(req, fiterName = "") {
     employee,
     useKind,
     useYn,
-    payType,
+    tradeKind,
   } = Object.keys(req.body).length > 0 ? req.body : req.query;
 
   const filter = {};
@@ -28,8 +28,8 @@ export function assetFilter(req, fiterName = "") {
   if (corpNum) {
     filter.corpNum = corpNum;
   }
-  if (payType) {
-    filter.payType = payType;
+  if (tradeKind) {
+    filter.tradeKind = tradeKind;
   }
   if (category) {
     filter.category = category;

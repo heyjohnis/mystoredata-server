@@ -32,7 +32,7 @@ export async function syncBaroCard(req) {
   const cards = await cardData.getCardList(req);
   console.log("cards: ", cards);
   for (let card of cards) {
-    const { cardNum, corpNum, userId, webId, cardType, payType } = card;
+    const { cardNum, corpNum, userId, webId, cardType, tradeKind } = card;
     const baseMonth = new Date().toISOString().slice(0, 7).replace("-", "");
     console.log("baseMonth: ", baseMonth, cardNum, corpNum, userId);
     await cardService.regCardLog({
@@ -43,7 +43,7 @@ export async function syncBaroCard(req) {
         baseMonth,
         webId,
         cardType,
-        payType,
+        tradeKind,
       },
     });
   }

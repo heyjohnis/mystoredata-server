@@ -25,7 +25,7 @@ Authorization: Bearer {{jwt}}
     "itemKind": "ASSET",
     "itemKindName": "자산",
     "itemType": "CHKACC",
-    "itemTypeName": "자유입출금식 예금",
+    "itemTypeName": "보통예금",
     "itemName": "예금인출금",
     "amount": 123456789
 }

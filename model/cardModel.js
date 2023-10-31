@@ -10,7 +10,7 @@ export const CardSchema = new Mongoose.Schema(
     corpNum: { type: String, required: true },
     cardCompany: { type: String, required: true },
     cardType: { type: String, required: true },
-    payType: { type: String, required: true },
+    tradeKind: { type: String, required: true },
     cardNum: { type: String, required: true },
     webId: { type: String, required: false },
     webPwd: { type: String, required: false },

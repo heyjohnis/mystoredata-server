@@ -12,7 +12,7 @@ const schema = new Mongoose.Schema(
     cardCompany: { type: String, required: true },
     cardNum: { type: String, required: true },
     cardType: { type: String, required: true },
-    payType: { type: String, required: true },
+    tradeKind: { type: String, required: true },
     useKind: { type: String, required: true },
     useDT: { type: String, required: false },
     transDate: { type: Date, required: true },
