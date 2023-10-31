@@ -99,16 +99,16 @@ export async function regAccountAndCard(req) {
     // 거래분류 업데이트 처리 병행
     await transData.regTransDateCard(card).catch((error) => console.log(error));
   }
-  // // 거래분류 업데이트
-  // await updateFinClass(req);
-  // // 취소거래 삭제처리
-  // await autoCancelCard(req);
-  // // 자동 카테고리 설정처리
-  // await autoSetCategory(req);
-  // // 미분류 카테고리 설정처리
-  // await autoSetNoneCategory(req);
-  // // 신용카드 미지급금 처리
-  // await createCreditCardDebt(req);
+  // 거래분류 업데이트
+  await updateFinClass(req);
+  // 취소거래 삭제처리
+  await autoCancelCard(req);
+  // 자동 카테고리 설정처리
+  await autoSetCategory(req);
+  // 미분류 카테고리 설정처리
+  await autoSetNoneCategory(req);
+  // 신용카드 미지급금 처리
+  await createCreditCardDebt(req);
 }
 
 async function autoCancelCard(req) {

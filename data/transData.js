@@ -1,12 +1,7 @@
 import mongoose from "mongoose";
 import CategoryRuleModel from "../model/categoryRule.js";
 import TransModel from "../model/transModel.js";
-import DebtModel from "../model/debtModel.js";
-import {
-  DefaultPersonalCategory,
-  DefaultCorpCategory,
-  FinClassCode,
-} from "../cmmCode.js";
+import { DefaultPersonalCategory, DefaultCorpCategory } from "../cmmCode.js";
 import { keywordCategory } from "../data/categoryData.js";
 import { nowDate, strToDate } from "../utils/date.js";
 import { assetFilter } from "../utils/filter.js";
@@ -22,7 +17,7 @@ export async function regTransDataAccount(log) {
   const asset = convertTransAsset(log);
   // 통장번호 뒤 4자리 추출
   const length =
-    asset.bankAccountNum.length > 4 ? 4 : asset.bankAccountNum.length * -1;
+    (asset.bankAccountNum.length > 4 ? 4 : asset.bankAccountNum.length) * -1;
   const bankAccountNumShort = asset.bankAccountNum.slice(length);
   asset.category = "-" + bankAccountNumShort;
   asset.categoryName = "보통예금" + bankAccountNumShort;
@@ -39,19 +34,20 @@ export async function regTransDataAccount(log) {
 /* 카드 거래내역 거래내역에 등록*/
 export async function regTransDateCard(log) {
   const asset = convertTransAsset(log);
-  const transData = await new TransModel(asset).save();
+
+  asset.finClassCode = "OUT1";
+  asset.finClassName = "쓴것(비용+)";
+
   if (asset.tradeKind === "CREDIT") {
+    asset.tradeKind = "CREDIT";
+    const transData = await new TransModel(asset).save();
     log.cardLog = transData._id;
     console.log("regTransDateCard log: ", log);
     await checkHasDabtAndCreateCreditCardDebt(log);
   } else {
+    asset.tradeKind = "CHECK";
+    const transData = await new TransModel(asset).save();
     const linkLog = await linkAccountLogForCheckCard(transData);
-    console.log(
-      "linkLog _id transData._id: ",
-      linkLog,
-      linkLog._id,
-      transData._id
-    );
     if (!linkLog) {
       await TransModel.updateOne(
         { _id: transData._id },
@@ -63,17 +59,18 @@ export async function regTransDateCard(log) {
 
 /* 중복 거래 확인(카드만 등록, 계좌만 등록, 기 등록된 거래인지?) */
 async function linkAccountLogForCheckCard(asset) {
-  return await TransModel.findByIdAndUpdate(
+  console.log("linkAccountLogForCheckCard: ", asset);
+  return await TransModel.findOneAndUpdate(
     {
       userId: asset.userId,
       transMoney: asset.transMoney,
-      cardLog: null,
       transDate: {
         $gte: new Date(Number(asset.transDate) - 200000),
         $lte: new Date(Number(asset.transDate) + 200000),
       },
     },
-    { cardLog: asset._id }
+    { cardLog: asset._id },
+    { returnOriginal: false }
   );
 }
 
@@ -438,7 +435,6 @@ export async function updateTransMoneyForAsset(req, data) {
       },
     }
   );
-
   return { ...updated, ...updated2 };
 }
 
