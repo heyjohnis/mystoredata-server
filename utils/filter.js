@@ -56,6 +56,7 @@ export function assetFilter(req) {
   if (tradeCorp) {
     filter.tradeCorp = tradeCorp;
   }
+  console.log("filter: ", filter);
   return filter;
 }
 

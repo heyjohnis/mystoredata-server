@@ -8,7 +8,7 @@ import AssetModel from "../model/assetModel.js";
 
 export async function getFinStatusAmountData(req) {
   const { userId, fromAt, toAt, payType } = req.body;
-  const selPayType = payType === "" ? { $ne: null } : payType;
+  const selPayType = !payType ? { $ne: null } : payType;
   try {
     const amount = await TransModel.aggregate([
       {
