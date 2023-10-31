@@ -608,7 +608,7 @@ export async function getCreditTransData(req) {
 
 export async function checkHasDabtAndCreateCreditCardDebt(data) {
   const { cardLog } = data;
-  const hasTran = await DebtModel.findOne({
+  const hasTran = await TransModel.findOne({
     cardLog,
     category: "500",
     useYn: true,
