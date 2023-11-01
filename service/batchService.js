@@ -8,7 +8,13 @@ export async function syncBaroAccount(req) {
   console.log("batch accounts: ", accounts);
   for (let account of accounts) {
     const { bankAccountNum, corpNum, userId } = account;
-    const baseMonth = new Date().toISOString().slice(0, 7).replace("-", "");
+
+    let baseMonth = new Date();
+    if (baseMonth.getDate() === 1) {
+      baseMonth = baseMonth.setMonth(baseMonth.getMonth() - 1);
+    }
+    baseMonth = new Date(baseMonth).toISOString().slice(0, 7).replace("-", "");
+
     console.log(
       "batch baseMonth: ",
       baseMonth,
@@ -33,7 +39,13 @@ export async function syncBaroCard(req) {
   console.log("cards: ", cards);
   for (let card of cards) {
     const { cardNum, corpNum, userId, webId, cardType, tradeKind } = card;
-    const baseMonth = new Date().toISOString().slice(0, 7).replace("-", "");
+
+    let baseMonth = new Date();
+    if (baseMonth.getDate() === 1) {
+      baseMonth = baseMonth.setMonth(baseMonth.getMonth() - 1);
+    }
+    baseMonth = new Date(baseMonth).toISOString().slice(0, 7).replace("-", "");
+
     console.log("baseMonth: ", baseMonth, cardNum, corpNum, userId);
     await cardService.regCardLog({
       body: {

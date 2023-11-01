@@ -97,8 +97,10 @@ export async function regAccountAndCard(req) {
     if (hasTransLog) continue;
 
     // 거래분류 업데이트 처리 병행
-    await transData.regTransDateCard(card).catch((error) => console.log(error));
+    await transData.regTransDataCard(card).catch((error) => console.log(error));
   }
+  // 체크카드 사용을 제외한 통장 거래내역
+  await getOnlyAccountLogs(req);
   // 거래분류 업데이트
   await updateFinClass(req);
   // 취소거래 삭제처리
@@ -166,4 +168,15 @@ export async function createCreditCardDebt(req) {
     cnt++;
   }
   return cnt;
+}
+
+export async function getOnlyAccountLogs(req) {
+  const logs = await transData.getOnlyAccountLogs(req);
+  for (const log of logs) {
+    const hasTransLog = await transData.checkHasTransLog({
+      accountLog: log._id,
+    });
+    if (hasTransLog) continue;
+    await transData.regTransDataFromAccountLog(log);
+  }
 }
