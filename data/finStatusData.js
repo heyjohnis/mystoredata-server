@@ -1,6 +1,6 @@
 import TransModel from "../model/transModel.js";
 import TaxLogModel from "../model/taxLogModel.js";
-import { strToDate } from "../utils/date.js";
+import { fromAtDate, strToDate, toAtDate } from "../utils/date.js";
 import FinItemModel from "../model/finItemModel.js";
 import AccountLogModel from "../model/accountLogModel.js";
 import DebtModel from "../model/debtModel.js";
@@ -15,8 +15,8 @@ export async function getFinStatusAmountData(req) {
         $match: {
           userId,
           transDate: {
-            $gte: strToDate(fromAt),
-            $lte: strToDate(toAt),
+            $gte: fromAtDate(fromAt),
+            $lte: toAtDate(toAt),
           },
           useYn: true,
           useKind: "BIZ",
@@ -45,8 +45,8 @@ export async function getFinStatusTaxData(req) {
         $match: {
           userId,
           ntsSendDT: {
-            $gte: strToDate(fromAt),
-            $lte: strToDate(toAt),
+            $gte: fromAtDate(fromAt),
+            $lte: toAtDate(toAt),
           },
           useYn: true,
         },
@@ -101,8 +101,8 @@ export async function getFinStatusAssetData(req) {
         $match: {
           userId,
           transDate: {
-            $gte: strToDate(fromAt),
-            $lte: strToDate(toAt),
+            $gte: fromAtDate(fromAt),
+            $lte: toAtDate(toAt),
           },
           useYn: true,
           asset: { $ne: null },
@@ -142,8 +142,8 @@ export async function getFinStatusDebtData(req) {
         $match: {
           userId,
           transDate: {
-            $gte: strToDate(fromAt),
-            $lte: strToDate(toAt),
+            $gte: fromAtDate(fromAt),
+            $lte: toAtDate(toAt),
           },
           useYn: true,
           debt: { $ne: null },

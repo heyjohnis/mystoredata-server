@@ -95,9 +95,8 @@ export async function regAccountAndCard(req) {
     // 카드 기등록 여부 확인
     const hasTransLog = await transData.checkHasTransLog({ cardLog: card._id });
     if (hasTransLog) continue;
-
     // 거래분류 업데이트 처리 병행
-    await transData.regTransDateCard(card).catch((error) => console.log(error));
+    await transData.regTransDataCard(card).catch((error) => console.log(error));
   }
   // 체크카드 사용을 제외한 통장 거래내역
   await getOnlyAccountLogs(req);

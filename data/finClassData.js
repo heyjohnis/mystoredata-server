@@ -52,8 +52,8 @@ async function resultFinClassCode(log) {
   if (await isGov(log)) return inOut + "1";
   // 부가세 납부의 경우
   if (await isVAT(log)) return inOut + "2";
-  // 매출/매입의 경우(거래처명이 있는 경우)
-  if (await isTax(log)) return inOut + (inOut === "OUT" ? "2" : "3");
+  // 매출/매입의 경우(거래처명이 있는 경우) IN, OUT 이 바뀜
+  if (await isTax(log)) return log.transMoney < 0 ? "IN2" : "OUT3";
   // 기타의 경우
 
   return inOut + "1";
@@ -70,6 +70,7 @@ async function isUserCorp(log) {
         {
           category: "300",
           categoryName: "이체",
+          transMoney: log.transMoney * -1,
         }
       );
       return true;
@@ -138,6 +139,7 @@ async function isLoan(log) {
       asset: loanInfo._id,
       category: "470",
       categoryName: "대여금",
+      transMoney: log.transMoney * -1,
     }
   );
   return true;
@@ -189,9 +191,10 @@ async function isVAT(log) {
 async function isTax(log) {
   const tradeCorpInfo = await tradeCorpData.getTradeCorpInfo(log);
   if (!tradeCorpInfo) return false;
+  const accountLog = log._id;
   await TransModel.updateOne(
     {
-      _id: log._id,
+      _id: accountLog,
     },
     {
       $set: {
@@ -200,9 +203,11 @@ async function isTax(log) {
         tradeCorpName: tradeCorpInfo.tradeCorpName,
         category: log.transMoney > 0 ? "550" : "540",
         categoryName: log.transMoney > 0 ? "매출채권" : "미지급금",
+        transMoney: log.transMoney * -1,
       },
     }
   );
+
   return tradeCorpInfo !== null;
 }
 

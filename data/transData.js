@@ -3,10 +3,11 @@ import CategoryRuleModel from "../model/categoryRule.js";
 import TransModel from "../model/transModel.js";
 import { DefaultPersonalCategory, DefaultCorpCategory } from "../cmmCode.js";
 import { keywordCategory } from "../data/categoryData.js";
-import { nowDate, strToDate } from "../utils/date.js";
+import { fromAtDate, nowDate, strToDate, toAtDate } from "../utils/date.js";
 import { assetFilter } from "../utils/filter.js";
 import { getFinClassByCategory, updateFinClass } from "./finClassData.js";
 import { convertTransAsset } from "../model/transInterface.js";
+import { setDepositTransData } from "../utils/convert.js";
 
 export async function checkHasTransLog(id) {
   return await TransModel.findOne(id);
@@ -15,20 +16,9 @@ export async function checkHasTransLog(id) {
 /* 통장 거래내역 거래내역에 등록 */
 export async function regTransDataAccount(log) {
   const asset = convertTransAsset(log);
-  // 통장번호 뒤 4자리 추출
-  const length =
-    (asset.bankAccountNum.length > 4 ? 4 : asset.bankAccountNum.length) * -1;
-  const bankAccountNumShort = asset.bankAccountNum.slice(length);
-  asset.category = "-" + bankAccountNumShort;
-  asset.categoryName = "보통예금" + bankAccountNumShort;
-  asset.finClassCode = "IN3";
-  asset.finClassName = "나머지(자산-)";
-  // 출금의 경우
-  if (asset.transMoney < 0) {
-    asset.finClassCode = "OUT3";
-    asset.finClassName = "나머지(자산+)";
-  }
-  return await new TransModel(asset).save();
+  // 보통예금으로 처리
+  const transLog = setDepositTransData(asset);
+  return await new TransModel(transLog).save();
 }
 
 /* 카드 거래내역 거래내역에 등록*/
@@ -505,8 +495,8 @@ export async function getTransCategoryByClass(req) {
       $match: {
         userId,
         transDate: {
-          $gte: strToDate(fromAt),
-          $lte: strToDate(toAt),
+          $gte: toAtDate(fromAt),
+          $lte: fromAtDate(toAt),
         },
         useYn: true,
         useKind: "BIZ",
