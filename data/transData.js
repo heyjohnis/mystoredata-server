@@ -498,7 +498,7 @@ export async function updateCategoryTempCategory(log, categorySet) {
 /* 거래분류별 카테고리 합산 */
 export async function getTransCategoryByClass(req) {
   const { userId, fromAt, toAt, tradeKind } = req.body;
-  const selPayType = !tradeKind ? { $ne: null } : tradeKind;
+  const selTradeKind = !tradeKind ? { $ne: null } : tradeKind;
 
   return await TransModel.aggregate([
     {
@@ -510,7 +510,7 @@ export async function getTransCategoryByClass(req) {
         },
         useYn: true,
         useKind: "BIZ",
-        tradeKind: selPayType,
+        tradeKind: selTradeKind,
       },
     },
     {

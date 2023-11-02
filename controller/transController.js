@@ -97,7 +97,7 @@ export async function regAccountAndCard(req) {
     if (hasTransLog) continue;
 
     // 거래분류 업데이트 처리 병행
-    await transData.regTransDataCard(card).catch((error) => console.log(error));
+    await transData.regTransDateCard(card).catch((error) => console.log(error));
   }
   // 체크카드 사용을 제외한 통장 거래내역
   await getOnlyAccountLogs(req);
