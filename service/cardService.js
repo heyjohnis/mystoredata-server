@@ -101,25 +101,24 @@ export async function reRegCard(req) {
 }
 
 export async function regCardLog(req) {
-  const cardNum = req.body.cardNum;
+  const { cardNum, baseMonth, corpNum } = req.body;
+
+  const reqBaro = {
+    CERTKEY: certKey,
+    CorpNum: corpNum || req.corpNum,
+    ID: req.body.webId,
+    CardNum: req.body.cardNum,
+    BaseMonth: baseMonth,
+    CountPerPage: 100,
+    OrderDirection: 1,
+  };
   let currentPage = 1;
-  let cntLog = 100;
-  while (cntLog == 100) {
-    const reqBaro = {
-      CERTKEY: certKey,
-      CorpNum: req.body.corpNum || req.corpNum,
-      ID: req.body.webId,
-      CardNum: cardNum,
-      BaseMonth: req.body.baseMonth,
-      CountPerPage: 100,
-      CurrentPage: currentPage++,
-      OrderDirection: 1,
-    };
-
+  let is100p = true;
+  let cntLog = 0;
+  while (is100p) {
+    reqBaro.CurrentPage = currentPage++;
     const response = await client.GetMonthlyCardLogEx2Async(reqBaro);
-
     const result = response[0].GetMonthlyCardLogEx2Result;
-
     if (result.CurrentPage < 0) {
       console.log(errorCase(result.CurrentPage));
       return result.CurrentPage;
@@ -127,8 +126,8 @@ export async function regCardLog(req) {
       // 호출 성공
       const card = await cardData.getCard(cardNum);
       const cardLogs = !result.CardLogList ? [] : result.CardLogList.CardLogEx2;
-      cntLog = cardLogs.length;
-      for (let i = 0; i < cntLog; i++) {
+      is100p = cardLogs === 100;
+      for (let i = 0; i < cardLogs.length; i++) {
         // 필드정보는 레퍼런스를 참고해주세요.
         const words = `${cardLogs[i].UseStoreName} ${cardLogs[i].UseStoreName}`;
         const keyword = await keywordGen(words);
@@ -164,10 +163,11 @@ export async function regCardLog(req) {
           currency: cardLogs[i].Currency,
           keyword,
         });
+        cntLog++;
       }
     }
-    return response[0].GetPeriodCardLogEx2Result;
   }
+  return cntLog;
 }
 
 export async function updateCardInfo(req) {

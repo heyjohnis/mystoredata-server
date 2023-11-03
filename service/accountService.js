@@ -88,7 +88,6 @@ export async function cancelStopAccount(req) {
 export async function regAcountLog(req) {
   const { bankAccountNum, baseMonth, corpNum, userId } = req.body;
 
-  let currentPage = 1;
   const reqBaro = {
     CERTKEY: certKey,
     CorpNum: corpNum || req.corpNum,
@@ -96,12 +95,13 @@ export async function regAcountLog(req) {
     BankAccountNum: bankAccountNum,
     BaseMonth: baseMonth,
     CountPerPage: 100,
-    CurrentPage: currentPage++,
     OrderDirection: 1,
   };
-
-  let cntLog = 100;
-  while (cntLog === 100) {
+  let currentPage = 1;
+  let is100p = true;
+  let cntLog = 0;
+  while (is100p) {
+    reqBaro.CurrentPage = currentPage++;
     const response = await client.GetMonthlyBankAccountLogExAsync(reqBaro);
     const result = response[0].GetMonthlyBankAccountLogExResult;
     if (result.CurrentPage < 0) {
@@ -115,7 +115,7 @@ export async function regAcountLog(req) {
         ? []
         : result.BankAccountLogList.BankAccountLogEx;
       console.log("cntLog: ", cntLog, "page", currentPage);
-      cntLog = logs.length;
+      is100p = logs.length === 100;
       for (let i = 0; i < logs.length; i++) {
         const words = `${logs[i].TransRemark}`;
         const keyword = await keywordGen(words);
@@ -141,10 +141,11 @@ export async function regAcountLog(req) {
           mgtRemark2: logs[i].MgtRemark2,
           keyword,
         });
+        cntLog++;
       }
-      return logs.length + 1;
     }
   }
+  return cntLog;
 }
 
 export async function deleteAccount(req) {

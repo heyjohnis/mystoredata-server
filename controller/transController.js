@@ -79,7 +79,6 @@ export async function regAccountAndCard(req) {
     });
     if (hasTransLog) continue;
     // 통장 거래내역 등록
-    console.log("account: ", account);
     await transData
       .regTransDataAccount(account)
       .catch((error) => console.log(error));
@@ -108,8 +107,6 @@ export async function regAccountAndCard(req) {
   await autoSetCategory(req);
   // 미분류 카테고리 설정처리
   await autoSetNoneCategory(req);
-  // 신용카드 미지급금 처리
-  await createCreditCardDebt(req);
 }
 
 async function autoCancelCard(req) {
@@ -144,7 +141,6 @@ export async function autoSetNoneCategory(req) {
   req.body.fromAt = fromAt;
   req.body.toAt = toAt;
   const transLogs = await transData.getNoneCategoryTransMoney(req, "999");
-  // console.log("미분류 category: ", transLogs);
   for (const log of transLogs) {
     const categorySet = await categoryData.setCategory(log);
     await transData.updateCategoryTempCategory(log, categorySet);
@@ -159,10 +155,10 @@ export async function getTransCategoryByClass(req, res) {
 }
 
 export async function createCreditCardDebt(req) {
+  // 등록된 신용카드 거래로그
   const trans = await transData.getCreditTransData(req);
   let cnt = 0;
   for (const tran of trans) {
-    // console.log("tran: ", tran);
     const hasData = await transData.checkHasDabtAndCreateCreditCardDebt(tran);
     cnt++;
   }
@@ -176,6 +172,11 @@ export async function getOnlyAccountLogs(req) {
       accountLog: log._id,
     });
     if (hasTransLog) continue;
-    await transData.regTransDataFromAccountLog(log);
+    const registedData = await transData.regTransDataFromAccountLog(log);
+    console.log("registedData: ", registedData);
+    await transData.updateTransDataFromAccountLog({
+      _id: log._id,
+      item: registedData._id,
+    });
   }
 }

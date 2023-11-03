@@ -3,7 +3,7 @@ import CategoryRuleModel from "../model/categoryRule.js";
 import TransModel from "../model/transModel.js";
 import { DefaultPersonalCategory, DefaultCorpCategory } from "../cmmCode.js";
 import { keywordCategory } from "../data/categoryData.js";
-import { fromAtDate, nowDate, strToDate, toAtDate } from "../utils/date.js";
+import { fromAtDate, nowDate, toAtDate } from "../utils/date.js";
 import { assetFilter } from "../utils/filter.js";
 import { getFinClassByCategory, updateFinClass } from "./finClassData.js";
 import { convertTransAsset } from "../model/transInterface.js";
@@ -31,8 +31,7 @@ export async function regTransDataCard(log) {
   if (asset.tradeKind === "CREDIT") {
     asset.tradeKind = "CREDIT";
     const transData = await new TransModel(asset).save();
-    log.cardLog = transData._id;
-    await checkHasDabtAndCreateCreditCardDebt(log);
+    await checkHasDabtAndCreateCreditCardDebt(log, transData._id);
   } else {
     asset.tradeKind = "CHECK";
     const transData = await new TransModel(asset).save();
@@ -40,7 +39,7 @@ export async function regTransDataCard(log) {
     if (!linkLog) {
       await TransModel.updateOne(
         { _id: transData._id },
-        { $set: { accountLog: linkLog._id, tradeKind: "CHECK" } }
+        { $set: { accountLog: transData._id, tradeKind: "CHECK" } }
       );
     }
   }
@@ -52,12 +51,14 @@ async function linkAccountLogForCheckCard(asset) {
     {
       userId: asset.userId,
       transMoney: asset.transMoney,
+      accountLog: { $ne: null },
+      item: null,
       transDate: {
         $gte: new Date(Number(asset.transDate) - 200000),
         $lte: new Date(Number(asset.transDate) + 200000),
       },
     },
-    { cardLog: asset._id, tradeKind: "CHECK" },
+    { cardLog: asset._id, tradeKind: "CHECK", item: asset._id },
     { returnOriginal: false }
   );
 }
@@ -531,23 +532,21 @@ export async function getCreditTransData(req) {
   return await TransModel.find(filter);
 }
 
-export async function checkHasDabtAndCreateCreditCardDebt(data) {
-  const { cardLog } = data;
+export async function checkHasDabtAndCreateCreditCardDebt(data, debtId) {
+  const { _id, cardLog, createAt, updatedAt, ...debt } = data._doc;
   const hasTran = await TransModel.findOne({
     cardLog,
     category: "500",
     useYn: true,
   });
   if (!hasTran) {
-    const { _id, ...debt } = data._doc;
     debt.category = "500";
     debt.categoryName = "카드대금";
     debt.finClassCode = "IN2";
     debt.finClassName = "빌린것(부채+)";
     debt.transMoney = debt.transMoney * -1;
     debt.tradeKind = "CREDIT";
-    console.log("checkHasDabtAndCreateCreditCardDebt: ", debt);
-    return await new TransModel(debt).save();
+    return await new TransModel({ ...debt, debt: debtId }).save();
   }
 }
 
@@ -565,7 +564,7 @@ export async function getOnlyAccountLogs(req) {
 
 export async function regTransDataFromAccountLog(log) {
   const { _id, ...data } = log._doc;
-  data.accountLog = _id;
+  data.item = _id;
   data.cardLog = null;
   data.category = null;
   data.categoryName = null;
@@ -573,4 +572,8 @@ export async function regTransDataFromAccountLog(log) {
   data.finClassName = null;
   data.tradeKind = "CASH";
   return await new TransModel(data).save();
+}
+
+export async function updateTransDataFromAccountLog({ _id, item }) {
+  return await TransModel.updateOne({ _id }, { $set: { item } });
 }
