@@ -489,14 +489,14 @@ export async function updateCategoryTempCategory(log, categorySet) {
 export async function getTransCategoryByClass(req) {
   const { userId, fromAt, toAt, tradeKind } = req.body;
   const selTradeKind = !tradeKind ? { $ne: null } : tradeKind;
-
+  console.log("getTransCategoryByClass: ", req.body);
   return await TransModel.aggregate([
     {
       $match: {
         userId,
         transDate: {
-          $gte: toAtDate(fromAt),
-          $lte: fromAtDate(toAt),
+          $gte: fromAtDate(fromAt),
+          $lte: toAtDate(toAt),
         },
         useYn: true,
         useKind: "BIZ",

@@ -46,7 +46,9 @@ export function fromAtDate(str) {
 
 export function toAtDate(str) {
   const toAt = strToDate(str);
-  return new Date(toAt?.setHours(toAt.getHours() + 24));
+  const date = new Date(toAt?.setHours(toAt.getHours() + 24));
+  console.log("toAtDate: ", date);
+  return date;
 }
 
 export function fromToDateForMerge(req) {

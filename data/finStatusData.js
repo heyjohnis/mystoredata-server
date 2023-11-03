@@ -1,6 +1,6 @@
 import TransModel from "../model/transModel.js";
 import TaxLogModel from "../model/taxLogModel.js";
-import { fromAtDate, strToDate, toAtDate } from "../utils/date.js";
+import { fromAtDate, toAtDate } from "../utils/date.js";
 import FinItemModel from "../model/finItemModel.js";
 import AccountLogModel from "../model/accountLogModel.js";
 import DebtModel from "../model/debtModel.js";
@@ -76,7 +76,7 @@ export async function getFinStatusAccountData(req) {
       if (items[i].itemType === "CHKACC") {
         const accountLog = await AccountLogModel.findOne({
           account: items[i].account,
-          transDate: { $lte: strToDate(toAt) },
+          transDate: { $lte: toAtDate(toAt) },
         }).sort({ transDate: -1 });
         if (accountLog) {
           console.log("accountLog: ", accountLog);
