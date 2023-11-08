@@ -13,6 +13,7 @@ export function assetFilter(req, fiterName = "") {
     toAt,
     category,
     finClassCode,
+    finClassCodes,
     tradeCorp,
     employee,
     useKind,
@@ -33,6 +34,11 @@ export function assetFilter(req, fiterName = "") {
   }
   if (category) {
     filter.category = category;
+  }
+
+  const codes = finClassCodes?.split("_");
+  if (codes?.length > 0) {
+    filter.finClassCode = { $in: codes };
   }
   if (finClassCode) {
     filter.finClassCode = finClassCode;

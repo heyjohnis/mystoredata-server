@@ -577,3 +577,41 @@ export async function regTransDataFromAccountLog(log) {
 export async function updateTransDataFromAccountLog({ _id, item }) {
   return await TransModel.updateOne({ _id }, { $set: { item } });
 }
+
+export async function getInOutAccount(req) {
+  const { userId, fromAt, toAt, tradeKind } = req.body;
+  const selTradeKind = !tradeKind ? { $ne: null } : tradeKind;
+  console.log("getTransCategoryByClass: ", req.body);
+  return await TransModel.aggregate([
+    {
+      $match: {
+        userId,
+        transDate: {
+          $gte: fromAtDate(fromAt),
+          $lte: toAtDate(toAt),
+        },
+        useYn: true,
+        useKind: "BIZ",
+        tradeKind: selTradeKind,
+        category: { $regex: /-/ },
+      },
+    },
+    {
+      $group: {
+        _id: { category: "$category", finClassCode: "$finClassCode" },
+        categoryName: { $first: "$categoryName" },
+        transMoney: { $sum: "$transMoney" },
+        transDate: { $first: "$transDate" },
+      },
+    },
+    {
+      $project: {
+        category: "$_id.category",
+        finClassCode: "$_id.finClassCode",
+        categoryName: "$categoryName",
+        transMoney: "$transMoney",
+        transDate: "$transDate",
+      },
+    },
+  ]);
+}

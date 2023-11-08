@@ -155,7 +155,7 @@ async function isFinCorp(log) {
         _id: log._id,
       },
       {
-        tradeKind: "CASH",
+        tradeKind: "CREDIT",
         category: "500",
         categoryName: "카드대금",
       }
