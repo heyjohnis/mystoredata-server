@@ -18,6 +18,7 @@ export async function regTaxScrap(req, res) {
   }
 }
 
+/* 홈택스 재등록 */
 export async function reRegTaxScrap(req, res) {
   try {
     const resCode = await taxService.ReRegistTaxInvoiceScrapAsync(req);
@@ -44,7 +45,15 @@ export async function regTaxLog(req, res) {
       user.fromAt = fromAt;
       user.toAt = toAt;
       user.user = user._id;
-      console.log("user: ", user.fromAt, user.toAt);
+      console.log("user: ", user.userId, user.userName, user.fromAt, user.toAt);
+      const body = { corpNum: user.corpNum };
+      const cancelCode = await taxService.cancelStopTaxInvoiceScrapAsync({
+        body,
+      });
+      console.log("홈택스 해지 취소 : ", cancelCode);
+
+      const reRegCode = await taxService.ReRegistTaxInvoiceScrapAsync({ body });
+      console.log("홈택스 사용 재등록 : ", reRegCode);
       cntSales +=
         (await taxService.getPeriodTaxInvoiceSalesListAsync(user)) || 0;
       cntPurchase +=

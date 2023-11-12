@@ -9,10 +9,11 @@ const certKey = config.baro.testCertKey;
 
 const client = await soap.createClientAsync(
   "https://testws.baroservice.com/TI.asmx?WSDL"
-); // 운영서버
+); // 테스트서버
 
 export async function registTaxInvoiceScrapAsync(req) {
   const { corpNum, hometaxPWD, hometaxID } = req.body;
+  console.log("hometax ", hometaxID, hometaxPWD);
   const hometaxLoginMethod = "ID";
   const response = await client.RegistTaxInvoiceScrapAsync({
     CERTKEY: certKey,
@@ -21,7 +22,7 @@ export async function registTaxInvoiceScrapAsync(req) {
     HometaxID: hometaxID,
     HometaxPWD: hometaxPWD,
   });
-  console.log("response: ", baroError(response[0].RegistTaxInvoiceScrapResult));
+  console.log("response: ", errorCase(response[0].RegistTaxInvoiceScrapResult));
   return response[0].RegistTaxInvoiceScrapResult;
 }
 
@@ -31,24 +32,17 @@ export async function ReRegistTaxInvoiceScrapAsync(req) {
     CERTKEY: certKey,
     CorpNum: corpNum,
   });
-
   const result = response[0].ReRegistTaxInvoiceScrapResult;
-
-  console.log("response: ", result);
-
   return result;
 }
 
-export async function CancelStopTaxInvoiceScrapAsync(req) {
+export async function cancelStopTaxInvoiceScrapAsync(req) {
   const { corpNum } = req.body;
   const response = await client.CancelStopTaxInvoiceScrapAsync({
     CERTKEY: certKey,
     CorpNum: corpNum,
   });
   const result = response[0].CancelStopTaxInvoiceScrapResult;
-
-  console.log("response: ", result);
-
   return result;
 }
 
@@ -73,7 +67,7 @@ export async function getPeriodTaxInvoiceSalesListAsync(userInfo) {
     const result = response[0].GetPeriodTaxInvoiceSalesListResult;
     if (result.CurrentPage < 0) {
       console.log(
-        "tax-log 조회: ",
+        "tax-log 매출조회: ",
         corpName,
         corpNum,
         userId,
@@ -156,7 +150,7 @@ export async function getPeriodTaxInvoicePurchaseListAsync(userInfo) {
     const result = response[0].GetPeriodTaxInvoicePurchaseListResult;
     if (result.CurrentPage < 0) {
       console.log(
-        "tax-log 조회: ",
+        "tax-log 매입조회: ",
         corpName,
         corpNum,
         userId,
@@ -169,8 +163,6 @@ export async function getPeriodTaxInvoicePurchaseListAsync(userInfo) {
       const logs = !result.SimpleTaxInvoiceExList
         ? []
         : result.SimpleTaxInvoiceExList.SimpleTaxInvoiceEx;
-
-      console.log("simpleTaxInvoices::::", logs);
       cntLog = logs.length;
       for (const log of logs) {
         let tradeCorpInfo = await TradeCorpModel.findOne({

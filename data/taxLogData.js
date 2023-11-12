@@ -101,7 +101,7 @@ export async function notUseCanceledTaxLog(user) {
     user: user.user,
     modifyCode: { $gte: 1 },
   });
-  console.log("canceledTaxlogs: ", canceledTaxlogs);
+  console.log("canceledTaxlogs: ", canceledTaxlogs?.length);
   for (const log of canceledTaxlogs) {
     const canceledLog = await TaxLogModel.findOneAndUpdate(
       {
@@ -112,12 +112,20 @@ export async function notUseCanceledTaxLog(user) {
       { $set: { useYn: false } },
       { sort: { issueDT: -1 } }
     );
-    console.log("canceledLog2: ", canceledLog);
+    console.log(
+      "canceledLog2: ",
+      canceledLog.itemName,
+      canceledLog.totalAmount
+    );
     await TaxLogModel.findOneAndUpdate(
       { _id: log._id },
       { $set: { useYn: false } }
     );
-    console.log("canceledLog1: ", canceledLog);
+    console.log(
+      "canceledLog1: ",
+      canceledLog.itemName,
+      canceledLog.totalAmount
+    );
   }
 }
 
