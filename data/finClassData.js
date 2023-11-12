@@ -14,6 +14,7 @@ import {
 import debtModel from "../model/debtModel.js";
 import assetModel from "../model/assetModel.js";
 import { assetFilter } from "../utils/filter.js";
+import { setDepositTransData } from "../utils/convert.js";
 
 export async function updateFinClass(req) {
   const filter = assetFilter(req, "updateFinClass");
@@ -63,13 +64,15 @@ async function isUserCorp(log) {
   console.log("isUserCorp: ", log.corpName, log.transRemark);
   for (const word of regexCorpName(`${log.transRemark}`).split(" ")) {
     if (log.corpName.indexOf(word) > -1) {
+      // 보통예금으로 변경
+      const transLog = setDepositTransData(log);
       await TransModel.updateOne(
         {
           _id: log._id,
         },
         {
-          category: "300",
-          categoryName: "이체",
+          category: transLog.category,
+          categoryName: transLog.categoryName,
           transMoney: log.transMoney * -1,
         }
       );
@@ -82,7 +85,7 @@ async function isUserCorp(log) {
 async function isCeoNameOrUserName(log) {
   console.log("isCeoNameOrUserName: ", log.transRemark, log.corpName);
   const myInfo = await UserModel.findOne({ _id: log.user });
-  // 법인의 경우 해당 안됨gghl
+  // 법인의 경우 해당 안됨
   if (!log?.transRemark) return false;
   if (myInfo.corpType === "C") return false;
 
