@@ -1,23 +1,24 @@
-import soap from "soap";
-import { config } from "../config.js";
 import * as accountData from "../data/accountData.js";
 import * as accountLogData from "../data/accountLogData.js";
 import { keywordGen } from "../utils/keywordGen.js";
 import errorCase from "../middleware/baroError.js";
+import { BaroService } from "../utils/baroService.js";
 
-const certKey = config.baro.certKey;
-// const client = await soap.createClientAsync('https://testws.baroservice.com/BANKACCOUNT.asmx?WSDL') // 테스트서버
-const client = await soap.createClientAsync(
-  "https://ws.baroservice.com/BANKACCOUNT.asmx?WSDL"
-); // 운영서버
+const testService = new BaroService("BANKACCOUNT", "TEST");
+const opsService = new BaroService("BANKACCOUNT", "OPS");
+let isOps = false;
+const certKey = isOps ? opsService.certKey : testService.certKey;
+const client = isOps ? await opsService.client() : await testService.client();
 
 // 계좌조회 : https://dev.barobill.co.kr/docs/references/계좌조회-API#GetBankAccountEx
 export async function getAccounts(req) {
-  const availOnly = 1;
+  const { corpNum, userId, opsKind } = req?.body || req?.query;
+  const baroSvc = new BaroService("BANKACCOUNT", opsKind || "TEST");
+  const client = await baroSvc.client();
   const response = await client.GetBankAccountExAsync({
-    CERTKEY: certKey,
-    CorpNum: req.corpNum,
-    AvailOnly: availOnly,
+    CERTKEY: baroSvc.certKey,
+    CorpNum: corpNum,
+    AvailOnly: 1,
   });
 
   const result = response[0].GetBankAccountExResult;
@@ -49,7 +50,7 @@ export async function regAccount(req) {
   const reqBaro = {
     CERTKEY: certKey,
     CorpNum: corpNum,
-    CollectCycle: "HOUR4",
+    CollectCycle: "DAY1",
     Bank: bank,
     BankAccountType: bankAccountType,
     BankAccountNum: bankAccountNum,

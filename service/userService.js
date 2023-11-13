@@ -1,12 +1,10 @@
-import soap from "soap";
-import { config } from "../config.js";
+import { BaroService } from "../utils/baroService.js";
 
-const certKey = config.baro.certKey;
-
-// const client = await soap.createClientAsync('https://testws.baroservice.com/TI.asmx?WSDL') // 테스트서버
-const client = await soap.createClientAsync(
-  "https://ws.baroservice.com/TI.asmx?WSDL"
-); // 운영서버
+const testService = new BaroService("TI", "TEST");
+const opsService = new BaroService("TI", "OPS");
+let isOps = true;
+const certKey = isOps ? opsService.certKey : testService.certKey;
+const client = isOps ? await opsService.client() : await testService.client();
 
 export async function getCorpMemberContacts(req) {
   const corpNum = req.corpNum;

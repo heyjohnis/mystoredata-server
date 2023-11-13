@@ -1,6 +1,7 @@
 import OpenAI from "openai";
+import { config } from "../config.js";
 
-const apiKey = "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"; // OpenAI API 키를 여기에 입력하세요.
+const apiKey = config.ai.key;
 
 const openai = new OpenAI({
   apiKey,

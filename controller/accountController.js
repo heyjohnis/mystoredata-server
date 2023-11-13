@@ -39,8 +39,21 @@ export async function getAccountLogs(req, res) {
 }
 
 export async function regAccount(req, res) {
+  // 등록된 계좌 확인
+  const body = req.body;
   try {
-    let code = await service.regAccount(req);
+    body.baroKind = "TEST";
+    const baraAccountList = await service.getAccounts({ body });
+    // Baro Test 서비스에 2개 이상 등록되었는지 확인
+    if (baraAccountList.length > 1) {
+      body.baroKind = "OPS";
+    }
+  } catch (error) {
+    res.sendStatus(500).json(error);
+  }
+
+  try {
+    let code = await service.regAccount({ body });
     console.log(errorCase(code));
     if (code < 0) code = await service.reRegAccount(req);
     if (code < 0) code = await service.cancelStopAccount(req);

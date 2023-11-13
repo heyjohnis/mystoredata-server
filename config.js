@@ -23,9 +23,15 @@ export const config = {
     ca: process.env.SSL_CA,
   },
   baro: {
-    certKey: process.env.CERT_KEY,
+    opsCertKey: process.env.OPS_CERT_KEY,
     testCertKey: process.env.TEST_CERT_KEY,
     corpNum: process.env.CORP_NUM,
     password: process.env.USER_PASSWORD,
+    opsUrl: process.env.BARO_OPS_URL,
+    testUrl: process.env.BARO_TEST_URL,
+  },
+
+  ai: {
+    key: process.env.AI_KEY,
   },
 };

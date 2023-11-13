@@ -1,15 +1,14 @@
-import soap from "soap";
-import { config } from "../config.js";
 import * as taxData from "../data/taxLogData.js";
 import * as transData from "../data/transData.js";
 import errorCase from "../middleware/baroError.js";
 import TradeCorpModel from "../model/tradeCorpModel.js";
+import { BaroService } from "../utils/baroService.js";
 
-const certKey = config.baro.testCertKey;
-
-const client = await soap.createClientAsync(
-  "https://testws.baroservice.com/TI.asmx?WSDL"
-); // 테스트서버
+const testService = new BaroService("TI", "TEST");
+const opsService = new BaroService("TI", "OPS");
+let isOps = false;
+const certKey = isOps ? opsService.certKey : testService.certKey;
+const client = isOps ? await opsService.client() : await testService.client();
 
 export async function registTaxInvoiceScrapAsync(req) {
   const { corpNum, hometaxPWD, hometaxID } = req.body;

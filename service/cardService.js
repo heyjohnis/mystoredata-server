@@ -1,16 +1,15 @@
-import soap from "soap"; // https://www.npmjs.com/package/soap
 import mecab from "mecab-ya";
 import * as cardData from "../data/cardData.js";
 import * as cardLogData from "../data/cardLogData.js";
-import { config } from "../config.js";
 import errorCase from "../middleware/baroError.js";
 import { keywordGen } from "../utils/keywordGen.js";
-const certKey = config.baro.certKey;
+import { BaroService } from "../utils/baroService.js";
 
-//const client = await soap.createClientAsync('https://testws.baroservice.com/CARD.asmx?WSDL') // 테스트서버
-const client = await soap.createClientAsync(
-  "https://ws.baroservice.com/CARD.asmx?WSDL"
-); // 운영서버
+const testService = new BaroService("CARD", "TEST");
+const opsService = new BaroService("CARD", "OPS");
+let isOps = true;
+const certKey = isOps ? opsService.certKey : testService.certKey;
+const client = isOps ? await opsService.client() : await testService.client();
 
 export async function regCard(req) {
   const corpNum = req.body.corpNum || req.corpNum;
