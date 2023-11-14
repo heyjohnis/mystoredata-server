@@ -15,18 +15,17 @@ export async function getAccount(bankAccountNum) {
   return AccountModel.findOne({ bankAccountNum });
 }
 
-export async function regAccount(_id, newAccount) {
-  const userInfo = await UserModel.findOne({ _id });
+export async function regAccount(req) {
+  const { user, bankAccountNum } = req.body;
+
+  const userInfo = await UserModel.findOne({ _id: user });
   const accounts = userInfo.accounts;
   const hasAccount = accounts.find(
-    (account) => account.bankAccountNum === newAccount.bankAccountNum
+    (account) => account.bankAccountNum === bankAccountNum
   );
   if (!hasAccount) {
     const registedAccount = await new AccountModel({
-      ...newAccount,
-      user: userInfo._id,
-      corpName: userInfo.corpName,
-      userId: userInfo.userId,
+      ...req.body,
     }).save();
     console.log("registedAccount user 에 추가 ", registedAccount);
     await UserModel.findByIdAndUpdate(
@@ -35,7 +34,7 @@ export async function regAccount(_id, newAccount) {
       { returnOriginal: false }
     );
     const hasFinItem = await FinItemModel.findOne({
-      user: userInfo._id,
+      user,
       account: registedAccount._id,
     });
     console.log("자산 등록 전: ", registedAccount);

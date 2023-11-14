@@ -15,6 +15,7 @@ export const AccountSchema = new Mongoose.Schema(
     webId: { type: String, required: false },
     webPwd: { type: String, required: false },
     useKind: { type: String, required: false },
+    opsKind: { type: String, required: false },
   },
   { timestamps: true }
 );

@@ -28,7 +28,6 @@ import debtRouter from "./router/debtRouter.js";
 import assetRouter from "./router/assetRouter.js";
 import creditCardRouter from "./router/creditCardRouter.js";
 import { syncBaroData } from "./controller/batchController.js";
-
 import { config } from "./config.js";
 import { initSocket } from "./connection/socket.js";
 import { connectDB } from "./database/database.js";

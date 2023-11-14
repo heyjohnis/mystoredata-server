@@ -40,11 +40,15 @@ export async function getAccountLogs(req, res) {
 
 export async function regAccount(req, res) {
   try {
-    const code = await service.regBaraAccount(req);
-    if (code > 0) {
-      await accountData.regAccount(req);
+    const opsKind = await service.regBaraAccount(req);
+    if (typeof opsKind === "integer") {
+      res.status(500).json(errorCase(opsKind));
+    } else {
+      const body = req.body;
+      body.opsKind = opsKind;
+      const result = await accountData.regAccount({ body });
+      res.status(200).json(result);
     }
-    res.status(200).json(result);
   } catch (error) {
     res.sendStatus(500).json(error);
   }
