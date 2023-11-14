@@ -16,6 +16,11 @@ router.get("/log", isAuth, controller.getAccountLogs);
 
 router.delete("/delete/:_id", isAuth, controller.deleteAccount);
 
+/* BaroBill */
+router.post("/baro-reg", isAuth, controller.baroRegAccount);
+
+router.post("/cancel", isAuth, controller.stopAccount);
+
 router.post("/cancel-stop", isAuth, controller.cancelStopAccount);
 
 router.post("/re-reg", isAuth, controller.reRegAccount);

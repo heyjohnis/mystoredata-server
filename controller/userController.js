@@ -1,6 +1,7 @@
 import * as userData from "../data/userData.js";
 import * as corpService from "../service/corpService.js";
 import errorCase from "../middleware/baroError.js";
+import { registerCorpBaro } from "./authController.js";
 
 export async function getUserList(req, res) {
   const users = await userData.getUserList(req);
@@ -8,20 +9,12 @@ export async function getUserList(req, res) {
 }
 
 export async function updateUser(req, res) {
+  // Baro Update or Regist
+  if (req.body.userType === "CORP") await registerCorpBaro(req);
   try {
-    if (req.body.userType === "CORP") {
-      let code = 0;
-      code = await corpService.updateBoroCorpInfo(req);
-      if (code > 0) {
-        const data = await userData.updateUser(req);
-        res.status(200).json({ data, error: {} });
-      } else {
-        res.status(400).json(errorCase(code));
-      }
-    } else {
-      const data = await userData.updateUser(req);
-      res.status(200).json({ data, error: {} });
-    }
+    const data = await userData.updateUser(req);
+    console.log("updateUser data: ", data);
+    res.status(200).json(data);
   } catch (error) {
     res.status(500).json({ error });
   }

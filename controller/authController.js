@@ -8,27 +8,33 @@ import errorCase from "../middleware/baroError.js";
 
 export async function signup(req, res) {
   // Baro Update or Regist
+  let codes = null;
   if (req.body.userKind === "CROP") {
-    registerCorpBaro(req, res);
+    codes = registerCorpBaro(req);
   }
   registerUser(req, res);
 }
 
-async function registerCorpBaro(req, res) {
-  const isRegistedCorp = await corpService.checkCorpIsMember(req);
-  console.log("isRegistedCorp: ", isRegistedCorp);
-  let resultCode;
-  if (isRegistedCorp > 0) {
-    resultCode = await corpService.updateBoroCorpInfo(req);
-  } else {
-    resultCode = await corpService.registCorp(req);
+export async function registerCorpBaro(req) {
+  const registedKinds = await corpService.checkCorpIsMember(req);
+  const resultCode = { TEST: null, OPS: null };
+  for (let kind in registedKinds) {
+    const body = req.body;
+    body.baroKind = kind;
+    if (registedKinds[kind]) {
+      const code = await corpService.updateBoroCorpInfo(req);
+      resultCode[kind] = errorCase(code);
+    } else {
+      const code = await corpService.registCorp(req);
+      resultCode[kind] = errorCase(code);
+    }
   }
-
-  if (resultCode < 0) return res.status(400).json(errorCase(resultCode));
+  console.log("registerCorpBaro resultCode: ", resultCode);
+  return resultCode;
 }
 
 async function registerUser(req, res) {
-  const { userId, corpName, password, name, email, url } = req.body;
+  const { userId, password } = req.body;
 
   const hasUser = await data.findByUserId(userId);
   console.log("hasUser: ", hasUser);

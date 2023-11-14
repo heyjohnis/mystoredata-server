@@ -4,7 +4,7 @@ import soap from "soap";
 export class BaroService {
   constructor(serviceName, opsKind) {
     this.serviceName = serviceName;
-    this.opsKind = opsKind;
+    this.opsKind = opsKind || "TEST";
   }
   async client() {
     const testClient = await soap.createClientAsync(

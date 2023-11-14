@@ -45,23 +45,23 @@ POST {{baseUrl}}/account/reg HTTP/1.1
 Content-Type: application/json; charset=UTF-8
 Authorization: Bearer {{jwt}}
 
-{
-    "corpNum": "1073270598",
-    "bankAccountType": "P",
-    "bank": "SHINHAN",
-    "bankAccountNum": "110335376921",
-    "bankAccountPwd": "2848",
-    "webId": "HEYJOHN",
-    "webPwd": "hj@28480404",
-    "identityNum": ""
-}
-
 # {
-#     "bankAccountType": "C",
-#     "bank": "HANA",
-#     "bankAccountNum": "37691003114104",
-#     "bankAccountPwd": "2848"
+#     "corpNum": "1073270598",
+#     "bankAccountType": "P",
+#     "bank": "SHINHAN",
+#     "bankAccountNum": "110335376921",
+#     "bankAccountPwd": "2848",
+#     "webId": "HEYJOHN",
+#     "webPwd": "hj@28480404",
+#     "identityNum": ""
 # }
+
+{
+    "bankAccountType": "C",
+    "bank": "HANA",
+    "bankAccountNum": "37691003253104",
+    "bankAccountPwd": "2848"
+}
 
 
 ### 통장목록
@@ -85,6 +85,55 @@ Authorization: Bearer {{jwt}}
     "bankAccountNum": "110335376921"
 }
 
+### Baro 테스트
+
+### 통장목록
+POST {{baseUrl}}/account/list HTTP/1.1
+Content-Type: application/json; charset=UTF-8
+Authorization: Bearer {{jwt}}
+
+{
+    "corpNum": "6348702350",
+    "opsKind": "TEST"
+}
+
+
+### 통장등록
+POST {{baseUrl}}/account/baro-reg HTTP/1.1
+Content-Type: application/json; charset=UTF-8
+Authorization: Bearer {{jwt}}
+
+{
+    "corpNum": "6348702350",
+    "bankAccountType": "C",
+    "bank": "HANA",
+    "bankAccountNum": "37691003114104",
+    "bankAccountPwd": "2848",
+    "opsKind": "OPS"
+}
+
+# {
+#     "corpNum": "1073270598",
+#     "bankAccountType": "P",
+#     "bank": "SHINHAN",
+#     "bankAccountNum": "110335376921",
+#     "bankAccountPwd": "2848",
+#     "webId": "HEYJOHN",
+#     "webPwd": "hj@28480404",
+#     "identityNum": ""
+# }
+
+### 통장 해지(Baro)
+POST {{baseUrl}}/account/cancel HTTP/1.1
+Content-Type: application/json; charset=UTF-8
+Authorization: Bearer {{jwt}}
+
+{
+    "bankAccountNum": "37691003114104",
+    "corpNum": "6348702350",
+    "opsKind": "OPS"
+}
+
 ### 통장 해지 취소
 POST {{baseUrl}}/account/cancel-stop HTTP/1.1
 Content-Type: application/json; charset=UTF-8
@@ -92,7 +141,8 @@ Authorization: Bearer {{jwt}}
 
 {
     "bankAccountNum": "37691003114104",
-    "corpNum": "6348702350"
+    "corpNum": "6348702350",
+    "opsKind": "OPS"
 }
 
 ### 통장 재등록
@@ -102,5 +152,6 @@ Authorization: Bearer {{jwt}}
 
 {
     "bankAccountNum": "37691003114104",
-    "corpNum": "6348702350"
+    "corpNum": "6348702350",
+    "opsKind": "OPS"
 }

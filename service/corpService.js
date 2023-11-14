@@ -1,21 +1,28 @@
 import { config } from "../config.js";
 import { BaroService } from "../utils/baroService.js";
-
-const testService = new BaroService("TI", "TEST");
-const opsService = new BaroService("TI", "OPS");
+const baraServiceName = "TI";
+const testService = new BaroService(baraServiceName, "TEST");
+const opsService = new BaroService(baraServiceName, "OPS");
 let isOps = true;
 const certKey = isOps ? opsService.certKey : testService.certKey;
 const client = isOps ? await opsService.client() : await testService.client();
 
 export async function checkCorpIsMember(req) {
-  const { corpNum, checkCorpNum } = req.body;
-  const response = await client.CheckCorpIsMemberAsync({
-    CERTKEY: certKey,
-    CorpNum: corpNum,
-    CheckCorpNum: corpNum,
-  });
-
-  return response[0].CheckCorpIsMemberResult;
+  const { corpNum } = req.body;
+  const result = { TEST: false, OPS: false };
+  for (let kind in result) {
+    const service = new BaroService(baraServiceName, kind);
+    const certKey = service.certKey;
+    const client = await service.client();
+    const response = await client.CheckCorpIsMemberAsync({
+      CERTKEY: certKey,
+      CorpNum: corpNum,
+      CheckCorpNum: corpNum,
+    });
+    response[0].CheckCorpIsMemberResult;
+    result[kind] = response[0].CheckCorpIsMemberResult > 0;
+  }
+  return result;
 }
 
 export async function registCorp(req) {
@@ -64,10 +71,14 @@ export async function updateBoroCorpInfo(req) {
     ceoName,
     bizType,
     bizClass,
-    postNum,
     addr1,
     addr2,
+    baroKind,
   } = req.body;
+
+  const service = new BaroService(baraServiceName, baroKind);
+  const certKey = service.certKey;
+  const client = await service.client();
 
   const response = await client.UpdateCorpInfoAsync({
     CERTKEY: certKey,
