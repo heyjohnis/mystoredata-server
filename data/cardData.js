@@ -22,6 +22,7 @@ export async function regCard(req) {
     webId,
     webPwd,
     useKind,
+    opsKind,
   } = req.body;
 
   const userInfo = await UserModel.findOne({ _id: user });
@@ -41,6 +42,7 @@ export async function regCard(req) {
       webId: webId || "",
       webPwd: webPwd || "",
       useKind: useKind || "PERSONAL",
+      opsKind,
     }).save();
     console.log("registedCard: ", registedCard);
     await UserModel.findByIdAndUpdate(

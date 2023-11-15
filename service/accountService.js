@@ -84,6 +84,10 @@ export async function regBaraAccount(req) {
   }
   // Baro Test 서비스에 1개 이하시 Baro Test 서비스에 등록
   const code = await baroReRegAccount(req);
+  if (typeof code === "number") {
+    body.opsKind = "OPS";
+    const code = await baroReRegAccount({ body });
+  }
   return code;
 }
 
@@ -147,11 +151,10 @@ export async function regAcountLog(req) {
     await cancelStopAccount(req);
   }
   const { bankAccountNum, baseMonth, corpNum, userId, opsKind } = req.body;
-  const baroService = new BaroService(baroServiceName, opsKind);
-  const certKey = baroService.certKey;
-  const client = await baroService.client();
+  const baroSvc = new BaroService(baroServiceName, opsKind);
+  const client = await baroSvc.client();
   const reqBaro = {
-    CERTKEY: certKey,
+    CERTKEY: baroSvc.certKey,
     CorpNum: corpNum || req.corpNum,
     ID: userId || req.userId,
     BankAccountNum: bankAccountNum,

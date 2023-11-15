@@ -36,9 +36,11 @@ export async function regCard(req) {
 
 export async function regBaraCard(req) {
   const body = req.body;
+  console.log("body: ", body);
   body.opsKind = "TEST";
   // Baro Test 계좌확인
-  const cardList = await getBaroCardList(req);
+  const cardList = await getBaroCardList({ body });
+  console.log("cardList: ", cardList);
   const hasCard = cardList.find((card) => card.CardNum === req.body.cardNum);
   if (hasCard) return "TEST";
   // Baro Test 서비스에 2개 이상시 OPS 서비스에 등록
@@ -48,6 +50,13 @@ export async function regBaraCard(req) {
     console.log("baroReRegCard: ", errorCase(code));
     return code;
   }
+  // Baro Test 서비스에 1개 이하시 Baro Test 서비스에 등록
+  const code = await baroReRegCard(req);
+  if (typeof code === "number") {
+    body.opsKind = "OPS";
+    const code = await baroReRegCard({ body });
+  }
+  return code;
 }
 
 async function baroReRegCard(req) {
@@ -87,12 +96,12 @@ export async function stopCard(req, res) {
   return code;
 }
 
-export async function getBaroCardList(req, res) {
-  const { corpNum, opsKind } = req?.body || req?.query;
+export async function getBaroCardList(req) {
+  const { corpNum, opsKind } = req.body;
   const baroSvc = new BaroService(baroServiceName, opsKind);
   const client = await baroSvc.client();
   const response = await client.GetCardExAsync({
-    CERTKEY: certKey,
+    CERTKEY: baroSvc.certKey,
     CorpNum: corpNum,
     AvailOnly: 1,
   });
@@ -104,7 +113,7 @@ export async function getBaroCardList(req, res) {
   } else {
     // 호출 성공
     const cards = !result ? [] : result.Card;
-    console.log("GetCardExResult: ", cards);
+    console.log("GetCardExAsync: ", cards);
     return cards;
   }
 }
@@ -127,7 +136,7 @@ export async function reRegCard(req) {
   const client = await baroSvc.client();
 
   const response = await client.ReRegistCardAsync({
-    CERTKEY: certKey,
+    CERTKEY: baroSvc.certKey,
     CorpNum: corpNum || req.corpNum,
     CardNum: cardNum,
   });
@@ -135,10 +144,16 @@ export async function reRegCard(req) {
 }
 
 export async function regCardLog(req) {
-  const { cardNum, baseMonth, corpNum } = req.body;
+  const hasCard = await hasBaroCard(req);
+  if (!hasCard) {
+    await cancelStopCard(req);
+  }
 
+  const { cardNum, baseMonth, corpNum, opsKind } = req.body;
+  const baroSvc = new BaroService(baroServiceName, opsKind);
+  const client = await baroSvc.client();
   const reqBaro = {
-    CERTKEY: certKey,
+    CERTKEY: baroSvc.certKey,
     CorpNum: corpNum || req.corpNum,
     ID: req.body.webId,
     CardNum: req.body.cardNum,

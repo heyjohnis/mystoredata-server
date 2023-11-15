@@ -10,6 +10,13 @@ export default function errorCase(errCode) {
             "알 수 없는 오류 발생. API 호출 중 서버오류가 발생한 경우입니다. 바로빌로 문의바랍니다.",
         },
       };
+    case -10002:
+      return {
+        error: {
+          code: -10002,
+          message: "해당 인증키를 찾을 수 없습니다.",
+        },
+      };
     case -10003:
       return {
         error: { code: -10003, message: "연동서비스가 점검 중입니다." },
