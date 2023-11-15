@@ -20,6 +20,10 @@ export async function checkCorpIsMember(req) {
       CheckCorpNum: corpNum,
     });
     response[0].CheckCorpIsMemberResult;
+    console.log(
+      "CheckCorpIsMemberAsync: ",
+      response[0].CheckCorpIsMemberResult
+    );
     result[kind] = response[0].CheckCorpIsMemberResult > 0;
   }
   return result;

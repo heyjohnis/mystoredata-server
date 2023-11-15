@@ -9,14 +9,16 @@ import errorCase from "../middleware/baroError.js";
 export async function signup(req, res) {
   // Baro Update or Regist
   let codes = null;
-  if (req.body.userKind === "CROP") {
+  if (req.body.userKind === "CORP") {
     codes = registerCorpBaro(req);
+    console.log("codes: ", codes);
   }
   registerUser(req, res);
 }
 
 export async function registerCorpBaro(req) {
   const registedKinds = await corpService.checkCorpIsMember(req);
+  console.log("registedKinds: ", registedKinds);
   const resultCode = { TEST: null, OPS: null };
   for (let kind in registedKinds) {
     const body = req.body;

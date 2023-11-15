@@ -23,6 +23,7 @@ export async function findByUserId(userId) {
 }
 
 export async function createUser(data) {
+  console.log("createUser data: ", data);
   const user = await new UserModel({
     ...data,
     persnalCategory: DefaultPersonalCategory,
