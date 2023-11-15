@@ -31,7 +31,7 @@ export async function regFinItem(req) {
   const item = {
     user: userInfo?._id || user,
     userId,
-    account: mongoose.Types.ObjectId(account),
+    account,
     accountNum: bankAccountNum || accountNum,
     itemKind: itemKind || "ASSET",
     itemKindName:

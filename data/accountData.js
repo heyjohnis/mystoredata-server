@@ -1,10 +1,11 @@
+import Mongoose from "mongoose";
 import UserModel from "../model/userModel.js";
 import AccountLogModel from "../model/accountLogModel.js";
 import AccountModel from "../model/accountModel.js";
 import { assetFilter } from "../utils/filter.js";
 import FinItemModel from "../model/finItemModel.js";
 import * as finItemData from "./finItemData.js";
-import mongoose from "mongoose";
+
 export async function getAccountList(req) {
   const filter = assetFilter(req);
   console.log("getAccountList filter: ", filter);
@@ -16,28 +17,51 @@ export async function getAccount(bankAccountNum) {
 }
 
 export async function regAccount(req) {
-  const { user, bankAccountNum } = req.body;
-
+  const {
+    user,
+    bank,
+    bankAccountNum,
+    bankAccountType,
+    bankAccountPwd,
+    webId,
+    webPwd,
+    useKind,
+    opsKind,
+  } = req.body;
   const userInfo = await UserModel.findOne({ _id: user });
   const accounts = userInfo.accounts;
+  const { _id, userId, corpNum, corpName } = userInfo;
   const hasAccount = accounts.find(
     (account) => account.bankAccountNum === bankAccountNum
   );
   if (!hasAccount) {
+    // Accounts 에 등록
     const registedAccount = await new AccountModel({
-      ...req.body,
+      user: _id,
+      userId,
+      corpNum,
+      corpName,
+      bank,
+      bankAccountNum: bankAccountNum || "",
+      bankAccountType: bankAccountType || "C",
+      bankAccountPwd: bankAccountPwd || "",
+      webId: webId || "",
+      webPwd: webPwd || "",
+      useKind: useKind || "PERSONAL",
+      opsKind,
     }).save();
-    console.log("registedAccount user 에 추가 ", registedAccount);
+    console.log("registedAccount: ", registedAccount);
+    // Users 에 등록
     await UserModel.findByIdAndUpdate(
       _id,
       { $push: { accounts: registedAccount } },
       { returnOriginal: false }
     );
+    // FinItems 에 등록
     const hasFinItem = await FinItemModel.findOne({
       user,
       account: registedAccount._id,
     });
-    console.log("자산 등록 전: ", registedAccount);
     if (!hasFinItem) {
       await finItemData.regFinItem({
         user: registedAccount.user,
@@ -54,17 +78,17 @@ export async function regAccount(req) {
 
 export async function deleteAccount(req) {
   const { _id } = req.params;
+  const { user } = req.body;
   console.log("deleteAccount: ", _id);
-  const resultDeleteAccount = await AccountModel.findOneAndDelete({
-    _id,
-  });
-  console.log({ resultDeleteAccount });
-  const updatedAccount = await UserModel.findOneAndUpdate(
-    { _id: resultDeleteAccount.user },
+  // Accounts 에서 삭제
+  await AccountModel.findOneAndDelete({ _id });
+  // FinItems 에서 삭제
+  await FinItemModel.deleteOne({ account: Mongoose.Types.ObjectId(_id) });
+  // Users 에서 삭제
+  return await UserModel.findOneAndUpdate(
+    { _id: user },
     { $pull: { accounts: { _id } } }
   );
-  console.log({ updatedAccount });
-  return updatedAccount;
 }
 
 export async function updateAccount(req) {
@@ -85,6 +109,7 @@ export async function updateAccountAmount(req) {
     { sort: { transDate: -1 } }
   );
   console.log({ lastTran });
+  if (!lastTran) return {};
   const balance = parseInt(lastTran.balance || 0);
   const result = await FinItemModel.updateOne(
     { account: lastTran.account },

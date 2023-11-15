@@ -3,11 +3,12 @@ import * as accountLogData from "../data/accountLogData.js";
 import { keywordGen } from "../utils/keywordGen.js";
 import errorCase from "../middleware/baroError.js";
 import { BaroService } from "../utils/baroService.js";
+import e from "express";
 
 const baroServiceName = "BANKACCOUNT";
 
-export async function getAccounts(req) {
-  const { corpNum, userId, opsKind } = req?.body || req?.query;
+export async function getBaroAccountList(req) {
+  const { corpNum, opsKind } = req?.body || req?.query;
   const baroSvc = new BaroService(baroServiceName, opsKind);
   const client = await baroSvc.client();
   const response = await client.GetBankAccountExAsync({
@@ -17,16 +18,16 @@ export async function getAccounts(req) {
   });
 
   const result = response[0].GetBankAccountExResult;
-
   if (result && /^-[0-9]{5}$/.test(result.BankAccount[0].BankAccountNum)) {
     // 호출 실패
-    console.log(result.BankAccount[0].BankAccountNum);
+    console.log(
+      "GetBankAccountExResult: ",
+      errorCase(result.BankAccount[0].BankAccountNum)
+    );
   } else {
     // 호출 성공
     const bankAccounts = !result ? [] : result.BankAccount;
-    for (const bankAccount of bankAccounts) {
-      console.log(bankAccount);
-    }
+    console.log("GetBankAccountExAsync: ", bankAccounts);
     return bankAccounts;
   }
 }
@@ -40,7 +41,6 @@ export async function regAccount(req) {
     webId,
     webPwd,
     birth,
-    opsKind,
   } = req.body;
   const corpNum = req.body.corpNum || req.corpNum;
   const baroSvc = new BaroService(baroServiceName, "TEST");
@@ -60,82 +60,96 @@ export async function regAccount(req) {
     Usage: "",
   };
   const response = await client.RegistBankAccountAsync(reqBaro);
-  return response[0].RegistBankAccountResult;
+  const code = response[0].RegistBankAccountResult;
+  console.log("RegistBankAccountAsync: ", errorCase(code));
+  return code;
 }
 
 export async function regBaraAccount(req) {
   const body = req.body;
   body.opsKind = "TEST";
   // Baro Test 계좌확인
-  const accountList = await getAccounts(req);
+  const accountList = await getBaroAccountList(req);
   // Baro Test 서비스에 포함하고 있으면 처리 완료
-  if (accountList.includes(req.body.bankAccountNum)) return "TEST";
+  const hasAccount = accountList.find(
+    (account) => account.BankAccountNum === req.body.bankAccountNum
+  );
+  if (hasAccount) return "TEST";
   // Baro Test 서비스에 2개 이상시 OPS 서비스에 등록
   if (accountList.length > 1) {
     body.opsKind = "OPS";
-    return await baroReRegAccount({ body });
+    const code = await baroReRegAccount({ body });
+    console.log("baroReRegAccount: ", errorCase(code));
+    return code;
   }
   // Baro Test 서비스에 1개 이하시 Baro Test 서비스에 등록
-  return await baroReRegAccount(req);
+  const code = await baroReRegAccount(req);
+  return code;
+}
+
+async function hasBaroAccount(req) {
+  const accountList = await getBaroAccountList(req);
+  console.log("accountList: ", accountList);
+  // Baro Test 서비스에 포함하고 있으면 처리 완료
+  const hasAccount = accountList.find(
+    (account) => account.BankAccountNum === req.body.bankAccountNum
+  );
+  return hasAccount;
 }
 
 async function baroReRegAccount(req) {
   const opsKind = req.body.opsKind;
   let code = await regAccount(req);
+  console.log("regAccount: ", errorCase(code));
   if (code > 0) return opsKind; // 등록 성공
+
   code = await cancelStopAccount(req);
+  console.log("cancelStopAccount: ", errorCase(code));
   if (code > 0) return opsKind; // 해지 취소 성공
+
   code = await reRegAccount(req);
+  console.log("reRegAccount: ", errorCase(code));
   if (code > 0) return opsKind; // 재등록 성공
   return code;
 }
 
 export async function reRegAccount(req) {
-  const { opsKind, corpNum } = req.body;
+  const { opsKind, corpNum, bankAccountNum } = req.body;
   const baroSvc = new BaroService(baroServiceName, opsKind);
   const client = await baroSvc.client();
 
   const response = await client.ReRegistBankAccountAsync({
     CERTKEY: baroSvc.certKey,
     CorpNum: corpNum || req.corpNum,
-    BankAccountNum: req.body.bankAccountNum,
+    BankAccountNum: bankAccountNum,
   });
   return response[0].ReRegistBankAccountResult;
 }
 
-export async function stopAccount(req) {
-  const { opsKind, corpNum } = req.body;
-  const baroSvc = new BaroService(baroServiceName, opsKind);
-  const client = await baroSvc.client();
-
-  const response = await client.StopBankAccountAsync({
-    CERTKEY: baroSvc.certKey,
-    CorpNum: corpNum || req.corpNum,
-    BankAccountNum: req.body.bankAccountNum,
-  });
-  return response[0].StopBankAccountResult;
-}
-
 export async function cancelStopAccount(req) {
-  const { opsKind, corpNum } = req.body;
+  const { opsKind, corpNum, bankAccountNum } = req.body;
   const baroSvc = new BaroService(baroServiceName, opsKind);
   const client = await baroSvc.client();
 
   const response = await client.CancelStopBankAccountAsync({
     CERTKEY: baroSvc.certKey,
     CorpNum: corpNum || req.corpNum,
-    BankAccountNum: req.body.bankAccountNum,
+    BankAccountNum: bankAccountNum,
   });
   return response[0].CancelStopBankAccountResult;
 }
 
 export async function regAcountLog(req) {
-  const { bankAccountNum, baseMonth, corpNum, userId } = req.body;
-  const testService = new BaroService(baroServiceName, "TEST");
-  const opsService = new BaroService(baroServiceName, "OPS");
-  let isOps = false;
-  const certKey = isOps ? opsService.certKey : testService.certKey;
-  const client = isOps ? await opsService.client() : await testService.client();
+  // 수집하기 전에 해지여부 확인 후 진행, 해지되었을 시 해지취소 후 수집
+  const hasAccount = await hasBaroAccount(req);
+  if (!hasAccount) {
+    // 계좌 해지 취소
+    await cancelStopAccount(req);
+  }
+  const { bankAccountNum, baseMonth, corpNum, userId, opsKind } = req.body;
+  const baroService = new BaroService(baroServiceName, opsKind);
+  const certKey = baroService.certKey;
+  const client = await baroService.client();
   const reqBaro = {
     CERTKEY: certKey,
     CorpNum: corpNum || req.corpNum,
@@ -196,25 +210,15 @@ export async function regAcountLog(req) {
   return cntLog;
 }
 
-export async function deleteAccount(req) {
-  const { account } = req.params;
+export async function stopAccount(req) {
   const { opsKind, corpNum } = req.body;
   const baroSvc = new BaroService(baroServiceName, opsKind);
   const client = await baroSvc.client();
 
   const response = await client.StopBankAccountAsync({
     CERTKEY: baroSvc.certKey,
-    CorpNum: req.body.corpNum || req.corpNum,
-    account,
+    CorpNum: corpNum || req.corpNum,
+    BankAccountNum: req.body.bankAccountNum,
   });
-  const resultCode = response[0].StopBankAccountResult;
-  const result = await accountData.deleteAccount(req);
-  console.log("delete account: ", result);
-
-  if (resultCode < 0) {
-    // 호출 실패
-    return resultCode;
-  } else {
-    // 호출 성공
-  }
+  return response[0].StopBankAccountResult;
 }

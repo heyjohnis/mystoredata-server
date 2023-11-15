@@ -15,30 +15,20 @@ export async function regCardLog(req, res) {
 }
 
 export async function regCard(req, res) {
+  const body = req.body;
   try {
-    const user = req.body.user || req._id;
-    let code = await service.regCard(req);
-    console.log(errorCase(code));
-    if (code < 0) code = await service.cancelStopCard(req);
-    code = code === -51004 || -50118 ? 1 : code; // 해지상태가 아닌 경우
-    await service.updateCardInfo(req);
-
-    if (code > 0) {
-      const regCardResult = await cardData.regCard(req);
-      res.status(200).json(regCardResult);
+    const opsKind = await service.regBaraCard(req);
+    // 오류코드가 존재하면 오류코드를 반환
+    console.log("opsKind: ", opsKind, typeof opsKind);
+    if (typeof opsKind === "number") {
+      body.opsKind = "OPS";
     } else {
-      const userInfo = await userData.findById(user);
-      const hasCard = userInfo.cards.find(
-        (card) => card.cardNum === req.body.cardNum
-      );
-      console.log("hasCard", hasCard);
-      if (!hasCard) {
-        await cardData.regCard(req);
-      }
-      res.status(400).json(errorCase(code));
+      body.opsKind = opsKind;
     }
+    const result = await cardData.regCard({ body });
+    res.status(200).json(result);
   } catch (error) {
-    res.status(500).json(error);
+    res.sendStatus(500).json(error);
   }
 }
 
@@ -67,7 +57,7 @@ export async function stopCard(req, res) {
 
 export async function getCardList(req, res) {
   try {
-    const data = await service.getCardList(req, res);
+    const data = await service.getBaroCardList(req, res);
     res.status(200).json(data);
   } catch (error) {
     console.error(error);
@@ -87,14 +77,12 @@ export async function getCardLogs(req, res) {
 
 export async function deleteCard(req, res) {
   try {
-    const code = await service.deleteCard(req);
-    console.log({ code });
+    const code = await service.stopCard(req);
+    await cardData.deleteCard(req);
     if (code > 0) {
-      const result = await cardData.deleteCard(req);
-      res.status(200).json(result);
+      res.status(200).json({ success: true });
     } else {
-      const result = await cardData.deleteCard(req);
-      res.status(200).json(result);
+      res.status(400).json(errorCase(code));
     }
   } catch (error) {
     res.status(500).json(error);

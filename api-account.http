@@ -94,7 +94,7 @@ Authorization: Bearer {{jwt}}
 
 {
     "corpNum": "6348702350",
-    "opsKind": "TEST"
+    "opsKind": "OPS"
 }
 
 
@@ -129,9 +129,9 @@ Content-Type: application/json; charset=UTF-8
 Authorization: Bearer {{jwt}}
 
 {
-    "bankAccountNum": "37691003114104",
+    "bankAccountNum": "37691003113404",
     "corpNum": "6348702350",
-    "opsKind": "OPS"
+    "opsKind": "TEST"
 }
 
 ### 통장 해지 취소

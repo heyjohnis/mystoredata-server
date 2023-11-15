@@ -36,8 +36,8 @@ Content-Type: application/json; charset=UTF-8
 Authorization: Bearer {{jwt}}
 
 {
-    "corpNum": "1073270598",
-	"cardNum": "4336920003113475"
+    "corpNum": "6348702350",
+	"cardNum": "9410822093647032"
 }
 
 ### 카드내역불러와 저장

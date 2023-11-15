@@ -5,6 +5,8 @@ import errorCase from "../middleware/baroError.js";
 import { keywordGen } from "../utils/keywordGen.js";
 import { BaroService } from "../utils/baroService.js";
 
+const baroServiceName = "CARD";
+
 const testService = new BaroService("CARD", "TEST");
 const opsService = new BaroService("CARD", "OPS");
 let isOps = true;
@@ -12,90 +14,123 @@ const certKey = isOps ? opsService.certKey : testService.certKey;
 const client = isOps ? await opsService.client() : await testService.client();
 
 export async function regCard(req) {
-  const corpNum = req.body.corpNum || req.corpNum;
   const { cardCompany, cardType, cardNum, webId, webPwd } = req.body;
-  const alias = "";
-  const usage = "";
-
+  const corpNum = req.body.corpNum || req.corpNum;
+  const baroSvc = new BaroService(baroServiceName, "TEST");
+  const client = await baroSvc.client();
   const response = await client.RegistCardAsync({
-    CERTKEY: certKey,
+    CERTKEY: baroSvc.certKey,
     CorpNum: corpNum,
     CardCompany: cardCompany,
     CardType: cardType,
     CardNum: cardNum,
     WebId: webId,
     WebPwd: webPwd,
-    Alias: alias,
-    Usage: usage,
+    Alias: "",
+    Usage: "",
   });
+  const code = response[0].RegistCardResult;
+  console.log("RegistCardAsync: ", errorCase(code));
+  return code;
+}
 
-  return response[0].RegistCardResult;
+export async function regBaraCard(req) {
+  const body = req.body;
+  body.opsKind = "TEST";
+  // Baro Test 계좌확인
+  const cardList = await getBaroCardList(req);
+  const hasCard = cardList.find((card) => card.CardNum === req.body.cardNum);
+  if (hasCard) return "TEST";
+  // Baro Test 서비스에 2개 이상시 OPS 서비스에 등록
+  if (cardList.length > 1) {
+    body.opsKind = "OPS";
+    const code = await baroReRegCard({ body });
+    console.log("baroReRegCard: ", errorCase(code));
+    return code;
+  }
+}
+
+async function baroReRegCard(req) {
+  const opsKind = req.body.opsKind;
+  let code = await regCard(req);
+  console.log("regCard: ", errorCase(code));
+  if (code > 0) return opsKind; // 등록 성공
+
+  code = await cancelStopCard(req);
+  console.log("cancelStopCard: ", errorCase(code));
+  if (code > 0) return opsKind; // 해지 취소 성공
+
+  code = await reRegCard(req);
+  console.log("reRegCard: ", errorCase(code));
+  if (code > 0) return opsKind; // 재등록 성공
+  return code;
+}
+
+export async function hasBaroCard(req) {
+  const cardList = await getBaroCardList(req);
+  const card = cardList.find((card) => card.CardNum === req.body.cardNum);
+  return card;
 }
 
 export async function stopCard(req, res) {
-  const { cardNum, corpNum } = req.body;
+  const { cardNum, corpNum, opsKind } = req.body;
+  const baroSvc = new BaroService(baroServiceName, opsKind);
+  const client = await baroSvc.client();
 
   const response = await client.StopCardAsync({
-    CERTKEY: certKey,
+    CERTKEY: baroSvc.certKey,
     CorpNum: corpNum,
     CardNum: cardNum,
   });
-
-  return response[0].StopCardResult;
+  const code = response[0].StopCardResult;
+  console.log("StopCardAsync: ", errorCase(code));
+  return code;
 }
 
-export async function getCardList(req, res) {
-  const corpNum = req.corpNum;
-  const availOnly = 1;
-
+export async function getBaroCardList(req, res) {
+  const { corpNum, opsKind } = req?.body || req?.query;
+  const baroSvc = new BaroService(baroServiceName, opsKind);
+  const client = await baroSvc.client();
   const response = await client.GetCardExAsync({
     CERTKEY: certKey,
     CorpNum: corpNum,
-    AvailOnly: availOnly,
+    AvailOnly: 1,
   });
 
   const result = response[0].GetCardExResult;
-
   if (result && /^-[0-9]{5}$/.test(result.Card[0].CardNum)) {
     // 호출 실패
-    console.log(result.Card[0].CardNum);
+    console.log("GetCardExResult: ", errorCase(result.Card[0].CardNum));
   } else {
     // 호출 성공
     const cards = !result ? [] : result.Card;
-
-    for (const card of cards) {
-      // 필드정보는 레퍼런스를 참고해주세요.
-      console.log(card);
-    }
+    console.log("GetCardExResult: ", cards);
+    return cards;
   }
 }
 
 export async function cancelStopCard(req) {
+  const { opsKind, corpNum, cardNum } = req.body;
+  const baroSvc = new BaroService(baroServiceName, opsKind);
+  const client = await baroSvc.client();
   const response = await client.CancelStopCardAsync({
-    CERTKEY: certKey,
-    CorpNum: req.body.corpNum || req.corpNum,
-    CardNum: req.body.cardNum,
+    CERTKEY: baroSvc.certKey,
+    CorpNum: corpNum || req.corpNum,
+    CardNum: cardNum,
   });
   return response[0].CancelStopCardResult;
 }
 
-export async function deleteCard(req) {
-  const response = await client.StopCardAsync({
-    CERTKEY: certKey,
-    CorpNum: req.body.corpNum || req.corpNum,
-    CardNum: req.body.cardNum,
-  });
-
-  return response[0].StopCardResult;
-}
-
 export async function reRegCard(req) {
+  const { opsKind, corpNum, cardNum } = req.body;
+  const baroSvc = new BaroService(baroServiceName, opsKind);
+  const client = await baroSvc.client();
+
   const response = await client.ReRegistCardAsync({
     CERTKEY: certKey,
-    CorpNum: req.body.corpNum || req.corpNum,
-    CardNum: req.body.cardNum,
+    CorpNum: corpNum || req.corpNum,
+    CardNum: cardNum,
   });
-
   return response[0].ReRegistCardResult;
 }
 

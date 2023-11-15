@@ -13,54 +13,52 @@ export async function getCard(cardNum) {
 }
 
 export async function regCard(req) {
-  console.log("regCard: ", req?.body || req);
   const {
     user,
-    userId,
     cardNum,
-    corpNum,
-    corpName,
     cardCompany,
     cardType,
     tradeKind,
     webId,
     webPwd,
     useKind,
-  } = req?.body || req;
-  let regedCardInfo = await CardModel.findOne({ user, cardNum });
-  console.log("regedCardInfo: ", regedCardInfo);
-  if (!regedCardInfo) {
-    regedCardInfo = await new CardModel({
-      user,
+  } = req.body;
+
+  const userInfo = await UserModel.findOne({ _id: user });
+  const cards = userInfo.cards;
+  const { _id, userId, corpNum, corpName } = userInfo;
+  const hasCard = cards.find((card) => card.cardNum === cardNum);
+  if (!hasCard) {
+    const registedCard = await new CardModel({
+      user: _id,
       userId,
-      cardNum,
       corpNum,
       corpName,
-      cardCompany,
-      cardType,
+      cardNum: cardNum || "",
+      cardCompany: cardCompany || "",
+      cardType: cardType || "",
       tradeKind,
-      webId,
-      webPwd,
-      useKind,
+      webId: webId || "",
+      webPwd: webPwd || "",
+      useKind: useKind || "PERSONAL",
     }).save();
-    console.log("regedCardInfo: ", regedCardInfo);
+    console.log("registedCard: ", registedCard);
+    await UserModel.findByIdAndUpdate(
+      _id,
+      { $push: { cards: registedCard } },
+      { returnOriginal: false }
+    );
+    return registedCard;
   }
-  const updateUserCard = await UserModel.findByIdAndUpdate(
-    { _id: user },
-    {
-      $push: { cards: regedCardInfo },
-    },
-    { returnOriginal: false }
-  );
-  console.log("updateUserCard: ", updateUserCard);
-  return updateUserCard;
+  return;
 }
 
 export async function deleteCard(req) {
-  const _id = req.params._id;
-  const deletedCard = await CardModel.findOneAndDelete({ _id });
+  const { _id } = req.params;
+  const { user } = req.body;
+  await CardModel.findOneAndDelete({ _id });
   return await UserModel.updateOne(
-    { _id: deletedCard.user },
+    { _id: user },
     { $pull: { cards: { _id } } }
   );
 }
