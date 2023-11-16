@@ -1,7 +1,11 @@
 {
   "workbench.colorCustomizations": {
     "titleBar.activeBackground": "#093f8f",
-    "titleBar.inactiveBackground": "#093f8f"
+    "titleBar.inactiveBackground": "#093f8f",
+    "titleBar.activeForeground": "#ffffff",
+    "titleBar.inactiveForeground": "#ffffff",
+    "statusBar.background": "#093f8f",
+    "statusBar.border": "#85abe4"
   },
   "explorer.compactFolders": false,
   "prettier.printWidth": 80,
