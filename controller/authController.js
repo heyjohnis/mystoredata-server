@@ -8,9 +8,8 @@ import errorCase from "../middleware/baroError.js";
 
 export async function signup(req, res) {
   // Baro Update or Regist
-  let codes = null;
-  if (req.body.userKind === "CORP") {
-    codes = registerCorpBaro(req);
+  if (req.body.userType === "CORP") {
+    const codes = await registerCorpBaro(req);
     console.log("codes: ", codes);
   }
   registerUser(req, res);
@@ -23,21 +22,22 @@ export async function registerCorpBaro(req) {
   for (let kind in registedKinds) {
     const body = req.body;
     body.baroKind = kind;
+    console.log("ops Kind: ", kind);
     if (registedKinds[kind]) {
-      const code = await corpService.updateBoroCorpInfo(req);
+      const code = await corpService.updateBoroCorpInfo({ body });
       resultCode[kind] = errorCase(code);
+      console.log("updateBoroCorpInfo code: ", resultCode[kind]);
     } else {
-      const code = await corpService.registCorp(req);
+      const code = await corpService.registCorp({ body });
       resultCode[kind] = errorCase(code);
+      console.log("registCorp code: ", resultCode[kind]);
     }
   }
-  console.log("registerCorpBaro resultCode: ", resultCode);
   return resultCode;
 }
 
 async function registerUser(req, res) {
   const { userId, password } = req.body;
-
   const hasUser = await data.findByUserId(userId);
   console.log("hasUser: ", hasUser);
   if (hasUser) {
@@ -48,15 +48,19 @@ async function registerUser(req, res) {
       },
     });
   }
-
   const hashed = await bcrypt.hash(
     password,
     parseInt(config.bcrypt.saltRounds)
   );
   const _id = await data.createUser({ ...req.body, password: hashed });
-
   const token = createJwtToken(_id);
   res.status(201).json({ token, _id });
+}
+
+function createJwtToken(_id) {
+  return jwt.sign({ _id }, config.jwt.secretKey, {
+    expiresIn: config.jwt.expiresInSec,
+  });
 }
 
 export async function login(req, res) {
@@ -75,10 +79,4 @@ export async function login(req, res) {
   }
   const token = createJwtToken(user.id);
   res.status(200).json({ token, userId, id: user.id, error: {} });
-}
-
-function createJwtToken(_id) {
-  return jwt.sign({ _id }, config.jwt.secretKey, {
-    expiresIn: config.jwt.expiresInSec,
-  });
 }
