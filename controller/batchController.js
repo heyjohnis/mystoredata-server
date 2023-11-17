@@ -6,23 +6,28 @@ import * as taxController from "../controller/taxController.js";
 import * as taxService from "../service/taxService.js";
 import * as taxData from "../data/taxLogData.js";
 import { nowDate } from "../utils/date.js";
+import { config } from "../config.js";
+
+const batchTime = config.batchTime;
 
 export async function syncBaroData() {
-  nodeschedule.scheduleJob("0 0 7 * * *", async function () {
-    await syncBaroAccount({});
-    console.log(`${nowDate()} syncBaroAccount`);
-    await syncBaroCard({});
-    console.log(`${nowDate()} syncBaroCard`);
-    await syncTransaction({});
-    console.log(`${nowDate()} syncTransaction`);
-  });
-
-  nodeschedule.scheduleJob("0 50 23 * * *", async function () {
-    regTaxLogByBaro();
-  });
-  nodeschedule.scheduleJob("0 10 12 * * *", async function () {
-    regTaxLogByBaro();
-  });
+  if (batchTime.t1)
+    nodeschedule.scheduleJob(batchTime.t1, async function () {
+      await syncBaroAccount({});
+      console.log(`${nowDate()} syncBaroAccount`);
+      await syncBaroCard({});
+      console.log(`${nowDate()} syncBaroCard`);
+      await syncTransaction({});
+      console.log(`${nowDate()} syncTransaction`);
+    });
+  if (batchTime.t2)
+    nodeschedule.scheduleJob(batchTime.t2, async function () {
+      regTaxLogByBaro();
+    });
+  if (batchTime.t3)
+    nodeschedule.scheduleJob(batchTime.t3, async function () {
+      regTaxLogByBaro();
+    });
 }
 
 export async function syncBaroAccount(req) {

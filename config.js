@@ -34,4 +34,10 @@ export const config = {
   ai: {
     key: process.env.AI_KEY,
   },
+
+  batchTime: {
+    t1: process.env.BATCH_TIME_T1,
+    t2: process.env.BATCH_TIME_T2,
+    t3: process.env.BATCH_TIME_T3,
+  },
 };
