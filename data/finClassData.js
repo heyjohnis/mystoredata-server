@@ -235,6 +235,7 @@ async function defaultFinClassCode(log, inOut) {
   if (log.card) {
     return inOut + "1";
   }
+  // 입금의 경우
   if (inOut == "IN") {
     try {
       const debtInfo = await new debtModel({
@@ -261,7 +262,9 @@ async function defaultFinClassCode(log, inOut) {
     } catch (error) {
       console.log("error: ", error);
     }
-  } else {
+  }
+  // 출금의 경우
+  else {
     try {
       const assetInfo = await new assetModel({
         user: log.user,

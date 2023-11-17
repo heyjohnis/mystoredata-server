@@ -69,7 +69,12 @@ export async function updateCard(card) {
   await CardModel.updateOne({ cardNum: card.cardNum }, { $set: { ...card } });
   return await UserModel.updateOne(
     { "cards.cardNum": card.cardNum },
-    { "cards.$.useKind": card.useKind }
+    {
+      $set: {
+        "cards.$.useKind": card.useKind,
+        "cards.$.tradeKind": card.tradeKind,
+      },
+    }
   );
 }
 

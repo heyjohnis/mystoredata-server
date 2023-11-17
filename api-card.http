@@ -30,14 +30,15 @@ Authorization: Bearer {{jwt}}
     "webPwd": "hj@28480404"
 }
 
-### 카드삭제
+### Baro 카드해지
 POST {{baseUrl}}/card/stop HTTP/1.1
 Content-Type: application/json; charset=UTF-8
 Authorization: Bearer {{jwt}}
 
 {
-    "corpNum": "6348702350",
-	"cardNum": "9410822093647032"
+    "corpNum": "1073270598",
+	"cardNum": "9410822093647032",
+    "opsKind": "OPS"
 }
 
 ### 카드내역불러와 저장

@@ -25,7 +25,6 @@ export async function regCardLog(data) {
 }
 
 export async function getCardLogs(req) {
-  console.log("getCardLogs filter: ", req?.body);
   const filter = { cardApprovalType: { $ne: "거절" } };
   if (req.query?.corpNum || req.body?.corpNum)
     filter.corpNum = req.query?.corpNum || req.body?.corpNum;
@@ -42,5 +41,6 @@ export async function getCardLogs(req) {
       $lte: new Date(toAt),
     };
   }
+  console.log("getCardLogs filter: ", filter);
   return await CardLogModel.find(filter).sort({ transDate: -1 });
 }

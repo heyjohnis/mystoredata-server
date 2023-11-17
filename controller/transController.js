@@ -4,6 +4,7 @@ import * as transData from "../data/transData.js";
 import * as categoryData from "../data/categoryData.js";
 import { fromToDateForMerge } from "../utils/date.js";
 import { updateFinClass } from "../data/finClassData.js";
+import { nowDate } from "../utils/date.js";
 
 export async function mergeTrans(req, res) {
   try {
@@ -97,16 +98,26 @@ export async function regAccountAndCard(req) {
     // 거래분류 업데이트 처리 병행
     await transData.regTransDataCard(card).catch((error) => console.log(error));
   }
+
   // 체크카드 사용을 제외한 통장 거래내역
   await getOnlyAccountLogs(req);
+  console.log(`[${nowDate()}] 체크카드 사용을 제외한 통장 거래내역 등록 완료`);
+
   // 거래분류 업데이트
   await updateFinClass(req);
+  console.log(`[${nowDate()}] 거래분류 업데이트 완료`);
+
   // 취소거래 삭제처리
   await autoCancelCard(req);
+  console.log(`[${nowDate()}] 취소거래 삭제처리 완료`);
+
   // 자동 카테고리 설정처리
   await autoSetCategory(req);
+  console.log(`[${nowDate()}] 자동 카테고리 설정처리 완료`);
+
   // 미분류 카테고리 설정처리
   await autoSetNoneCategory(req);
+  console.log(`[${nowDate()}] 미분류 카테고리 설정처리 완료`);
 }
 
 async function autoCancelCard(req) {
@@ -168,12 +179,13 @@ export async function createCreditCardDebt(req) {
 export async function getOnlyAccountLogs(req) {
   const logs = await transData.getOnlyAccountLogs(req);
   for (const log of logs) {
+    // 기 등록 여부 확인
     const hasTransLog = await transData.checkHasTransLog({
       accountLog: log._id,
     });
     if (hasTransLog) continue;
+    // 통장 거래내역 등록
     const registedData = await transData.regTransDataFromAccountLog(log);
-    console.log("registedData: ", registedData);
     await transData.updateTransDataFromAccountLog({
       _id: log._id,
       item: registedData._id,

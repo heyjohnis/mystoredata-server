@@ -27,7 +27,6 @@ export async function regEmployeeInfo(req) {
 }
 
 export async function getEmployeeInfo(log) {
-  console.log("getEmployeeInfo: ", log);
   const { userId, transRemark } = log;
   return EmpModel.findOne({ userId, transRemark: transRemark });
 }

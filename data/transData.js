@@ -344,7 +344,6 @@ export async function upateCancelLog(req) {
       { $set: { useYn: false } },
       { sort: { transDate: -1 } }
     );
-    console.log("canceledLogs: ", canceledLogs);
     if (!canceledLogs) {
       const canceledLogsInverse = await TransModel.findOneAndUpdate(
         {
