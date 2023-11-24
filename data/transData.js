@@ -29,8 +29,8 @@ export async function regTransDataCard(log) {
   asset.finClassName = "쓴것(비용+)";
 
   if (asset.tradeKind === "CREDIT") {
-    asset.tradeKind = "CREDIT";
     const transData = await new TransModel(asset).save();
+    console.log("regTransDataCard: ", transData);
     await checkHasDabtAndCreateCreditCardDebt(log, transData._id);
   } else {
     asset.tradeKind = "CHECK";
@@ -304,7 +304,7 @@ export async function regTaxLogToTransLog(data, taxLog) {
       taxData.category = "840";
       taxData.categoryName = "부가세(미리낸)";
     }
-    taxData.transMoney = taxLog.taxTotal;
+    taxData.transMoney = taxLog.taxTotal * -1;
     await new TransModel(taxData).save();
     // 매출채권, 미지급금 처리
     if (
@@ -321,7 +321,7 @@ export async function regTaxLogToTransLog(data, taxLog) {
       taxData.category = "540";
       taxData.categoryName = "미지급금";
     }
-    taxData.transMoney = taxLog.totalAmount;
+    taxData.transMoney = taxLog.amountTotal * -1;
     await new TransModel(taxData).save();
     return taxLog;
   } catch (error) {
@@ -498,16 +498,21 @@ export async function getTransCategoryByClass(req) {
           $lte: toAtDate(toAt),
         },
         useYn: true,
-        useKind: "BIZ",
+        //useKind: "BIZ",
         tradeKind: selTradeKind,
       },
     },
     {
       $group: {
-        _id: { category: "$category", finClassCode: "$finClassCode" },
+        _id: {
+          category: "$category",
+          finClassCode: "$finClassCode",
+          useKind: "$useKind",
+        },
         categoryName: { $first: "$categoryName" },
         transMoney: { $sum: "$transMoney" },
         transDate: { $first: "$transDate" },
+        useKind: { $first: "$useKind" },
       },
     },
     {
@@ -517,6 +522,7 @@ export async function getTransCategoryByClass(req) {
         categoryName: "$categoryName",
         transMoney: "$transMoney",
         transDate: "$transDate",
+        useKind: "$useKind",
       },
     },
   ]);
@@ -530,8 +536,8 @@ export async function getCreditTransData(req) {
   return await TransModel.find(filter);
 }
 
-export async function checkHasDabtAndCreateCreditCardDebt(data, debtId) {
-  const { _id, cardLog, createAt, updatedAt, ...debt } = data._doc;
+export async function checkHasDabtAndCreateCreditCardDebt(data, cardLog) {
+  const { _id, createAt, card, updatedAt, ...debt } = data._doc;
   const hasTran = await TransModel.findOne({
     cardLog,
     category: "500",
@@ -544,7 +550,7 @@ export async function checkHasDabtAndCreateCreditCardDebt(data, debtId) {
     debt.finClassName = "빌린것(부채+)";
     debt.transMoney = debt.transMoney * -1;
     debt.tradeKind = "CREDIT";
-    return await new TransModel({ ...debt, debt: debtId }).save();
+    return await new TransModel({ ...debt, cardLog, debt: card }).save();
   }
 }
 
