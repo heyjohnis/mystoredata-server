@@ -1,5 +1,5 @@
 @baseUrl = http://localhost:8089
-@jwt = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NGQxZDhiNGEyY2RhODg4MWU5NzkzNTYiLCJpYXQiOjE2OTMyMDM4NDYsImV4cCI6MTY5NTc5NTg0Nn0.HfvmBEdvamrofUiUe6-vpZpnOpHzQUYJBWDCU3lugMU
+@jwt = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NGQxZDhiNGEyY2RhODg4MWU5NzkzNTYiLCJpYXQiOjE3MDEwOTE4ODAsImV4cCI6MTcwMTI2NDY4MH0.2WaS55OlN17VFtaH_oMgM_W86X3qxxwokw7LO5l52Jc
 
 ### 로그인
 POST {{baseUrl}}/auth/login HTTP/1.1
@@ -31,7 +31,7 @@ Content-Type: application/json; charset=UTF-8
 Authorization: Bearer {{jwt}}
 
 ### 카테고리 키워드 초기화 ( BIZ, PERSONAL )
-GET {{baseUrl}}/rule/reset-category?useKind=PERSONAL HTTP/1.1
+GET {{baseUrl}}/rule/reset-category?useKind=BIZ HTTP/1.1
 Content-Type: application/json; charset=UTF-8
 Authorization: Bearer {{jwt}}
 
@@ -41,6 +41,6 @@ Content-Type: application/json; charset=UTF-8
 Authorization: Bearer {{jwt}}
 
 ### 미분류 카테고리
-GET {{baseUrl}}/category/non-category/juni0227 HTTP/1.1
+GET {{baseUrl}}/category/non-category/bethelean HTTP/1.1
 Content-Type: application/json; charset=UTF-8
 Authorization: Bearer {{jwt}}

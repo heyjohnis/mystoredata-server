@@ -27,7 +27,7 @@ export async function updateFinClass(req) {
 }
 
 async function resultFinClassCode(log) {
-  const inOut = log.tradeType === "D" ? "IN" : "OUT"; // 입금, 출금
+  const inOut = log.tradeType === "C" ? "IN" : "OUT"; // 입금, 출금
   // 사용자 회사명의 경우
   if (await isUserCorp(log)) return inOut + "3";
   // 한국사람 이름인 경우
@@ -50,9 +50,8 @@ async function resultFinClassCode(log) {
   // 부가세 납부의 경우
   if (await isVAT(log)) return inOut + "2";
   // 매출/매입의 경우(거래처명이 있는 경우) IN, OUT 이 바뀜
-  if (await isTax(log)) return log.tradeType === "C" ? "IN2" : "OUT3";
+  if (await isTax(log)) return log.tradeType === "C" ? "OUT3" : "IN2";
   // 기타의 경우
-
   return inOut + "1";
 }
 
@@ -149,7 +148,7 @@ async function isLoan(log) {
       asset: loanInfo._id,
       category: "470",
       categoryName: "대여금",
-      finClassCode: log.tradeType === "D" ? "IN3" : "OUT3", //
+      finClassCode: log.tradeType === "C" ? "IN3" : "OUT3", //
       transMoney: log.transMoney,
     }
   );
@@ -212,8 +211,8 @@ async function isTax(log) {
         tradeCorp: tradeCorpInfo.tradeCorp,
         tradeCorpNum: tradeCorpInfo.tradeCorpNum,
         tradeCorpName: tradeCorpInfo.tradeCorpName,
-        category: log.tradeType === "D" ? "550" : "540",
-        categoryName: log.tradeType === "D" ? "매출채권" : "미지급금",
+        category: log.tradeType === "C" ? "550" : "540",
+        categoryName: log.tradeType === "C" ? "매출채권" : "미지급금",
         transMoney: log.transMoney,
       },
     }
