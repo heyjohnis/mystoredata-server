@@ -1,5 +1,5 @@
 @baseUrl = http://localhost:8089
-@jwt = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NGQxZDhiNGEyY2RhODg4MWU5NzkzNTYiLCJpYXQiOjE2OTgwNDA0NDEsImV4cCI6MTcwMDYzMjQ0MX0.MwAlQLXCIxxMwMDgfcNXdLtGTtgNG9retpaeGS61ork
+@jwt = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NGQxZDhiNGEyY2RhODg4MWU5NzkzNTYiLCJpYXQiOjE3MDEwNDg4NjMsImV4cCI6MTcwMzY0MDg2M30.4Lwd0jhQoPiFZwuqWLJ2v2cD2Vn4VDejk5dweelqYZc
 
 ### 로그인
 POST {{baseUrl}}/auth/login HTTP/1.1
@@ -30,15 +30,14 @@ Authorization: Bearer {{jwt}}
     "corpNum": "6348702350"
 }
 
-
 ### 세금계산서 발행 로그 저장
 POST {{baseUrl}}/tax/reg-log HTTP/1.1
 Content-Type: application/json; charset=UTF-8
 Authorization: Bearer {{jwt}}
 
 {
-    "fromAt": "20230501",
-    "toAt": "20231117"
+    "fromAt": "20230510",
+    "toAt": "20231125"
 }
 
 ### 세금계산서 발행 업체명 및 대표 이름 확인 

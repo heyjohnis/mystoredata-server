@@ -6,7 +6,7 @@ const router = express.Router();
 
 router.put("/merge", isAuth, controller.mergeTrans);
 
-router.post("/log", isAuth, controller.mergeTransLogs);
+router.post("/log", isAuth, controller.getTransLogs);
 
 router.post("/trade-log", isAuth, controller.getTradeLogs);
 

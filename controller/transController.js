@@ -15,7 +15,7 @@ export async function mergeTrans(req, res) {
   }
 }
 
-export async function mergeTransLogs(req, res) {
+export async function getTransLogs(req, res) {
   const data = await transData
     .getTransMoney(req)
     .catch((error) => console.log(error));
@@ -69,19 +69,19 @@ export async function updateCategory(req, res) {
 
 /* 카드내역과 통장내역 등록 및 정보 동기화 */
 export async function regAccountAndCard(req) {
-  // 카드 거래내역 등록
+  // 통장 거래내역 등록 및 정보 동기화
   const accountLogs = await accountLogData
     .getAccountLogs(req)
     .catch((error) => console.log(error));
-  for (const account of accountLogs) {
+  for (const log of accountLogs) {
     // 통장 기등록 여부 확인
     const hasTransLog = await transData.checkHasTransLog({
-      accountLog: account._id,
+      accountLog: log._id,
     });
     if (hasTransLog) continue;
     // 통장 거래내역 등록
     await transData
-      .regTransDataAccount(account)
+      .regTransDataAccount(log)
       .catch((error) => console.log(error));
   }
 
@@ -91,16 +91,16 @@ export async function regAccountAndCard(req) {
     .catch((error) => console.log(error));
 
   // 통장개래와 카드거래를 합치기
-  for (const card of cardLogs) {
+  for (const log of cardLogs) {
     // 카드 기등록 여부 확인
-    const hasTransLog = await transData.checkHasTransLog({ cardLog: card._id });
+    const hasTransLog = await transData.checkHasTransLog({ cardLog: log._id });
     if (hasTransLog) continue;
     // 거래분류 업데이트 처리 병행
-    await transData.regTransDataCard(card).catch((error) => console.log(error));
+    await transData.regTransDataCard(log).catch((error) => console.log(error));
   }
 
   // 체크카드 사용을 제외한 통장 거래내역
-  await getOnlyAccountLogs(req);
+  await regTradeOnlyAccountLogs(req);
   console.log(`[${nowDate()}] 체크카드 사용을 제외한 통장 거래내역 등록 완료`);
 
   // 거래분류 업데이트
@@ -176,7 +176,7 @@ export async function createCreditCardDebt(req) {
   return cnt;
 }
 
-export async function getOnlyAccountLogs(req) {
+export async function regTradeOnlyAccountLogs(req) {
   const logs = await transData.getOnlyAccountLogs(req);
   for (const log of logs) {
     // 기 등록 여부 확인

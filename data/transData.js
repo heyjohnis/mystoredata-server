@@ -20,7 +20,6 @@ export async function regTransDataAccount(log) {
   const transLog = setDepositTransData(asset);
   return await new TransModel(transLog).save();
 }
-
 /* 카드 거래내역 거래내역에 등록*/
 export async function regTransDataCard(log) {
   const asset = convertTransAsset(log);
@@ -270,8 +269,8 @@ export async function regTaxLogToTransLog(data, taxLog) {
 
   // 매출의 경우
   if (
-    (taxLog.amountTotal > 0 && taxLog.modifyCode !== 4) ||
-    (taxLog.amountTotal < 0 && taxLog.modifyCode === 4)
+    (taxLog.tradeType === "D" && taxLog.modifyCode !== 4) ||
+    (taxLog.tradeType === "C" && taxLog.modifyCode === 4)
   ) {
     taxData.transRemark = taxLog.invoiceeCorpName;
     taxData.finClassCode = "IN1";
@@ -282,8 +281,8 @@ export async function regTaxLogToTransLog(data, taxLog) {
     taxData.transRemark = taxLog.invoicerCorpName;
     taxData.finClassCode = "OUT1";
     taxData.finClassName = "쓴것(비용+)";
-    taxData.category = "410";
-    taxData.categoryName = "매입";
+    taxData.category = "-" + taxLog.invoicerCorpNum;
+    taxData.categoryName = taxLog.invoicerCorpName;
   }
 
   try {
@@ -291,8 +290,8 @@ export async function regTaxLogToTransLog(data, taxLog) {
     await new TransModel(taxData).save();
     // 부가세 처리
     if (
-      (taxLog.amountTotal > 0 && taxLog.modifyCode !== 4) ||
-      (taxLog.amountTotal < 0 && taxLog.modifyCode === 4)
+      (taxLog.tradeType === "D" && taxLog.modifyCode !== 4) ||
+      (taxLog.tradeType === "C" && taxLog.modifyCode === 4)
     ) {
       taxData.finClassCode = "IN2";
       taxData.finClassName = "빌린것(부채+)";
@@ -304,14 +303,14 @@ export async function regTaxLogToTransLog(data, taxLog) {
       taxData.category = "840";
       taxData.categoryName = "부가세(미리낸)";
     }
-    taxData.transMoney = taxLog.taxTotal * -1;
+    taxData.transMoney = taxLog.taxTotal;
     await new TransModel(taxData).save();
     // 매출채권, 미지급금 처리
     if (
-      (taxLog.amountTotal > 0 && taxLog.modifyCode !== 4) ||
-      (taxLog.amountTotal < 0 && taxLog.modifyCode === 4)
+      (taxLog.tradeType === "D" && taxLog.modifyCode !== 4) ||
+      (taxLog.tradeType === "C" && taxLog.modifyCode === 4)
     ) {
-      taxData.finClassCode = "OUT3";
+      taxData.finClassCode = "IN3";
       taxData.finClassName = "나머지(자산+)";
       taxData.category = "550";
       taxData.categoryName = "매출채권";
@@ -321,7 +320,7 @@ export async function regTaxLogToTransLog(data, taxLog) {
       taxData.category = "540";
       taxData.categoryName = "미지급금";
     }
-    taxData.transMoney = taxLog.amountTotal * -1;
+    taxData.transMoney = taxLog.totalAmount;
     await new TransModel(taxData).save();
     return taxLog;
   } catch (error) {
@@ -548,7 +547,8 @@ export async function checkHasDabtAndCreateCreditCardDebt(data, cardLog) {
     debt.categoryName = "카드대금";
     debt.finClassCode = "IN2";
     debt.finClassName = "빌린것(부채+)";
-    debt.transMoney = debt.transMoney * -1;
+    debt.transMoney = parseInt(debt.cardApprovalCost);
+    debt.tradeType = "C";
     debt.tradeKind = "CREDIT";
     return await new TransModel({ ...debt, cardLog, debt: card }).save();
   }
@@ -575,6 +575,7 @@ export async function regTransDataFromAccountLog(log) {
   data.finClassCode = null;
   data.finClassName = null;
   data.tradeKind = "CASH";
+  data.tradeType = data.tradeType === "D" ? "C" : "D";
   return await new TransModel(data).save();
 }
 

@@ -50,10 +50,10 @@ export async function regTaxLog(req, res) {
       const cancelCode = await taxService.cancelStopTaxInvoiceScrapAsync({
         body,
       });
-      console.log("홈택스 해지 취소 : ", cancelCode);
+      console.log("홈택스 해지 취소 : ", errorCase(cancelCode));
 
       const reRegCode = await taxService.ReRegistTaxInvoiceScrapAsync({ body });
-      console.log("홈택스 사용 재등록 : ", reRegCode);
+      console.log("홈택스 사용 재등록 : ", errorCase(reRegCode));
       cntSales +=
         (await taxService.getPeriodTaxInvoiceSalesListAsync(user)) || 0;
       cntPurchase +=

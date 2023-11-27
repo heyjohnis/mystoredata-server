@@ -19,7 +19,7 @@ export async function getFinStatusAmountData(req) {
             $lte: toAtDate(toAt),
           },
           useYn: true,
-          useKind: "BIZ",
+          // useKind: "BIZ",
           tradeKind: selPayType,
         },
       },

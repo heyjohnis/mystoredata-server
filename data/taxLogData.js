@@ -11,10 +11,8 @@ export async function regTaxLog(data, userInfo, tradeCorp) {
     if (existingData) {
       return;
     }
-
-    const tradeTypeCode = userInfo.corpNum === data.InvoicerCorpNum ? 1 : -1;
-    const tradeType =
-      userInfo.corpNum === data.InvoicerCorpNum ? "매출" : "매입";
+    const tradeType = userInfo.corpNum === data.InvoicerCorpNum ? "D" : "C";
+    // D : 매출, C : 매입
     return await new TaxLogModel({
       user: userInfo.user,
       userId: userInfo.userId,
@@ -22,7 +20,6 @@ export async function regTaxLog(data, userInfo, tradeCorp) {
       corpNum: userInfo.corpNum,
       ntsSendKey: data.NTSSendKey,
       tradeType,
-      tradeTypeCode,
       tradeCorp,
       ntsSendDT: strToDate(data.NTSSendDT),
       issueDT: strToDate(data.IssueDT),
@@ -57,9 +54,9 @@ export async function regTaxLog(data, userInfo, tradeCorp) {
       brokerBizClass: data.BrokerBizClass,
       brokerContactName: data.BrokerContactName,
       brokerEmail: data.BrokerEmail,
-      amountTotal: parseInt(data.AmountTotal) * tradeTypeCode,
-      taxTotal: parseInt(data.TaxTotal) * tradeTypeCode,
-      totalAmount: parseInt(data.TotalAmount) * tradeTypeCode,
+      amountTotal: parseInt(data.AmountTotal),
+      taxTotal: parseInt(data.TaxTotal),
+      totalAmount: parseInt(data.TotalAmount),
       cash: data.cash,
       itemName: data.ItemName,
       taxRegID: data.TaxRegID,
