@@ -14,6 +14,8 @@ router.post("/regLog", isAuth, controller.regAcountLog);
 
 router.get("/log", isAuth, controller.getAccountLogs);
 
+router.post("/log", isAuth, controller.getAccountLogs);
+
 router.delete("/delete/:_id", isAuth, controller.deleteAccount);
 
 /* BaroBill */
