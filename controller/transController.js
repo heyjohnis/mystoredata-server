@@ -192,10 +192,3 @@ export async function regTradeOnlyAccountLogs(req) {
     });
   }
 }
-
-export async function getInOutAccount(req, res) {
-  const data = await transData
-    .getInOutAccount(req)
-    .catch((error) => console.log(error));
-  res.status(200).json(data);
-}

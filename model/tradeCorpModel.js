@@ -9,7 +9,6 @@ export const TradeCorpSchema = new Mongoose.Schema(
     corpName: { type: String, required: true },
     corpNum: { type: String, required: true },
     tradeType: { type: String, required: true },
-    tradeTypeCode: { type: Number, required: true },
     tradeCorpNum: { type: String, required: false },
     tradeCorpName: { type: String, required: false },
     tradeCorpCEOName: { type: String, required: false },

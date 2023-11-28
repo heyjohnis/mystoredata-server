@@ -53,7 +53,7 @@ export async function getFinStatusTaxData(req) {
       },
       {
         $group: {
-          _id: "$tradeTypeCode",
+          _id: "$tradeType",
           total: { $sum: "$totalAmount" },
           amount: { $sum: "$amountTotal" },
           tax: { $sum: "$taxTotal" },

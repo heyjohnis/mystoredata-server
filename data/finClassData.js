@@ -243,7 +243,7 @@ async function defaultFinClassCode(log, inOut) {
     return inOut + "1";
   }
   // 입금의 경우
-  if (inOut == "IN") {
+  if (inOut === "IN") {
     try {
       const debtInfo = await new debtModel({
         user: log.user,

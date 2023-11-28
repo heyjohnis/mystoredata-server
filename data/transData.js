@@ -277,12 +277,14 @@ export async function regTaxLogToTransLog(data, taxLog) {
     taxData.finClassName = "번것(수익+)";
     taxData.category = "400";
     taxData.categoryName = "매출";
+    taxData.tradeType = "C";
   } else {
     taxData.transRemark = taxLog.invoicerCorpName;
     taxData.finClassCode = "OUT1";
     taxData.finClassName = "쓴것(비용+)";
     taxData.category = "-" + taxLog.invoicerCorpNum;
     taxData.categoryName = taxLog.invoicerCorpName;
+    taxData.tradeType = "D";
   }
 
   try {
@@ -297,11 +299,13 @@ export async function regTaxLogToTransLog(data, taxLog) {
       taxData.finClassName = "빌린것(부채+)";
       taxData.category = "850";
       taxData.categoryName = "부가세(내야할)";
+      taxData.tradeType = "C";
     } else {
       taxData.finClassCode = "OUT3";
       taxData.finClassName = "나머지(자산+)";
       taxData.category = "840";
       taxData.categoryName = "부가세(미리낸)";
+      taxData.tradeType = "D";
     }
     taxData.transMoney = taxLog.taxTotal;
     await new TransModel(taxData).save();
@@ -314,11 +318,13 @@ export async function regTaxLogToTransLog(data, taxLog) {
       taxData.finClassName = "나머지(자산+)";
       taxData.category = "550";
       taxData.categoryName = "매출채권";
+      taxData.tradeType = "D";
     } else {
       taxData.finClassCode = "IN2";
       taxData.finClassName = "빌린것(부채+)";
       taxData.category = "540";
       taxData.categoryName = "미지급금";
+      taxData.tradeType = "C";
     }
     taxData.transMoney = taxLog.totalAmount;
     await new TransModel(taxData).save();
@@ -581,42 +587,4 @@ export async function regTransDataFromAccountLog(log) {
 
 export async function updateTransDataFromAccountLog({ _id, item }) {
   return await TransModel.updateOne({ _id }, { $set: { item } });
-}
-
-export async function getInOutAccount(req) {
-  const { userId, fromAt, toAt, tradeKind } = req.body;
-  const selTradeKind = !tradeKind ? { $ne: null } : tradeKind;
-  console.log("getTransCategoryByClass: ", req.body);
-  return await TransModel.aggregate([
-    {
-      $match: {
-        userId,
-        transDate: {
-          $gte: fromAtDate(fromAt),
-          $lte: toAtDate(toAt),
-        },
-        useYn: true,
-        useKind: "BIZ",
-        tradeKind: selTradeKind,
-        category: { $regex: /-/ },
-      },
-    },
-    {
-      $group: {
-        _id: { category: "$category", finClassCode: "$finClassCode" },
-        categoryName: { $first: "$categoryName" },
-        transMoney: { $sum: "$transMoney" },
-        transDate: { $first: "$transDate" },
-      },
-    },
-    {
-      $project: {
-        category: "$_id.category",
-        finClassCode: "$_id.finClassCode",
-        categoryName: "$categoryName",
-        transMoney: "$transMoney",
-        transDate: "$transDate",
-      },
-    },
-  ]);
 }
