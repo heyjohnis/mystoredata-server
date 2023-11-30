@@ -30,6 +30,8 @@ export async function getCardLogs(req) {
     filter.corpNum = req.query?.corpNum || req.body?.corpNum;
   if (req.query?.userId || req.body?.userId)
     filter.userId = req.query?.userId || req.body?.userId;
+  if (req.query?.tradeKind || req.body?.tradeKind)
+    filter.tradeKind = req.query?.tradeKind || req.body?.tradeKind;
   if (
     (req.query?.fromAt || req.body?.fromAt) &&
     (req.query?.toAt || req.body?.toAt)

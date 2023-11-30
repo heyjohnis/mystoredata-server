@@ -588,3 +588,18 @@ export async function regTransDataFromAccountLog(log) {
 export async function updateTransDataFromAccountLog({ _id, item }) {
   return await TransModel.updateOne({ _id }, { $set: { item } });
 }
+
+export async function getTradeItem(req) {
+  const id = mongoose.Types.ObjectId(req.body._id);
+  return await TransModel.find({
+    $or: [
+      { asset: id },
+      { debt: id },
+      { item: id },
+      { employee: id },
+      { cardLog: id },
+      { accountLog: id },
+      { tax: id },
+    ],
+  });
+}

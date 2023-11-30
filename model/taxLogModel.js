@@ -14,6 +14,7 @@ export const TaxLogSchema = new Mongoose.Schema(
     tradeType: { type: String, required: false },
     tradeTypeCode: { type: Number, required: false },
     issueDT: { type: Date, required: false },
+    transDate: { type: Date, required: false },
     writeDate: { type: String, required: false },
     modifyCode: { type: Number, required: false },
     taxType: { type: Number, required: false },

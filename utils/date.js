@@ -40,11 +40,13 @@ export function nowDate() {
 }
 
 export function fromAtDate(str) {
+  if (!str) return;
   const fromAt = strToDate(str);
   return new Date(fromAt?.setHours(fromAt.getHours()));
 }
 
 export function toAtDate(str) {
+  if (!str) return;
   const toAt = strToDate(str);
   const date = new Date(toAt?.setHours(toAt.getHours() + 24));
   console.log("toAtDate: ", date);

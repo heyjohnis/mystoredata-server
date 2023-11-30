@@ -62,6 +62,7 @@ export async function regTaxLog(data, userInfo, tradeCorp) {
       taxRegID: data.TaxRegID,
       taxCorpName: data.CorpName,
       ceoName: data.CEOName,
+      transDate: strToDate(data.IssueDT),
     })
       .save()
       .then((res) => res);

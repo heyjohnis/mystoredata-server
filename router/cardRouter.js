@@ -16,6 +16,8 @@ router.get("/list", isAuth, controller.getCardList);
 
 router.get("/log", isAuth, controller.getCardLogs);
 
+router.post("/log", isAuth, controller.getCardLogs);
+
 router.delete("/delete/:_id", isAuth, controller.deleteCard);
 
 router.post("/cancel-stop", isAuth, controller.cancelStopCard);
