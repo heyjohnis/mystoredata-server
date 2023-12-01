@@ -46,7 +46,7 @@ export async function regTransDataCard(log) {
 
 /* 중복 거래 확인(카드만 등록, 계좌만 등록, 기 등록된 거래인지?) */
 async function linkAccountLogForCheckCard(asset) {
-  return await TransModel.findOneAndUpdate(
+  const log = await TransModel.findOneAndUpdate(
     {
       userId: asset.userId,
       transMoney: asset.transMoney,
@@ -57,8 +57,14 @@ async function linkAccountLogForCheckCard(asset) {
         $lte: new Date(Number(asset.transDate) + 200000),
       },
     },
-    { cardLog: asset._id, tradeKind: "CHECK", item: asset._id },
+    { cardLog: asset.cardLog, tradeKind: "CHECK", item: asset._id },
     { returnOriginal: false }
+  );
+  console.log("linkAccountLogForCheckCard: ", log);
+  if (!log) return;
+  return await TransModel.findOneAndUpdate(
+    { _id: asset._id },
+    { $set: { cardLog: log.cardLog } }
   );
 }
 
@@ -260,7 +266,7 @@ export async function regTaxLogToTransLog(data, taxLog) {
     corpNum,
     corpName,
     useYn: taxLog.useYn,
-    tax: taxLog._id,
+    taxLog: taxLog._id,
     transDate: taxLog.issueDT,
     transMoney: taxLog.amountTotal,
     tradeKind: "BILL",
@@ -541,10 +547,10 @@ export async function getCreditTransData(req) {
   return await TransModel.find(filter);
 }
 
-export async function checkHasDabtAndCreateCreditCardDebt(data, cardLog) {
-  const { _id, createAt, card, updatedAt, ...debt } = data._doc;
+export async function checkHasDabtAndCreateCreditCardDebt(data, creditCardLog) {
+  const { _id, createAt, card, cardLog, updatedAt, ...debt } = data._doc;
   const hasTran = await TransModel.findOne({
-    cardLog,
+    item: creditCardLog,
     category: "500",
     useYn: true,
   });
@@ -556,7 +562,12 @@ export async function checkHasDabtAndCreateCreditCardDebt(data, cardLog) {
     debt.transMoney = parseInt(debt.cardApprovalCost);
     debt.tradeType = "C";
     debt.tradeKind = "CREDIT";
-    return await new TransModel({ ...debt, cardLog, debt: card }).save();
+    return await new TransModel({
+      ...debt,
+      debt: _id,
+      cardLog: _id,
+      item: creditCardLog,
+    }).save();
   }
 }
 
