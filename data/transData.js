@@ -64,7 +64,7 @@ async function linkAccountLogForCheckCard(asset) {
   if (!log) return;
   return await TransModel.findOneAndUpdate(
     { _id: asset._id },
-    { $set: { cardLog: log.cardLog } }
+    { $set: { accountLog: log.accountLog } }
   );
 }
 
@@ -260,36 +260,50 @@ export async function updateCategory(req) {
 /* 세금계산서를 거래내역에 등록 */
 export async function regTaxLogToTransLog(data, taxLog) {
   const { user, userId, corpNum, corpName } = data;
+  const {
+    useYn,
+    _id,
+    issueDt,
+    amountTotal,
+    invoiceeCorpName,
+    invoicerCorpNum,
+    invoicerCorpName,
+    modifyCode,
+    tradeType,
+    taxTotal,
+    totalAmount,
+  } = taxLog;
   const taxData = {
     user,
     userId,
     corpNum,
     corpName,
-    useYn: taxLog.useYn,
-    taxLog: taxLog._id,
-    transDate: taxLog.issueDT,
-    transMoney: taxLog.amountTotal,
+    useYn: useYn,
+    taxLog: _id,
+    transDate: issueDt,
+    transMoney: amountTotal,
     tradeKind: "BILL",
     useKind: "BIZ",
   };
 
+  console.log("regTaxLogToTransLog taxData: ", taxData);
   // 매출의 경우
   if (
-    (taxLog.tradeType === "D" && taxLog.modifyCode !== 4) ||
-    (taxLog.tradeType === "C" && taxLog.modifyCode === 4)
+    (tradeType === "D" && modifyCode !== 4) ||
+    (tradeType === "C" && modifyCode === 4)
   ) {
-    taxData.transRemark = taxLog.invoiceeCorpName;
+    taxData.transRemark = invoiceeCorpName;
     taxData.finClassCode = "IN1";
     taxData.finClassName = "번것(수익+)";
     taxData.category = "400";
     taxData.categoryName = "매출";
     taxData.tradeType = "C";
   } else {
-    taxData.transRemark = taxLog.invoicerCorpName;
+    taxData.transRemark = invoicerCorpName;
     taxData.finClassCode = "OUT1";
     taxData.finClassName = "쓴것(비용+)";
-    taxData.category = "-" + taxLog.invoicerCorpNum;
-    taxData.categoryName = taxLog.invoicerCorpName;
+    taxData.category = "-" + invoicerCorpNum;
+    taxData.categoryName = invoicerCorpName;
     taxData.tradeType = "D";
   }
 
@@ -298,8 +312,8 @@ export async function regTaxLogToTransLog(data, taxLog) {
     await new TransModel(taxData).save();
     // 부가세 처리
     if (
-      (taxLog.tradeType === "D" && taxLog.modifyCode !== 4) ||
-      (taxLog.tradeType === "C" && taxLog.modifyCode === 4)
+      (tradeType === "D" && modifyCode !== 4) ||
+      (tradeType === "C" && modifyCode === 4)
     ) {
       taxData.finClassCode = "IN2";
       taxData.finClassName = "빌린것(부채+)";
@@ -313,12 +327,12 @@ export async function regTaxLogToTransLog(data, taxLog) {
       taxData.categoryName = "부가세(미리낸)";
       taxData.tradeType = "D";
     }
-    taxData.transMoney = taxLog.taxTotal;
+    taxData.transMoney = taxTotal;
     await new TransModel(taxData).save();
     // 매출채권, 미지급금 처리
     if (
-      (taxLog.tradeType === "D" && taxLog.modifyCode !== 4) ||
-      (taxLog.tradeType === "C" && taxLog.modifyCode === 4)
+      (tradeType === "D" && modifyCode !== 4) ||
+      (tradeType === "C" && modifyCode === 4)
     ) {
       taxData.finClassCode = "IN3";
       taxData.finClassName = "나머지(자산+)";
@@ -332,7 +346,7 @@ export async function regTaxLogToTransLog(data, taxLog) {
       taxData.categoryName = "미지급금";
       taxData.tradeType = "C";
     }
-    taxData.transMoney = taxLog.totalAmount;
+    taxData.transMoney = totalAmount;
     await new TransModel(taxData).save();
     return taxLog;
   } catch (error) {
@@ -610,7 +624,7 @@ export async function getTradeItem(req) {
       { employee: id },
       { cardLog: id },
       { accountLog: id },
-      { tax: id },
+      { taxLog: id },
     ],
   });
 }
