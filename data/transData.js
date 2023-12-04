@@ -628,3 +628,22 @@ export async function getTradeItem(req) {
     ],
   });
 }
+
+export async function checkIsTransfer(log) {
+  const { transMoney, tradeType, tradeKind } = log;
+  if (tradeKind === "CASH") return false;
+  if (tradeType === "D" && transMoney > 0) return true;
+  if (tradeType === "C" && transMoney < 0) return true;
+  return false;
+}
+
+export async function updateTransferLog(log, transferLog) {
+  await TransModel.updateOne(
+    { _id: log._id },
+    { $set: { item: transferLog.accountLog } }
+  );
+  await TransModel.updateOne(
+    { _id: transferLog._id },
+    { $set: { item: log.accountLog } }
+  );
+}

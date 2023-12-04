@@ -5,6 +5,7 @@ import * as categoryData from "../data/categoryData.js";
 import { fromToDateForMerge } from "../utils/date.js";
 import { updateFinClass } from "../data/finClassData.js";
 import { nowDate } from "../utils/date.js";
+import { link } from "fs";
 
 export async function mergeTrans(req, res) {
   try {
@@ -99,7 +100,7 @@ export async function regAccountAndCard(req) {
     await transData.regTransDataCard(log).catch((error) => console.log(error));
   }
 
-  // 체크카드 사용을 제외한 통장 거래내역
+  // 체크카드 사용을 제외한 통장 거래내역 (이체거래 포함)
   await regTradeOnlyAccountLogs(req);
   console.log(`[${nowDate()}] 체크카드 사용을 제외한 통장 거래내역 등록 완료`);
 
@@ -184,6 +185,26 @@ export async function regTradeOnlyAccountLogs(req) {
       accountLog: log._id,
     });
     if (hasTransLog) continue;
+
+    // 이체 거래내역 연결
+    const transferLog = logs.find((accountLog) => {
+      console.log(
+        "transferLog: ",
+        Math.abs(accountLog.transDate - log.transDate)
+      );
+      return (
+        accountLog.transMoney === log.transMoney &&
+        accountLog.tradeType !== log.tradeType &&
+        Math.abs(accountLog.transDate - log.transDate) < 1000 * 60
+      );
+    });
+
+    if (transferLog) {
+      console.log("transferLog: ", transferLog);
+      await transData.updateTransferLog(log, transferLog);
+      continue;
+    }
+
     // 통장 거래내역 등록
     const registedData = await transData.regTransDataFromAccountLog(log);
     await transData.updateTransDataFromAccountLog({
