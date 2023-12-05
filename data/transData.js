@@ -60,7 +60,6 @@ async function linkAccountLogForCheckCard(asset) {
     { cardLog: asset.cardLog, tradeKind: "CHECK", item: asset._id },
     { returnOriginal: false }
   );
-  console.log("linkAccountLogForCheckCard: ", log);
   if (!log) return;
   return await TransModel.findOneAndUpdate(
     { _id: asset._id },
@@ -358,17 +357,34 @@ export async function regTaxLogToTransLog(data, taxLog) {
 /* 거래 취소된 내역 업데이트(취소처리) */
 export async function upateCancelLog(req) {
   try {
-    const _id = mongoose.Types.ObjectId(req._id);
-    await TransModel.updateOne({ _id }, { $set: { useYn: false } });
+    const { userId, transDate, transMoney, accountLog, cardLog } = req;
+    await TransModel.updateOne(
+      {
+        $or: [{ accountLog }, { cardLog }],
+      },
+      { $set: { useYn: false } }
+    );
     const canceledLogs = await TransModel.findOneAndUpdate(
       {
-        userId: req.userId,
-        transDate: { $lte: req.transDate },
-        transMoney: req.transMoney * -1,
+        userId,
+        transDate: { $lte: transDate },
+        transMoney: transMoney * -1,
       },
       { $set: { useYn: false } },
       { sort: { transDate: -1 } }
     );
+
+    // 카드취소 상대계정
+    await TransModel.updateOne(
+      {
+        $or: [
+          { accountLog: mongoose.Types.ObjectId(canceledLogs.accountLog) },
+          { cardLog: mongoose.Types.ObjectId(canceledLogs.cardLog) },
+        ],
+      },
+      { $set: { useYn: false } }
+    );
+
     if (!canceledLogs) {
       const canceledLogsInverse = await TransModel.findOneAndUpdate(
         {
