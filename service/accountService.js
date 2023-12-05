@@ -3,7 +3,6 @@ import * as accountLogData from "../data/accountLogData.js";
 import { keywordGen } from "../utils/keywordGen.js";
 import errorCase from "../middleware/baroError.js";
 import { BaroService } from "../utils/baroService.js";
-import e from "express";
 
 const baroServiceName = "BANKACCOUNT";
 

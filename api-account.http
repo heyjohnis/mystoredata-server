@@ -1,5 +1,5 @@
 @baseUrl = http://localhost:8089
-@jwt = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NGQxZDhiNGEyY2RhODg4MWU5NzkzNTYiLCJpYXQiOjE2OTk4NTA3OTMsImV4cCI6MTcwMjQ0Mjc5M30.DRnPx93ZtrCSvSMDu-g1HWfU3lWPbPr6RBLPQaFy5Bw
+@jwt = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NGQxZDhiNGEyY2RhODg4MWU5NzkzNTYiLCJpYXQiOjE3MDE3NTQzNjMsImV4cCI6MTcwNDM0NjM2M30.sS1yMV8EG6Byk_Vq0WqhzVg8h6XZd8cXd55Ka0Cj1NQ
 
 ### 로그인
 POST {{baseUrl}}/auth/login HTTP/1.1
@@ -22,8 +22,10 @@ Content-Type: application/json; charset=UTF-8
 Authorization: Bearer {{jwt}}
 
 {
-    "bankAccountNum": "110335376921",
-    "baseMonth": "202307"
+    "bankAccountNum": "37691003114104",
+    "corpNum": "6348702350",
+    "baseMonth": "202312",
+    "opsKind": "TEST"
 }
 
 ### 통장내역불러오기
@@ -129,9 +131,9 @@ Content-Type: application/json; charset=UTF-8
 Authorization: Bearer {{jwt}}
 
 {
-    "bankAccountNum": "37691003114104",
+    "bankAccountNum": "37691003113404",
     "corpNum": "6348702350",
-    "opsKind": "OPS"
+    "opsKind": "TEST"
 }
 
 ### 통장 재등록
@@ -140,7 +142,7 @@ Content-Type: application/json; charset=UTF-8
 Authorization: Bearer {{jwt}}
 
 {
-    "bankAccountNum": "37691003114104",
+    "bankAccountNum": "37691003113404",
     "corpNum": "6348702350",
-    "opsKind": "OPS"
+    "opsKind": "TEST"
 }
