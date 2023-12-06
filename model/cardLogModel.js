@@ -4,11 +4,11 @@ import { useVirtualId } from "../database/database.js";
 const types = Mongoose.Types;
 const schema = new Mongoose.Schema(
   {
-    user: { type: Object, required: true, ref: "user" },
+    user: { type: types.ObjectId, required: true, ref: "user" },
     userId: { type: String, required: true },
     corpNum: { type: String, required: true },
     corpName: { type: String, required: true },
-    card: { type: Object, required: false, ref: `card` },
+    card: { type: types.ObjectId, required: false, ref: `card` },
     cardCompany: { type: String, required: true },
     cardNum: { type: String, required: true },
     cardType: { type: String, required: true },

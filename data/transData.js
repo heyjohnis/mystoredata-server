@@ -358,7 +358,7 @@ export async function regTaxLogToTransLog(data, taxLog) {
 export async function upateCancelLog(req) {
   try {
     const { userId, transDate, transMoney, accountLog, cardLog } = req;
-    await TransModel.updateOne(
+    await TransModel.updateMany(
       {
         $or: [{ accountLog }, { cardLog }],
       },
@@ -375,11 +375,13 @@ export async function upateCancelLog(req) {
     );
 
     // 카드취소 상대계정
-    await TransModel.updateOne(
+    await TransModel.updateMany(
       {
         $or: [
           { accountLog: mongoose.Types.ObjectId(canceledLogs.accountLog) },
           { cardLog: mongoose.Types.ObjectId(canceledLogs.cardLog) },
+          { item: mongoose.Types.ObjectId(canceledLogs.accountLog) },
+          { item: mongoose.Types.ObjectId(canceledLogs.cardLog) },
         ],
       },
       { $set: { useYn: false } }

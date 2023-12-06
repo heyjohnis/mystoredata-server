@@ -6,9 +6,9 @@ export const FinItemSchema = new Mongoose.Schema(
   {
     user: { type: types.ObjectId, ref: `user`, required: true },
     userId: { type: String, required: true },
-    account: { type: Object, required: false, ref: `account` },
+    account: { type: types.ObjectId, required: false, ref: `account` },
     accountNum: { type: String, required: false },
-    card: { type: Object, required: false, ref: `card` },
+    card: { type: types.ObjectId, required: false, ref: `card` },
     itemKind: { type: String, required: true },
     itemKindName: { type: String, required: true },
     itemType: { type: String, required: true },
