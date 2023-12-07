@@ -182,16 +182,12 @@ export async function regTradeOnlyAccountLogs(req) {
   for (const log of logs) {
     // 기 등록 여부 확인
     const hasTransLog = await transData.checkHasTransLog({
-      accountLog: log._id,
+      accountLog: log.accountLog,
     });
     if (hasTransLog) continue;
 
     // 이체 거래내역 연결
     const transferLog = logs.find((accountLog) => {
-      console.log(
-        "transferLog: ",
-        Math.abs(accountLog.transDate - log.transDate)
-      );
       return (
         accountLog.transMoney === log.transMoney &&
         accountLog.tradeType !== log.tradeType &&

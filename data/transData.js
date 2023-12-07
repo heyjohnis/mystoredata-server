@@ -35,10 +35,10 @@ export async function regTransDataCard(log) {
     asset.tradeKind = "CHECK";
     const transData = await new TransModel(asset).save();
     const linkLog = await linkAccountLogForCheckCard(transData);
-    if (!linkLog) {
+    if (linkLog) {
       await TransModel.updateOne(
         { _id: transData._id },
-        { $set: { accountLog: transData._id, tradeKind: "CHECK" } }
+        { $set: { accountLog: transData.accountLog, tradeKind: "CHECK" } }
       );
     }
   }
@@ -46,19 +46,19 @@ export async function regTransDataCard(log) {
 
 /* 중복 거래 확인(카드만 등록, 계좌만 등록, 기 등록된 거래인지?) */
 async function linkAccountLogForCheckCard(asset) {
+  // 연결 계좌 거래내역 확인 후 카드 내역과 연결
   const log = await TransModel.findOneAndUpdate(
     {
       userId: asset.userId,
-      transMoney: asset.transMoney,
+      transMoney: Math.abs(asset.transMoney),
       accountLog: { $ne: null },
-      item: null,
+      cardLog: null,
       transDate: {
-        $gte: new Date(Number(asset.transDate) - 200000),
-        $lte: new Date(Number(asset.transDate) + 200000),
+        $gte: new Date(Number(asset.transDate) - 600000),
       },
     },
-    { cardLog: asset.cardLog, tradeKind: "CHECK", item: asset._id },
-    { returnOriginal: false }
+    { cardLog: asset.cardLog, tradeKind: "CHECK" },
+    { sort: { transDate: -1 }, returnOriginal: false }
   );
   if (!log) return;
   return await TransModel.findOneAndUpdate(
@@ -79,11 +79,6 @@ export async function autoSetCategoryAndUseKind(asset) {
       categoryName,
       useKind,
     });
-    console.log(
-      `${nowDate()}: set category by remark: ${asset.transAssetNum} ${
-        asset.transMoney
-      } ${asset.transRemark} ${asset.useStoreName}`
-    );
   } else {
     const DefaultCategory =
       asset.useKind === "BIZ" ? DefaultCorpCategory : DefaultPersonalCategory;
@@ -159,7 +154,11 @@ async function getAutosetCategoryCode(asset) {
 /* 거래내역 조회 */
 export async function getTransMoney(req) {
   const filter = assetFilter(req);
-  return TransModel.find(filter).sort({ transDate: -1 });
+  return TransModel.find(filter).sort({
+    transDate: -1,
+    transMoney: -1,
+    finClassCode: 1,
+  });
 }
 
 /* 거래처 거래내역 조회 */
@@ -383,6 +382,7 @@ export async function upateCancelLog(req) {
           { item: mongoose.Types.ObjectId(canceledLogs.accountLog) },
           { item: mongoose.Types.ObjectId(canceledLogs.cardLog) },
         ],
+        transMoney: Math.abs(canceledLogs.transMoney),
       },
       { $set: { useYn: false } }
     );
