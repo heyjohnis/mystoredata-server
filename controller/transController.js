@@ -205,7 +205,7 @@ export async function regTradeOnlyAccountLogs(req) {
     const registedData = await transData.regTransDataFromAccountLog(log);
     await transData.updateTransDataFromAccountLog({
       _id: log._id,
-      item: registedData._id,
+      item: registedData.accountLog,
     });
   }
 }

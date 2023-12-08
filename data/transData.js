@@ -261,7 +261,7 @@ export async function regTaxLogToTransLog(data, taxLog) {
   const {
     useYn,
     _id,
-    issueDt,
+    issueDT,
     amountTotal,
     invoiceeCorpName,
     invoicerCorpNum,
@@ -278,7 +278,7 @@ export async function regTaxLogToTransLog(data, taxLog) {
     corpName,
     useYn: useYn,
     taxLog: _id,
-    transDate: issueDt,
+    transDate: issueDT,
     transMoney: amountTotal,
     tradeKind: "BILL",
     useKind: "BIZ",
@@ -354,49 +354,49 @@ export async function regTaxLogToTransLog(data, taxLog) {
 }
 
 /* 거래 취소된 내역 업데이트(취소처리) */
-export async function upateCancelLog(req) {
+export async function upateCancelLog(log) {
   try {
-    const { userId, transDate, transMoney, accountLog, cardLog } = req;
-    await TransModel.updateMany(
+    const { _id, userId, transDate, transMoney, accountLog, cardLog } = log;
+    await TransModel.findOneAndUpdate(
       {
-        $or: [{ accountLog }, { cardLog }],
+        _id,
       },
       { $set: { useYn: false } }
     );
-    const canceledLogs = await TransModel.findOneAndUpdate(
+
+    await TransModel.updateMany(
       {
         userId,
-        transDate: { $lte: transDate },
+        accountLog,
+        cardLog,
+      },
+      { $set: { useYn: false } }
+    );
+
+    const canceledLog = await TransModel.findOneAndUpdate(
+      {
+        userId,
+        transDate: { $gte: transDate },
         transMoney: transMoney * -1,
+        useYn: true,
       },
       { $set: { useYn: false } },
-      { sort: { transDate: -1 } }
+      { sort: { transDate: 1 } }
     );
 
     // 카드취소 상대계정
     await TransModel.updateMany(
       {
         $or: [
-          { accountLog: mongoose.Types.ObjectId(canceledLogs.accountLog) },
-          { cardLog: mongoose.Types.ObjectId(canceledLogs.cardLog) },
-          { item: mongoose.Types.ObjectId(canceledLogs.accountLog) },
-          { item: mongoose.Types.ObjectId(canceledLogs.cardLog) },
+          { accountLog: canceledLog.accountLog },
+          { cardLog: canceledLog.cardLog },
+          { item: canceledLog.accountLog },
+          { item: canceledLog.cardLog },
         ],
-        transMoney: Math.abs(canceledLogs.transMoney),
+        transMoney: Math.abs(canceledLog.transMoney),
       },
       { $set: { useYn: false } }
     );
-
-    if (!canceledLogs) {
-      const canceledLogsInverse = await TransModel.findOneAndUpdate(
-        {
-          userId: req.userId,
-          transDate: { $gte: req.transDate },
-          transMoney: req.transMoney * -1,
-        },
-        { $set: { useYn: false } }
-      );
-    }
     return { success: true };
   } catch (error) {
     console.log({ error });
