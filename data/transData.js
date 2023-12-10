@@ -8,6 +8,7 @@ import { assetFilter } from "../utils/filter.js";
 import { getFinClassByCategory, updateFinClass } from "./finClassData.js";
 import { convertTransAsset } from "../model/transInterface.js";
 import { setDepositTransData } from "../utils/convert.js";
+import { calculateSimilarity } from "../utils/similarity.js";
 
 export async function checkHasTransLog(id) {
   return await TransModel.findOne(id);
@@ -356,44 +357,19 @@ export async function regTaxLogToTransLog(data, taxLog) {
 /* 거래 취소된 내역 업데이트(취소처리) */
 export async function upateCancelLog(log) {
   try {
-    const { _id, userId, transDate, transMoney, accountLog, cardLog } = log;
-    await TransModel.findOneAndUpdate(
+    const { _id } = log;
+    await TransModel.updateOne(
       {
         _id,
       },
       { $set: { useYn: false } }
     );
-
-    await TransModel.updateMany(
+    await TransModel.updateOne(
       {
-        userId,
-        accountLog,
-        cardLog,
-      },
-      { $set: { useYn: false } }
-    );
-
-    const canceledLog = await TransModel.findOneAndUpdate(
-      {
-        userId,
-        transDate: { $gte: transDate },
-        transMoney: transMoney * -1,
+        transDate: log.transDate,
+        transMoney: log.transMoney * -1,
+        finClassCode: log.finClassCode,
         useYn: true,
-      },
-      { $set: { useYn: false } },
-      { sort: { transDate: 1 } }
-    );
-
-    // 카드취소 상대계정
-    await TransModel.updateMany(
-      {
-        $or: [
-          { accountLog: canceledLog.accountLog },
-          { cardLog: canceledLog.cardLog },
-          { item: canceledLog.accountLog },
-          { item: canceledLog.cardLog },
-        ],
-        transMoney: Math.abs(canceledLog.transMoney),
       },
       { $set: { useYn: false } }
     );

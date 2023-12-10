@@ -120,7 +120,7 @@ Content-Type: application/json; charset=UTF-8
 Authorization: Bearer {{jwt}}
 
 {
-    "bankAccountNum": "37691003113404",
+    "bankAccountNum": "37691003114104",
     "corpNum": "6348702350",
     "opsKind": "OPS"
 }

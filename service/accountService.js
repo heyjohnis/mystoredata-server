@@ -40,9 +40,10 @@ export async function regAccount(req) {
     webId,
     webPwd,
     birth,
+    opsKind,
   } = req.body;
   const corpNum = req.body.corpNum || req.corpNum;
-  const baroSvc = new BaroService(baroServiceName, "TEST");
+  const baroSvc = new BaroService(baroServiceName, opsKind || "TEST");
   const client = await baroSvc.client();
   const reqBaro = {
     CERTKEY: baroSvc.certKey,
@@ -147,7 +148,17 @@ export async function regAcountLog(req) {
   const hasAccount = await hasBaroAccount(req);
   if (!hasAccount) {
     // 계좌 해지 취소
-    await cancelStopAccount(req);
+    let code = await cancelStopAccount(req);
+    console.log("cancelStopAccount: ", errorCase(code));
+    if (code === -51005) code = await reRegAccount(req);
+    console.log("reRegAccount: ", errorCase(code));
+    if (code === -26006) {
+      req.body.opsKind = "OPS";
+      const result = await accountData.updateAccount(req);
+      console.log("updateAccount: ", result?.n);
+      code = await baroReRegAccount(req);
+      console.log("운영 ReRegAccount: ", errorCase(code));
+    }
   }
   const { bankAccountNum, baseMonth, corpNum, userId, opsKind } = req.body;
   const baroSvc = new BaroService(baroServiceName, opsKind);

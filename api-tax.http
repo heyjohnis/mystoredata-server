@@ -36,8 +36,8 @@ Content-Type: application/json; charset=UTF-8
 Authorization: Bearer {{jwt}}
 
 {
-    "fromAt": "20230510",
-    "toAt": "20231125"
+    "fromAt": "20230601",
+    "toAt": "20231208"
 }
 
 ### 세금계산서 발행 업체명 및 대표 이름 확인 

@@ -16,6 +16,11 @@ export async function syncBaroAccount(req) {
     console.log("cancelStopAccount: ", bankAccountNum, errorCase(code));
     code = await accountService.reRegAccount(req);
     console.log("reRegAccount: ", bankAccountNum, errorCase(code));
+    if (code === -26006) {
+      req.body.opsKind = "OPS";
+      const result = await accountData.updateAccount(req);
+      console.log("updateAccount: ", result?.n);
+    }
 
     let baseMonth = new Date();
     if (baseMonth.getDate() === 1) {

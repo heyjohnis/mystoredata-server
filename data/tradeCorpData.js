@@ -30,5 +30,6 @@ export async function getTradeCorpInfo(data) {
       bestSimilar.similarity = simiar;
     }
   }
+  console.log("bestSimilar: ", bestSimilar);
   return bestSimilar.similarity > 0.5 ? bestSimilar : null;
 }

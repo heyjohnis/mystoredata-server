@@ -92,11 +92,14 @@ export async function deleteAccount(req) {
 }
 
 export async function updateAccount(req) {
-  const { bankAccountNum, useKind } = req.body;
-  await AccountModel.updateOne({ bankAccountNum }, { $set: { useKind } });
+  const { userId, bankAccountNum, useKind, opsKind } = req.body;
+  await AccountModel.updateOne(
+    { bankAccountNum, userId },
+    { $set: { useKind, opsKind } }
+  );
   return await UserModel.updateOne(
-    { "accounts.bankAccountNum": bankAccountNum },
-    { "accounts.$.useKind": useKind }
+    { userId, "accounts.bankAccountNum": bankAccountNum },
+    { "accounts.$.useKind": useKind, "accounts.$.opsKind": opsKind }
   );
 }
 
