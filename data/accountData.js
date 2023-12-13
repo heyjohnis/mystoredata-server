@@ -93,19 +93,21 @@ export async function deleteAccount(req) {
 
 export async function updateAccount(req) {
   const { userId, bankAccountNum, useKind, opsKind } = req.body;
-  await AccountModel.updateOne(
-    { bankAccountNum, userId },
-    { $set: { useKind, opsKind } }
-  );
+  const $set = {};
+  if (useKind) $set.useKind = useKind;
+  if (opsKind) $set.opsKind = opsKind;
+  await AccountModel.updateOne({ bankAccountNum, userId }, { $set });
+  const updateOption = {};
+  if (useKind) updateOption["accounts.$.useKind"] = useKind;
+  if (opsKind) updateOption["accounts.$.opsKind"] = opsKind;
   return await UserModel.updateOne(
     { userId, "accounts.bankAccountNum": bankAccountNum },
-    { "accounts.$.useKind": useKind, "accounts.$.opsKind": opsKind }
+    updateOption
   );
 }
 
 export async function updateAccountAmount(req) {
   const bankAccountNum = req.body.bankAccountNum;
-  console.log("updateAccountAmount: ", req.body);
   const lastTran = await AccountLogModel.findOne(
     { bankAccountNum },
     {},
@@ -118,6 +120,5 @@ export async function updateAccountAmount(req) {
     { account: lastTran.account },
     { $set: { amount: balance, transDate: lastTran.transDate } }
   );
-  console.log("updateAccountAmount: ", result);
   return result;
 }

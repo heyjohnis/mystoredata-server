@@ -320,7 +320,7 @@ export async function regTaxLogToTransLog(data, taxLog) {
       taxData.categoryName = "부가세(내야할)";
       taxData.tradeType = "C";
     } else {
-      taxData.finClassCode = "OUT3";
+      taxData.finClassCode = "IN3";
       taxData.finClassName = "나머지(자산+)";
       taxData.category = "840";
       taxData.categoryName = "부가세(미리낸)";

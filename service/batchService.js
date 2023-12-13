@@ -8,7 +8,7 @@ export async function syncBaroAccount(req) {
   const accounts = await accountData.getAccountList(req);
   console.log("batch accounts: ", accounts);
   for (let account of accounts) {
-    const { bankAccountNum, corpNum, userId, opsKind } = account;
+    const { bankAccountNum, corpNum, userId, opsKind, useKind } = account;
 
     // 해지계좌 해제 및 재등록 처리
     req.body = { ...req.body, opsKind, corpNum, bankAccountNum };
@@ -18,6 +18,7 @@ export async function syncBaroAccount(req) {
     console.log("reRegAccount: ", bankAccountNum, errorCase(code));
     if (code === -26006) {
       req.body.opsKind = "OPS";
+      req.body.useKind = useKind;
       const result = await accountData.updateAccount(req);
       console.log("updateAccount: ", result?.n);
     }
@@ -55,12 +56,18 @@ export async function syncBaroCard(req) {
       card;
 
     // 해지카드 해제 및 재등록 처리
-    req.body = { ...req.body, opsKind, corpNum, cardNum };
+    req.body = { ...req.body, ...card, corpNum, cardNum };
     let code = await cardService.cancelStopCard(req);
     console.log("cancelStopCard: ", cardNum, errorCase(code));
     code = await cardService.reRegCard(req);
     console.log("reRegCard: ", cardNum, errorCase(code));
-
+    if (code === -26006) {
+      req.body.opsKind = "OPS";
+      const result = await cardData.updateCard(req);
+      console.log("updateCard: ", result?.n);
+      code = await cardService.baroReRegCard(req);
+      console.log("운영 baroReRegCard: ", errorCase(code));
+    }
     let baseMonth = new Date();
     if (baseMonth.getDate() === 1) {
       baseMonth = baseMonth.setMonth(baseMonth.getMonth() - 1);

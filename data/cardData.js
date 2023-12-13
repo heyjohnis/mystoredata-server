@@ -65,14 +65,15 @@ export async function deleteCard(req) {
   );
 }
 
-export async function updateCard(card) {
-  await CardModel.updateOne({ cardNum: card.cardNum }, { $set: { ...card } });
+export async function updateCard(req) {
+  const { cardNum, useKind, tradeKind } = req.body;
+  await CardModel.updateOne({ cardNum }, { $set: { ...req.body } });
   return await UserModel.updateOne(
-    { "cards.cardNum": card.cardNum },
+    { "cards.cardNum": cardNum },
     {
       $set: {
-        "cards.$.useKind": card.useKind,
-        "cards.$.tradeKind": card.tradeKind,
+        "cards.$.useKind": useKind,
+        "cards.$.tradeKind": tradeKind,
       },
     }
   );

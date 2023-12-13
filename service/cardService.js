@@ -14,9 +14,9 @@ const certKey = isOps ? opsService.certKey : testService.certKey;
 const client = isOps ? await opsService.client() : await testService.client();
 
 export async function regCard(req) {
-  const { cardCompany, cardType, cardNum, webId, webPwd } = req.body;
+  const { cardCompany, cardType, cardNum, webId, webPwd, opsKind } = req.body;
   const corpNum = req.body.corpNum || req.corpNum;
-  const baroSvc = new BaroService(baroServiceName, "TEST");
+  const baroSvc = new BaroService(baroServiceName, opsKind || "TEST");
   const client = await baroSvc.client();
   const response = await client.RegistCardAsync({
     CERTKEY: baroSvc.certKey,
@@ -36,7 +36,6 @@ export async function regCard(req) {
 
 export async function regBaraCard(req) {
   const body = req.body;
-  console.log("body: ", body);
   body.opsKind = "TEST";
   // Baro Test 계좌확인
   const cardList = await getBaroCardList({ body });
@@ -59,7 +58,7 @@ export async function regBaraCard(req) {
   return code;
 }
 
-async function baroReRegCard(req) {
+export async function baroReRegCard(req) {
   const opsKind = req.body.opsKind;
   let code = await regCard(req);
   console.log("regCard: ", errorCase(code));
@@ -146,7 +145,17 @@ export async function reRegCard(req) {
 export async function regCardLog(req) {
   const hasCard = await hasBaroCard(req);
   if (!hasCard) {
-    await cancelStopCard(req);
+    let code = await cancelStopCard(req);
+    console.log("cancelStopCard: ", errorCase(code));
+    if (code === -50101) code = await reRegCard(req);
+    console.log("reRegCard: ", errorCase(code));
+    if (code === -26006) {
+      req.body.opsKind = "OPS";
+      const result = await cardData.updateCard(req);
+      console.log("updateCard: ", result?.n);
+      code = await baroReRegCard(req);
+      console.log("운영 baroReRegCard: ", errorCase(code));
+    }
   }
 
   const { cardNum, baseMonth, corpNum, opsKind } = req.body;

@@ -34,7 +34,7 @@ export async function regCard(req, res) {
 
 export async function updateCard(req, res) {
   try {
-    const result = await cardData.updateCard(req.body);
+    const result = await cardData.updateCard(req);
     res.status(200).json(result);
   } catch (error) {
     res.status(500).json(error);
