@@ -66,7 +66,7 @@ export async function deleteCard(req) {
 }
 
 export async function updateCard(req) {
-  const { cardNum, useKind, tradeKind } = req.body;
+  const { cardNum, useKind, tradeKind, opsKind } = req.body;
   await CardModel.updateOne({ cardNum }, { $set: { ...req.body } });
   return await UserModel.updateOne(
     { "cards.cardNum": cardNum },
@@ -74,6 +74,7 @@ export async function updateCard(req) {
       $set: {
         "cards.$.useKind": useKind,
         "cards.$.tradeKind": tradeKind,
+        "cards.$.opsKind": opsKind,
       },
     }
   );

@@ -8,7 +8,6 @@ import { assetFilter } from "../utils/filter.js";
 import { getFinClassByCategory, updateFinClass } from "./finClassData.js";
 import { convertTransAsset } from "../model/transInterface.js";
 import { setDepositTransData } from "../utils/convert.js";
-import { calculateSimilarity } from "../utils/similarity.js";
 
 export async function checkHasTransLog(id) {
   return await TransModel.findOne(id);

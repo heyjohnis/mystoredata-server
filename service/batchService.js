@@ -52,11 +52,11 @@ export async function syncBaroCard(req) {
   const cards = await cardData.getCardList(req);
   console.log("cards: ", cards);
   for (let card of cards) {
-    const { cardNum, corpNum, userId, webId, cardType, tradeKind, opsKind } =
-      card;
+    const { cardNum, corpNum, userId, webId, cardType, tradeKind } = card;
 
     // 해지카드 해제 및 재등록 처리
-    req.body = { ...req.body, ...card, corpNum, cardNum };
+    req.body = { ...card._doc };
+    console.log("syncBaroCard req.body: ", req.body);
     let code = await cardService.cancelStopCard(req);
     console.log("cancelStopCard: ", cardNum, errorCase(code));
     code = await cardService.reRegCard(req);
@@ -68,6 +68,7 @@ export async function syncBaroCard(req) {
       code = await cardService.baroReRegCard(req);
       console.log("운영 baroReRegCard: ", errorCase(code));
     }
+
     let baseMonth = new Date();
     if (baseMonth.getDate() === 1) {
       baseMonth = baseMonth.setMonth(baseMonth.getMonth() - 1);
