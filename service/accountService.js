@@ -191,11 +191,9 @@ export async function regAccountLog(req) {
         : result.BankAccountLogList.BankAccountLogEx;
       console.log("cntLog: ", cntLog, "page", currentPage);
       is100p = logs.length === 100;
-      console.log("logs.length: ", logs.length);
-      for (let i = 0; i < logs.length; i++) {
-        const words = `${logs[i].TransRemark}`;
+      for (let log of logs) {
+        const words = `${log.TransRemark}`;
         const keyword = await keywordGen(words);
-        console.log("logs: ", logs[i]);
         await accountLogData.regAccountLog({
           user: account.user,
           userId: account.userId,
@@ -205,16 +203,16 @@ export async function regAccountLog(req) {
           account: account._id,
           useKind: account.useKind,
           bankAccountNum: account.bankAccountNum,
-          withdraw: logs[i].Withdraw,
-          deposit: logs[i].Deposit,
-          balance: logs[i].Balance,
-          transDT: logs[i].TransDT,
-          transType: logs[i].TransType,
-          transOffice: logs[i].TransOffice,
-          transRemark: logs[i].TransRemark,
-          transRefKey: logs[i].TransRefKey,
-          mgtRemark1: logs[i].MgtRemark1,
-          mgtRemark2: logs[i].MgtRemark2,
+          withdraw: log.Withdraw,
+          deposit: log.Deposit,
+          balance: log.Balance,
+          transDT: log.TransDT,
+          transType: log.TransType,
+          transOffice: log.TransOffice,
+          transRemark: log.TransRemark,
+          transRefKey: log.TransRefKey,
+          mgtRemark1: log.MgtRemark1,
+          mgtRemark2: log.MgtRemark2,
           keyword,
         });
         cntLog++;

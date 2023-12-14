@@ -85,18 +85,23 @@ export async function regAccountAndCard(req) {
       .regTransDataAccount(log)
       .catch((error) => console.log(error));
   }
-
   // 카드 거래내역 등록 및 정보 동기화
   const cardLogs = await cardLogData
     .getCardLogs(req)
     .catch((error) => console.log(error));
-
-  // 통장개래와 카드거래를 합치기
   for (const log of cardLogs) {
     // 카드 기등록 여부 확인
     const hasTransLog = await transData.checkHasTransLog({ cardLog: log._id });
-    if (hasTransLog) continue;
-    // 거래분류 업데이트 처리 병행
+    // 계좌거래와 연결된 카드거래의 경우 패스
+    if (hasTransLog?.accountLog) continue;
+    // 카드거래는 동륵되었지만 통장 거래와 연결되지 않은 경우
+    if (hasTransLog) {
+      await transData
+        .linkAccountLogForCheckCard(hasTransLog)
+        .catch((error) => console.log(error));
+      continue;
+    }
+    // 카드거래 등록과 계좌거래 연결 동시 진행
     await transData.regTransDataCard(log).catch((error) => console.log(error));
   }
 
@@ -180,11 +185,12 @@ export async function createCreditCardDebt(req) {
 export async function regTradeOnlyAccountLogs(req) {
   const logs = await transData.getOnlyAccountLogs(req);
   for (const log of logs) {
-    // 기 등록 여부 확인
+    // 기 등록 여부 확인 (item: accountLog)
     const hasTransLog = await transData.checkHasTransLog({
-      accountLog: log.accountLog,
+      item: log.accountLog,
     });
     if (hasTransLog) continue;
+    console.log("regTradeOnlyAccountLogs hasTransLog: ", hasTransLog);
 
     // 이체 거래내역 연결
     const transferLog = logs.find((accountLog) => {

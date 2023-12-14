@@ -114,7 +114,6 @@ export async function updateAccountAmount(req) {
     {},
     { sort: { transDate: -1 } }
   );
-  console.log({ lastTran });
   if (!lastTran) return {};
   const balance = parseInt(lastTran.balance || 0);
   const result = await FinItemModel.updateOne(

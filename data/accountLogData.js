@@ -1,9 +1,9 @@
 import AccountLogModel from "../model/accountLogModel.js";
 import { strToDate } from "../utils/date.js";
-import { assetFilter } from "../utils/filter.js";
 
 export async function regAccountLog(data) {
-  const { user, withdraw, bankAccountNum, transDT, transRefKey } = data;
+  const { user, withdraw, bankAccountNum, transDT, transRefKey, deposit } =
+    data;
   try {
     const existingData = await AccountLogModel.findOne({
       user,
@@ -17,12 +17,10 @@ export async function regAccountLog(data) {
     }
     await new AccountLogModel({
       ...data,
-      transDate: strToDate(data.transDT),
-      transMoney: parseInt(data.deposit) || parseInt(data.withdraw) * -1,
-      transAssetNum: data.bankAccountNum,
-    })
-      .save()
-      .then((res) => res._id);
+      transDate: strToDate(transDT),
+      transMoney: parseInt(deposit) || parseInt(withdraw) * -1,
+      transAssetNum: bankAccountNum,
+    }).save();
   } catch (error) {
     throw error;
   }

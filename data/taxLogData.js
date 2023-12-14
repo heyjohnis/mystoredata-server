@@ -97,7 +97,7 @@ export async function getTaxLogs(req) {
 export async function notUseCanceledTaxLog(user) {
   const canceledTaxlogs = await TaxLogModel.find({
     user: user.user,
-    modifyCode: { $gte: 1 },
+    totalAmount: { $lte: 0 },
   });
   console.log("canceledTaxlogs: ", canceledTaxlogs?.length);
   for (const log of canceledTaxlogs) {
@@ -107,13 +107,12 @@ export async function notUseCanceledTaxLog(user) {
         totalAmount: log.totalAmount * -1,
         issueDT: { $lte: log.issueDT },
       },
-      { $set: { useYn: false } },
-      { sort: { issueDT: -1 } }
+      { $set: { useYn: false } }
     );
     console.log(
       "canceledLog2: ",
-      canceledLog.itemName,
-      canceledLog.totalAmount
+      canceledLog?.itemName,
+      canceledLog?.totalAmount
     );
     await TaxLogModel.findOneAndUpdate(
       { _id: log._id },
@@ -121,8 +120,8 @@ export async function notUseCanceledTaxLog(user) {
     );
     console.log(
       "canceledLog1: ",
-      canceledLog.itemName,
-      canceledLog.totalAmount
+      canceledLog?.itemName,
+      canceledLog?.totalAmount
     );
   }
 }

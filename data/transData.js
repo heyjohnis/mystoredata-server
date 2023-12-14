@@ -34,18 +34,12 @@ export async function regTransDataCard(log) {
   } else {
     asset.tradeKind = "CHECK";
     const transData = await new TransModel(asset).save();
-    const linkLog = await linkAccountLogForCheckCard(transData);
-    if (linkLog) {
-      await TransModel.updateOne(
-        { _id: transData._id },
-        { $set: { accountLog: transData.accountLog, tradeKind: "CHECK" } }
-      );
-    }
+    await linkAccountLogForCheckCard(transData);
   }
 }
 
 /* 중복 거래 확인(카드만 등록, 계좌만 등록, 기 등록된 거래인지?) */
-async function linkAccountLogForCheckCard(asset) {
+export async function linkAccountLogForCheckCard(asset) {
   // 연결 계좌 거래내역 확인 후 카드 내역과 연결
   const log = await TransModel.findOneAndUpdate(
     {
