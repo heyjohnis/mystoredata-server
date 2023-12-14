@@ -36,7 +36,7 @@ export async function syncBaroAccount(req) {
       corpNum,
       userId
     );
-    await accountService.regAcountLog({
+    await accountService.regAccountLog({
       body: {
         bankAccountNum,
         corpNum,

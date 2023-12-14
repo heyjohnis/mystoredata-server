@@ -108,6 +108,7 @@ export async function updateAccount(req) {
 
 export async function updateAccountAmount(req) {
   const bankAccountNum = req.body.bankAccountNum;
+  console.log("updateAccountAmount: ", bankAccountNum);
   const lastTran = await AccountLogModel.findOne(
     { bankAccountNum },
     {},

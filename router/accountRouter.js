@@ -10,7 +10,7 @@ router.post("/reg", isAuth, controller.regAccount);
 
 router.put("/update", isAuth, controller.updateAccount);
 
-router.post("/regLog", isAuth, controller.regAcountLog);
+router.post("/regLog", isAuth, controller.regAccountLog);
 
 router.get("/log", isAuth, controller.getAccountLogs);
 

@@ -143,7 +143,7 @@ export async function cancelStopAccount(req) {
   return response[0].CancelStopBankAccountResult;
 }
 
-export async function regAcountLog(req) {
+export async function regAccountLog(req) {
   // 수집하기 전에 해지여부 확인 후 진행, 해지되었을 시 해지취소 후 수집
   const hasAccount = await hasBaroAccount(req);
   if (!hasAccount) {
@@ -191,11 +191,11 @@ export async function regAcountLog(req) {
         : result.BankAccountLogList.BankAccountLogEx;
       console.log("cntLog: ", cntLog, "page", currentPage);
       is100p = logs.length === 100;
+      console.log("logs.length: ", logs.length);
       for (let i = 0; i < logs.length; i++) {
         const words = `${logs[i].TransRemark}`;
         const keyword = await keywordGen(words);
-        console.log("keyword: ", keyword);
-
+        console.log("logs: ", logs[i]);
         await accountLogData.regAccountLog({
           user: account.user,
           userId: account.userId,
@@ -209,6 +209,7 @@ export async function regAcountLog(req) {
           deposit: logs[i].Deposit,
           balance: logs[i].Balance,
           transDT: logs[i].TransDT,
+          transType: logs[i].TransType,
           transOffice: logs[i].TransOffice,
           transRemark: logs[i].TransRemark,
           transRefKey: logs[i].TransRefKey,
@@ -217,6 +218,7 @@ export async function regAcountLog(req) {
           keyword,
         });
         cntLog++;
+        console.log("cntLog: ", cntLog);
       }
     }
   }
