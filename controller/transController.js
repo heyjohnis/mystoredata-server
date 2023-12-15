@@ -190,8 +190,6 @@ export async function regTradeOnlyAccountLogs(req) {
       item: log.accountLog,
     });
     if (hasTransLog) continue;
-    console.log("regTradeOnlyAccountLogs hasTransLog: ", hasTransLog);
-
     // 이체 거래내역 연결
     const transferLog = logs.find((accountLog) => {
       return (

@@ -49,6 +49,7 @@ export async function linkAccountLogForCheckCard(asset) {
       cardLog: null,
       transDate: {
         $gte: new Date(Number(asset.transDate) - 600000),
+        $lte: new Date(Number(asset.transDate) + 600000),
       },
     },
     { cardLog: asset.cardLog, tradeKind: "CHECK" },
