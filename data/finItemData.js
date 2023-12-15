@@ -13,11 +13,13 @@ export async function regFinItem(req) {
     bankAccountNum,
     accountNum,
     amount,
+    currentAmount,
     corpCode,
     itemKind,
     itemType,
     itemName,
     transDate,
+    defaultDate,
   } = req?.body || req;
   let userInfo;
   if (!user) {
@@ -48,6 +50,8 @@ export async function regFinItem(req) {
     isFixed: !!user,
     transDate: transDate || new Date(),
     amount: amount || 0,
+    currentAmount: currentAmount || 0,
+    defaultDate: new Date(defaultDate) || new Date(),
   };
   console.log("regFinItem item: ", item);
   try {
@@ -78,6 +82,8 @@ export async function updateFinItem(req) {
     const {
       amount,
       account,
+      currentAmount,
+      defaultDate,
       accountNum,
       card,
       itemKind,
@@ -95,6 +101,8 @@ export async function updateFinItem(req) {
       {
         $set: {
           amount,
+          currentAmount,
+          defaultDate,
           account: mongoose.Types.ObjectId(account),
           accountNum,
           card,

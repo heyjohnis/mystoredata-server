@@ -118,7 +118,7 @@ export async function updateAccountAmount(req) {
   const balance = parseInt(lastTran.balance || 0);
   const result = await FinItemModel.updateOne(
     { account: lastTran.account },
-    { $set: { amount: balance, transDate: lastTran.transDate } }
+    { $set: { currentAmount: balance, transDate: lastTran.transDate } }
   );
   return result;
 }
