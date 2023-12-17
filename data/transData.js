@@ -149,6 +149,12 @@ async function getAutosetCategoryCode(asset) {
 /* 거래내역 조회 */
 export async function getTransMoney(req) {
   const filter = assetFilter(req);
+  // 개인사용목적의 경우
+  if (req.body.category === "-99999999") {
+    filter.useKind = "PERSONAL";
+    delete filter.category;
+  }
+  console.log("filter: ", filter);
   return TransModel.find(filter).sort({
     transDate: -1,
     transMoney: -1,
@@ -377,7 +383,11 @@ export async function upateCancelLog(log) {
 /* 급여 거래내역 처리 */
 export async function updateTransMoneyForEmployee(req, data) {
   return await TransModel.updateMany(
-    { userId: req.body.userId, transRemark: req.body.transRemark },
+    {
+      userId: req.body.userId,
+      transRemark: req.body.transRemark,
+      finClassCode: "OUT1",
+    },
     {
       $set: {
         employee: data._id,

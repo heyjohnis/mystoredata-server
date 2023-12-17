@@ -140,6 +140,7 @@ async function isBorrow(log) {
 async function isLoan(log) {
   const loanInfo = await assetData.getAssetInfo(log);
   if (!loanInfo) return false;
+  console.log("isLoan: ", log);
   await TransModel.updateOne(
     {
       _id: log._id,
@@ -148,7 +149,7 @@ async function isLoan(log) {
       asset: loanInfo._id,
       category: "470",
       categoryName: "대여금",
-      finClassCode: log.tradeType === "C" ? "IN3" : "OUT3", //
+      finClassCode: log.tradeType === "D" ? "IN3" : "OUT3", //
       transMoney: log.transMoney,
     }
   );
