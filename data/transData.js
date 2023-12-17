@@ -5,7 +5,7 @@ import { DefaultPersonalCategory, DefaultCorpCategory } from "../cmmCode.js";
 import { keywordCategory } from "../data/categoryData.js";
 import { fromAtDate, nowDate, toAtDate } from "../utils/date.js";
 import { assetFilter } from "../utils/filter.js";
-import { getFinClassByCategory, updateFinClass } from "./finClassData.js";
+import { getFinClassByCategory } from "./finClassData.js";
 import { convertTransAsset } from "../model/transInterface.js";
 import { setDepositTransData } from "../utils/convert.js";
 
@@ -386,7 +386,7 @@ export async function updateTransMoneyForEmployee(req, data) {
     {
       userId: req.body.userId,
       transRemark: req.body.transRemark,
-      finClassCode: "OUT1",
+      tradeType: "D",
     },
     {
       $set: {
@@ -405,38 +405,48 @@ export async function updateTransMoneyForEmployee(req, data) {
 
 /* 부채 거래내역 처리 */
 export async function updateTransMoneyForDebt(req, data) {
-  const { userId, transRemark, finClassName, finItemCode } = req.body;
+  const { userId, transRemark, finItemCode } = req.body;
+  const $set = {};
   const category = finItemCode === "BORR" ? "480" : "";
   const categoryName = finItemCode === "BORR" ? "차입금" : "";
 
-  // 입금의 경우
+  // 계좌에서 출금일 경우(비용, 부채-, 자산+)
   const updated = await TransModel.updateMany(
-    { userId, transRemark, transMoney: { $gt: 0 } },
     {
-      $set: {
-        debt: data._id,
-        category,
-        categoryName,
-        finClassCode: finItemCode === "BORR" ? "IN2" : "",
-        finClassName: finItemCode === "BORR" ? "빌린것(부채+)" : "",
-        asset: null,
-        item: null,
-        employee: null,
-      },
-    }
-  );
-  // 출금의 경우
-  const updated2 = await TransModel.updateMany(
-    { userId, transRemark, transMoney: { $lt: 0 } },
+      userId,
+      transRemark,
+      finClassCode: { $in: ["OUT1", "OUT2", "IN3"] },
+      categoryName: { $not: { $regex: "보통예금" } },
+    },
     {
       $set: {
         debt: data._id,
         category,
         categoryName,
         finClassCode: finItemCode === "BORR" ? "OUT2" : "",
-        finClassName: finItemCode === "BORR" ? "갚은것(부채-)" : "",
+        finClassName: finItemCode === "BORR" ? "빌린것(부채-)" : "",
         asset: null,
-        item: null,
+        employee: null,
+      },
+    }
+  );
+
+  // 계좌에서 입금일 경우(수익, 부채+, 자산-)
+  const updated2 = await TransModel.updateMany(
+    {
+      userId,
+      transRemark,
+      finClassCode: { $in: ["IN1", "IN2", "OUT3"] },
+      categoryName: { $not: { $regex: "보통예금" } },
+    },
+    {
+      $set: {
+        debt: data._id,
+        category,
+        categoryName,
+        finClassCode: finItemCode === "BORR" ? "IN2" : "",
+        finClassName: finItemCode === "BORR" ? "갚은것(부채+)" : "",
+        asset: null,
         employee: null,
       },
     }
@@ -451,32 +461,43 @@ export async function updateTransMoneyForAsset(req, data) {
   const category = finItemCode === "LOAN" ? "470" : "";
   const categoryName = finItemCode === "LOAN" ? "대여금" : "";
   console.log("updateTransMoneyForAsset 자산정보: ", data);
-  // 입금의 경우
+
+  // 계좌에서 출금일 경우(비용, 부채-, 자산+)
   const updated = await TransModel.updateMany(
-    { userId, transRemark, transMoney: { $gt: 0 } },
+    {
+      userId,
+      transRemark,
+      finClassCode: { $in: ["OUT1", "OUT2", "IN3"] },
+      categoryName: { $not: { $regex: "보통예금" } },
+    },
     {
       $set: {
         asset: data._id,
         category,
         categoryName,
         finClassCode: finItemCode === "LOAN" ? "IN3" : "",
-        finClassName: finItemCode === "LOAN" ? "나머지(자산-)" : "",
+        finClassName: finItemCode === "LOAN" ? "나머지(자산+)" : "",
         debt: null,
         item: null,
         employee: null,
       },
     }
   );
-  // 출금의 경우
+  // 계좌에서 입금일 경우(수익, 부채+, 자산-)
   const updated2 = await TransModel.updateMany(
-    { userId, transRemark, transMoney: { $lt: 0 } },
+    {
+      userId,
+      transRemark,
+      finClassCode: { $in: ["IN1", "IN2", "OUT3"] },
+      categoryName: { $not: { $regex: "보통예금" } },
+    },
     {
       $set: {
         asset: data._id,
         category,
         categoryName,
         finClassCode: finItemCode === "LOAN" ? "OUT3" : "",
-        finClassName: finItemCode === "LOAN" ? "나머지(자산+)" : "",
+        finClassName: finItemCode === "LOAN" ? "나머지(자산-)" : "",
         debt: null,
         item: null,
         employee: null,

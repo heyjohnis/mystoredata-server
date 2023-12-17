@@ -4,8 +4,7 @@
     "titleBar.inactiveBackground": "#093f8f",
     "titleBar.activeForeground": "#ffffff",
     "titleBar.inactiveForeground": "#ffffff",
-    "statusBar.background": "#093f8f",
-    "statusBar.border": "#85abe4"
+    "statusBar.background": "#093f8f"
   },
   "explorer.compactFolders": false,
   "prettier.printWidth": 80,

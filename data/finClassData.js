@@ -12,51 +12,52 @@ import assetModel from "../model/assetModel.js";
 import { assetFilter } from "../utils/filter.js";
 import { setDepositTransData } from "../utils/convert.js";
 
+// 거래분류가 없는 거래에 대해 거래분류를 업데이트
 export async function updateFinClass(req) {
   const filter = assetFilter(req, "updateFinClass");
   filter.finClassCode = null;
   const items = await TransModel.find(filter);
   for (const item of items) {
-    console.log("updateFinClass item: ", item.length);
-    const finClassCode = await resultFinClassCode(item);
-    await TransModel.findOneAndUpdate(
-      { _id: item._id },
-      { finClassCode: finClassCode, finClassName: FinClassCode[finClassCode] }
-    );
+    await resultFinClassCode(item);
   }
 }
 
 async function resultFinClassCode(log) {
   const inOut = log.tradeType === "C" ? "IN" : "OUT"; // 입금, 출금
   // 사용자 회사명의 경우
-  if (await isUserCorp(log)) return inOut + "3";
+  if (await isUserCorp(log)) return;
   // 한국사람 이름인 경우
   if (isKoreanName(log.transRemark)) {
     // 개인사업자의 경우 대표자나 사용자 이름인 경우
-    if (await isCeoNameOrUserName(log)) return inOut + "3";
+    if (await isCeoNameOrUserName(log)) return;
     // 직원명이 경우
-    if (await hasEmployee(log)) return inOut + "1";
+    if (await hasEmployee(log)) return;
     // 차입금의 경우
-    if (await isBorrow(log)) return inOut + "2";
+    if (await isBorrow(log)) return;
     // 대여금의 경우
-    if (await isLoan(log)) return inOut + "3";
+    if (await isLoan(log)) return;
     // 미분류의 경우
-    return await defaultFinClassCode(log, inOut);
+    defaultFinClassCode(log, inOut);
+    return;
   }
   // 금융회사의 경우
-  if (await isFinCorp(log)) return inOut + "2";
+  if (await isFinCorp(log)) return;
   // 정부기관의 경우
-  if (await isGov(log)) return inOut + "1";
+  if (await isGov(log)) return;
   // 부가세 납부의 경우
-  if (await isVAT(log)) return inOut + "2";
+  if (await isVAT(log)) return;
   // 매출/매입의 경우(거래처명이 있는 경우) IN, OUT 이 바뀜
-  if (await isTax(log)) return log.tradeType === "C" ? "OUT3" : "IN2";
+  if (await isTax(log)) return;
   // 기타의 경우
-  return inOut + "1";
+  console.log("기타의 경우: ", log.transRemark, log.transMoney);
+  await TransModel.updateOne(
+    { _id: log._id },
+    { finClassCode: inOut + 1, finClassName: FinClassCode[inOut + 1] }
+  );
 }
 
 async function isUserCorp(log) {
-  console.log("isUserCorp: ", log.corpName, log.transRemark);
+  if (!log.transRemark) return false;
   for (const word of regexCorpName(`${log.transRemark}`).split(" ")) {
     if (log.corpName.indexOf(word) > -1) {
       // 보통예금으로 변경
@@ -82,6 +83,7 @@ async function isUserCorp(log) {
           finClassName,
         }
       );
+      console.log("isUserCorp: ", log.transRemark, log.transMoney);
       return true;
     }
   }
@@ -89,7 +91,6 @@ async function isUserCorp(log) {
 }
 
 async function isCeoNameOrUserName(log) {
-  console.log("isCeoNameOrUserName: ", log.transRemark, log.corpName);
   const myInfo = await UserModel.findOne({ _id: log.user });
   // 법인의 경우 해당 안됨
   if (!log?.transRemark) return false;
@@ -98,10 +99,24 @@ async function isCeoNameOrUserName(log) {
   const userName = myInfo.userName || "     ";
   const ceoName = myInfo.ceoName || "     ";
 
-  return (
+  if (
     log.transRemark.indexOf(userName) > -1 ||
     log.transRemark.indexOf(ceoName) > -1
-  );
+  ) {
+    await TransModel.updateOne(
+      {
+        _id: log._id,
+      },
+      {
+        finClassCode: log.tradeType === "C" ? "OUT3" : "IN3",
+        finClassName: log.tradeType === "C" ? "나머지(자산-)" : "나머지(자산+)",
+      }
+    );
+    console.log("isCeoNameOrUserName: ", log.transRemark, log.transMoney);
+    return true;
+  } else {
+    return false;
+  }
 }
 
 async function hasEmployee(log) {
@@ -116,8 +131,11 @@ async function hasEmployee(log) {
       employee: employeeInfo._id,
       category: "630",
       categoryName: "급여",
+      finClassCode: "OUT1",
+      finClassName: "쓴것(비용+)",
     }
   );
+  console.log("hasEmployee: ", log.transRemark, log.transMoney);
   return true;
 }
 
@@ -132,15 +150,17 @@ async function isBorrow(log) {
       debt: borrowInfo._id,
       category: "480",
       categoryName: "차입금",
+      finClassCode: log.tradeType === "C" ? "IN2" : "OUT2",
+      finClassName: log.tradeType === "C" ? "빌린것(부채+)" : "빌린것(부채-)",
     }
   );
+  console.log("isBorrow: ", log.transRemark, log.transMoney);
   return true;
 }
 
 async function isLoan(log) {
   const loanInfo = await assetData.getAssetInfo(log);
   if (!loanInfo) return false;
-  console.log("isLoan: ", log);
   await TransModel.updateOne(
     {
       _id: log._id,
@@ -149,10 +169,12 @@ async function isLoan(log) {
       asset: loanInfo._id,
       category: "470",
       categoryName: "대여금",
-      finClassCode: log.tradeType === "D" ? "IN3" : "OUT3", //
+      finClassCode: log.tradeType === "D" ? "IN3" : "OUT3",
+      finClassName: log.tradeType === "D" ? "나머지(자산+)" : "나머지(자산-)",
       transMoney: log.transMoney,
     }
   );
+  console.log("isLoan: ", log.transRemark, log.transMoney);
   return true;
 }
 
@@ -169,8 +191,11 @@ async function isFinCorp(log) {
         tradeKind: "CREDIT",
         category: "500",
         categoryName: "카드대금",
+        finClassCode: log.tradeType === "C" ? "IN2" : "OUT2",
+        finClassName: log.tradeType === "C" ? "빌린것(부채+)" : "빌린것(부채-)",
       }
     );
+    console.log("isFinCorp: ", log.transRemark, log.transMoney);
     return true;
   }
   return false;
@@ -192,20 +217,22 @@ async function isVAT(log) {
       {
         category: "830",
         categoryName: "부가가치세",
+        finClassCode: log.tradeType === "C" ? "IN2" : "OUT2",
+        finClassName: log.tradeType === "C" ? "빌린것(부채+)" : "빌린것(부채-)",
       }
     );
     return true;
   }
+  console.log("isVAT: ", log.transRemark, log.transMoney);
   return false;
 }
 
 async function isTax(log) {
   const tradeCorpInfo = await tradeCorpData.getTradeCorpInfo(log);
   if (!tradeCorpInfo) return false;
-  const accountLog = log._id;
   await TransModel.updateOne(
     {
-      _id: accountLog,
+      _id: log._id,
     },
     {
       $set: {
@@ -214,12 +241,13 @@ async function isTax(log) {
         tradeCorpName: tradeCorpInfo.tradeCorpName,
         category: log.tradeType === "C" ? "550" : "540",
         categoryName: log.tradeType === "C" ? "매출채권" : "미지급금",
-        transMoney: log.transMoney,
+        finClassCode: log.tradeType === "C" ? "OUT3" : "IN3",
+        finClassName: log.tradeType === "C" ? "나머지(자산-)" : "나머지(자산+)",
       },
     }
   );
-
-  return tradeCorpInfo !== null;
+  console.log("isTax: ", log.transRemark, log.transMoney);
+  return true;
 }
 
 export async function getFinClassByCategory(req) {
@@ -240,9 +268,6 @@ export async function getFinClassByCategory(req) {
 async function defaultFinClassCode(log, inOut) {
   // 카드정보가 있으면 비용으로 간주
   console.log("defaultFinClassCode 카드정보: ", log.card);
-  if (log.card) {
-    return inOut + "1";
-  }
   // 입금의 경우
   if (inOut === "IN") {
     try {
@@ -264,9 +289,11 @@ async function defaultFinClassCode(log, inOut) {
           category: "480",
           categoryName: "차입금",
           debt: debtInfo._id,
+          tradeType: "C",
+          finClassCode: "IN2",
+          finClassName: "빌린것(부채+)",
         }
       );
-      return "IN2";
     } catch (error) {
       console.log("error: ", error);
     }
@@ -292,9 +319,11 @@ async function defaultFinClassCode(log, inOut) {
           category: "470",
           categoryName: "대여금",
           asset: assetInfo._id,
+          tradeType: "D",
+          finClassCode: "IN3",
+          finClassName: "나머지(자산+)",
         }
       );
-      return "OUT3";
     } catch (error) {
       console.log("error: ", error);
     }
