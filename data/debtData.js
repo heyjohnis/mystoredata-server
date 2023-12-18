@@ -44,3 +44,32 @@ export async function getDebtInfo(data) {
   const { userId, transRemark } = data;
   return await debtModel.findOne({ userId, transRemark });
 }
+
+export async function deleteDebtNotUse(req) {
+  const { userId } = req.body;
+
+  const notUseData = await debtModel.aggregate([
+    {
+      $lookup: {
+        from: "transmoneys",
+        localField: "_id",
+        foreignField: "debt",
+        as: "joinedData",
+      },
+    },
+    {
+      $addFields: {
+        count: { $size: "$joinedData" },
+      },
+    },
+    {
+      $match: {
+        count: 0,
+        userId,
+      },
+    },
+  ]);
+
+  const ids = notUseData.map((item) => item._id);
+  return debtModel.deleteMany({ _id: { $in: ids } });
+}

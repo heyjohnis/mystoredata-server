@@ -1,5 +1,7 @@
 import * as empData from "../data/empData.js";
 import * as transData from "../data/transData.js";
+import * as assetData from "../data/assetData.js";
+import * as debtData from "../data/debtData.js";
 
 export async function regEmployeeInfo(req, res) {
   try {
@@ -8,6 +10,10 @@ export async function regEmployeeInfo(req, res) {
       req,
       empDataInfo
     );
+    const cntDelAsset = await assetData.deleteAssetNotUse(req);
+    if (cntDelAsset?.n > 0) console.log("자산항목 삭제: ", cntDelAsset.n);
+    const cntDelDebt = await debtData.deleteDebtNotUse(req);
+    if (cntDelDebt?.n > 0) console.log("부채항목 삭제: ", cntDelDebt.n);
     res.status(200).json(updatedData);
   } catch (error) {
     console.error(error);

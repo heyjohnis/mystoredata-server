@@ -1,5 +1,4 @@
 import EmpModel from "../model/empModel.js";
-import TransModel from "../model/transModel.js";
 import { assetFilter } from "../utils/filter.js";
 
 export async function regEmployeeInfo(req) {
@@ -37,7 +36,7 @@ export async function getEmployeeList(req) {
 }
 
 export async function deleteEmployeeNotUse(req) {
-  const { _id } = req.body;
+  const { userId } = req.body;
 
   const notUseData = await EmpModel.aggregate([
     {
@@ -56,6 +55,7 @@ export async function deleteEmployeeNotUse(req) {
     {
       $match: {
         count: 0,
+        userId,
       },
     },
   ]);

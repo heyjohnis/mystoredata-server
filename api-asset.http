@@ -1,5 +1,5 @@
 @baseUrl = http://localhost:8089
-@jwt = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NGQxZDhiNGEyY2RhODg4MWU5NzkzNTYiLCJpYXQiOjE3MDIxMjgyMDYsImV4cCI6MTcwMjMwMTAwNn0.f5DyUVVqhvqq3cQEGfNojz3ZymEEB7vhT2Jr8JIufh4
+@jwt = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NGQxZDhiNGEyY2RhODg4MWU5NzkzNTYiLCJpYXQiOjE3MDI4NTY0MjEsImV4cCI6MTcwNTQ0ODQyMX0.87HWSHrC-hX7Z1WCmkEir1Bya-bzB2rrTCumlv0BVPQ
 
 ### 로그인
 POST {{baseUrl}}/auth/login HTTP/1.1
@@ -16,5 +16,5 @@ Content-Type: application/json; charset=UTF-8
 Authorization: Bearer {{jwt}}
 
 {
-
+    "userId": "iset12"
 }

@@ -200,7 +200,6 @@ export async function regTradeOnlyAccountLogs(req) {
     });
 
     if (transferLog) {
-      console.log("transferLog: ", transferLog);
       await transData.updateTransferLog(log, transferLog);
       continue;
     }

@@ -41,27 +41,59 @@ export async function regTransDataCard(log) {
 /* 중복 거래 확인(카드만 등록, 계좌만 등록, 기 등록된 거래인지?) */
 export async function linkAccountLogForCheckCard(asset) {
   // 연결 계좌 거래내역 확인 후 카드 내역과 연결
-  const log = await TransModel.findOneAndUpdate(
-    {
-      userId: asset.userId,
-      transMoney: Math.abs(asset.transMoney),
-      accountLog: { $ne: null },
-      cardLog: null,
-      transDate: {
-        $gte: new Date(Number(asset.transDate) - 600000),
-        $lte: new Date(Number(asset.transDate) + 600000),
-      },
+  // 계좌만 등록되고 카드는 등록되지 않은 경우 (현금지출거래로 처리된 것이 있는지 확인)
+  const logs = await TransModel.find({
+    userId: asset.userId,
+    transMoney: Math.abs(asset.transMoney),
+    accountLog: { $ne: null },
+    cardLog: null,
+    transDate: {
+      $gte: new Date(Number(asset.transDate) - 600000),
+      $lte: new Date(Number(asset.transDate) + 600000),
     },
-    { cardLog: asset.cardLog, tradeKind: "CHECK" },
-    { sort: { transDate: -1 }, returnOriginal: false }
-  );
-  if (!log) return;
-  return await TransModel.findOneAndUpdate(
-    { _id: asset._id },
-    { $set: { accountLog: log.accountLog } }
-  );
+  });
+  if (logs.length === 0) {
+    console.log(
+      "이미 연결됐거나 카드거래와 연결된 계좌 거래내역이 없습니다",
+      asset.cardLog ? asset.cardLog : "(확인필요)"
+    );
+    return;
+  } else if (logs.length === 1) {
+    console.log(
+      "카드거래와 연결해야할 계좌 거래내역이 있습니다",
+      asset.cardLog
+    );
+    await TransModel.updateOne(
+      {
+        _id: logs[0]._id,
+      },
+      { cardLog: asset.cardLog, tradeKind: "CHECK" }
+    );
+    return await TransModel.findOneAndUpdate(
+      { _id: asset._id },
+      { $set: { accountLog: logs[0].accountLog } }
+    );
+  } else if (logs.length > 1) {
+    const ids = logs.map((log) => log._id.toString());
+    console.log("카드거래와 연결해야할 계좌 거래내역이 여러개 있습니다", ids);
+    logs.forEach(async (log) => {
+      if (ids.includes((log?.item || "").toString())) {
+        await TransModel.deleteOne({ _id: log._id });
+      } else {
+        await TransModel.updateOne(
+          {
+            _id: log._id,
+          },
+          { cardLog: asset.cardLog, tradeKind: "CHECK" }
+        );
+        return await TransModel.findOneAndUpdate(
+          { _id: asset._id },
+          { $set: { accountLog: log.accountLog } }
+        );
+      }
+    });
+  }
 }
-
 /* 자동으로 카테고리와 사용처 설정 */
 export async function autoSetCategoryAndUseKind(asset) {
   // 기 등록된 적요를 통해 카테고리 자동 설정

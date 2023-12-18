@@ -45,8 +45,7 @@ export async function getAssetInfo(data) {
 }
 
 export async function deleteAssetNotUse(req) {
-  const { _id } = req.body;
-
+  const { userId } = req.body;
   const notUseData = await assetModel.aggregate([
     {
       $lookup: {
@@ -64,6 +63,7 @@ export async function deleteAssetNotUse(req) {
     {
       $match: {
         count: 0,
+        userId,
       },
     },
   ]);

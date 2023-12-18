@@ -2,15 +2,14 @@ import AccountLogModel from "../model/accountLogModel.js";
 import { strToDate } from "../utils/date.js";
 
 export async function regAccountLog(data) {
-  const { user, withdraw, bankAccountNum, transDT, transRefKey, deposit } =
-    data;
+  const { user, withdraw, bankAccountNum, transDT, deposit, balance } = data;
   try {
     const existingData = await AccountLogModel.findOne({
       user,
       bankAccountNum,
       withdraw,
       transDT,
-      transRefKey,
+      balance,
     });
     if (existingData) {
       return;
