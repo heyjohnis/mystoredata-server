@@ -5,7 +5,11 @@ import * as userData from "./userData.js";
 import * as tradeCorpData from "./tradeCorpData.js";
 import * as debtData from "./debtData.js";
 import * as assetData from "./assetData.js";
-import { FinClassCode, FinCardCorpKeyword } from "../cmmCode.js";
+import {
+  FinClassCode,
+  FinCardCorpKeyword,
+  CardTypeKeword,
+} from "../cmmCode.js";
 import { regexCorpName, isKoreanName } from "../utils/filter.js";
 import debtModel from "../model/debtModel.js";
 import assetModel from "../model/assetModel.js";
@@ -24,6 +28,7 @@ export async function updateFinClass(req) {
 
 async function resultFinClassCode(log) {
   const inOut = log.tradeType === "C" ? "IN" : "OUT"; // 입금, 출금
+  if (await isCardTrans(log, inOut)) return;
   // 사용자 회사명의 경우
   if (await isUserCorp(log)) return;
   // 한국사람 이름인 경우
@@ -54,6 +59,20 @@ async function resultFinClassCode(log) {
     { _id: log._id },
     { finClassCode: inOut + 1, finClassName: FinClassCode[inOut + 1] }
   );
+}
+
+async function isCardTrans(log, inOut) {
+  if (!CardTypeKeword.includes(log?.transType || " ")) return false;
+
+  await TransModel.updateOne(
+    { _id: log._id },
+    {
+      finClassCode: "OUT1",
+      finClassName: FinClassCode["OUT1"],
+      transMoney: inOut === "IN" ? log.transMoney * -1 : log.transMoney,
+    }
+  );
+  return true;
 }
 
 async function isUserCorp(log) {

@@ -249,11 +249,9 @@ export async function getCreditCardLogs(req) {
 /* 카드대금 조회 */
 export async function getCashedPayableLogs(req) {
   const filter = assetFilter(req);
-  filter.tradeKind = "CASH";
-  filter.finClassCode = "OUT2";
   filter.category = "500";
   filter.useYn = true;
-  return TransModel.find(filter);
+  return TransModel.find(filter).sort({ transDate: -1 });
 }
 
 /* 거래내역 수정 */

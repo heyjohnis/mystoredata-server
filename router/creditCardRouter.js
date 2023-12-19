@@ -8,6 +8,6 @@ router.post("/reg", isAuth, controller.regCreditCardInfo);
 
 router.post("/list", isAuth, controller.getCreditCardList);
 
-router.post("/cashed", isAuth, controller.getCashedPayableLogs);
+router.post("/debt", isAuth, controller.getCashedPayableLogs);
 
 export default router;
