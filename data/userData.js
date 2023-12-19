@@ -123,7 +123,7 @@ export async function createCategoryRule(req) {
     userId,
   } = req.body;
   const { finClassCode, finClassName } = await getFinClassByCategory(req);
-  const query = { user };
+  const query = { user, finClassCode: { $nin: ["IN3", "OUT3"] } };
 
   query.$or = query.$or || [];
   if (useStoreName) {
