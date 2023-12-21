@@ -8,4 +8,6 @@ router.post("/reg", isAuth, controller.regDebtInfo);
 
 router.post("/list", isAuth, controller.getDebtList);
 
+router.post("/auto-delete", isAuth, controller.deleteAssetNotUse);
+
 export default router;

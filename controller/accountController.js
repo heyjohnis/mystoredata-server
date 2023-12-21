@@ -16,11 +16,7 @@ export async function getAccounts(req, res) {
 
 export async function regAccountLog(req, res) {
   try {
-    console.log("=========== 문제 발생 ===========");
     let code = await service.regAccountLog(req);
-    console.log("regAccountLog code: ", code);
-    console.log("=========== // 문제 발생 ===========");
-    console.log("regAccountLog code: ", code);
     const updatedAmount = await accountData.updateAccountAmount(req);
     console.log("updatedAmount: ", updatedAmount);
     if (code > 0) {
