@@ -24,8 +24,8 @@ Authorization: Bearer {{jwt}}
     "userId": "bethelean",
     "itemKind": "ASSET",
     "itemKindName": "자산",
-    "itemType": "CHKACC",
-    "itemTypeName": "보통예금",
+    "finItemCode": "CHKACC",
+    "finItemName": "보통예금",
     "itemName": "예금인출금",
     "amount": 123456789
 }
