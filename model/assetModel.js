@@ -13,6 +13,8 @@ export const DebtSchema = new Mongoose.Schema(
     finName: { type: String, required: true },
     transRemark: { type: String, required: true },
     useYn: { type: Boolean, default: true },
+    defaultDate: { type: Date, required: true, default: Date.now },
+    amount: { type: Number, required: true },
   },
   { timestamps: true }
 );
