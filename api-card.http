@@ -46,9 +46,11 @@ POST {{baseUrl}}/card/regLog HTTP/1.1
 Content-Type: application/json; charset=UTF-8
 
 {
-    "id": "iset12",
-    "corpNum": "1073270598",
-    "cardNum": "5594100017143644"
+    "userId": "bethelean",
+    "corpNum": "6348702350",
+    "cardNum": "9440819003942150",
+    "opsKind": "OPS",
+    "baseMonth": "202312"
 }
 
 ### 카드 재등록

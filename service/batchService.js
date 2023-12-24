@@ -52,24 +52,26 @@ export async function syncBaroCard(req) {
   const cards = await cardData.getCardList(req);
   console.log("cards: ", cards);
   for (let card of cards) {
-    const { cardNum, corpNum, userId, webId, cardType, tradeKind } = card;
+    const { cardNum, corpNum, userId, webId, cardType, tradeKind, opsKind } =
+      card;
 
     // 해지카드 해제 및 재등록 처리
     req.body = { ...card._doc };
-    console.log("syncBaroCard req.body: ", req.body);
-    let code = await cardService.cancelStopCard(req);
-    console.log("cancelStopCard: ", cardNum, errorCase(code));
-    code = await cardService.reRegCard(req);
-    console.log("reRegCard: ", cardNum, errorCase(code));
-    if (code === -26006) {
-      req.body.opsKind = "OPS";
-      const result = await cardData.updateCard(req);
-      console.log("updateCard: ", result?.n);
-      code = await cardService.baroReRegCard(req);
-      console.log("운영 baroReRegCard: ", errorCase(code));
-    }
+    // console.log("syncBaroCard req.body: ", req.body);
+    // let code = await cardService.cancelStopCard(req);
+    // console.log("cancelStopCard: ", cardNum, errorCase(code));
+    // code = await cardService.reRegCard(req);
+    // console.log("reRegCard: ", cardNum, errorCase(code));
+    // if (code === -26006) {
+    //   req.body.opsKind = "OPS";
+    //   const result = await cardData.updateCard(req);
+    //   console.log("updateCard: ", result?.n);
+    //   code = await cardService.baroReRegCard(req);
+    //   console.log("운영 baroReRegCard: ", errorCase(code));
+    // }
 
     let baseMonth = new Date();
+    // 매달 1일의 경우 전월로 설정
     if (baseMonth.getDate() === 1) {
       baseMonth = baseMonth.setMonth(baseMonth.getMonth() - 1);
     }
@@ -85,6 +87,7 @@ export async function syncBaroCard(req) {
         webId,
         cardType,
         tradeKind,
+        opsKind,
       },
     });
   }

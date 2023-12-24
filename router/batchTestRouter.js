@@ -9,4 +9,6 @@ router.get("/sync-card", controller.syncBaroCard);
 
 router.get("/sync-merge", controller.syncTransaction);
 
+router.get("/sync-test", controller.syncDaily);
+
 export default router;

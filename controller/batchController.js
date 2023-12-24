@@ -13,12 +13,7 @@ const batchTime = config.batchTime;
 export async function syncBaroData() {
   if (batchTime.t1)
     nodeschedule.scheduleJob(batchTime.t1, async function () {
-      await syncBaroAccount({});
-      console.log(`${nowDate()} syncBaroAccount`);
-      await syncBaroCard({});
-      console.log(`${nowDate()} syncBaroCard`);
-      await syncTransaction({});
-      console.log(`${nowDate()} syncTransaction`);
+      await syncDaily();
     });
   if (batchTime.t2)
     nodeschedule.scheduleJob(batchTime.t2, async function () {
@@ -28,6 +23,15 @@ export async function syncBaroData() {
     nodeschedule.scheduleJob(batchTime.t3, async function () {
       regTaxLogByBaro();
     });
+}
+
+export async function syncDaily() {
+  await syncBaroAccount({});
+  console.log(`${nowDate()} syncBaroAccount`);
+  await syncBaroCard({});
+  console.log(`${nowDate()} syncBaroCard`);
+  await syncTransaction({});
+  console.log(`${nowDate()} syncTransaction`);
 }
 
 export async function syncBaroAccount(req) {

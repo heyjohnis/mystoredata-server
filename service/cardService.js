@@ -159,6 +159,7 @@ export async function regCardLog(req) {
   }
 
   const { cardNum, baseMonth, corpNum, opsKind } = req.body;
+  console.log("regCardLog: ", cardNum, baseMonth, corpNum, opsKind);
   const baroSvc = new BaroService(baroServiceName, opsKind);
   const client = await baroSvc.client();
   const reqBaro = {
