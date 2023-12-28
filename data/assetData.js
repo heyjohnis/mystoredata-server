@@ -26,6 +26,7 @@ export async function regAssetInfo(req) {
       finItemName,
       finName,
       transRemark,
+      itemName: finName,
     }).save();
     return asset;
   } catch (error) {
@@ -70,4 +71,48 @@ export async function deleteAssetNotUse(req) {
 
   const ids = notUseData.map((item) => item._id);
   return assetModel.deleteMany({ _id: { $in: ids } });
+}
+
+export async function saveAssetInfo(req) {
+  const {
+    _id,
+    user,
+    userId,
+    corpNum,
+    corpName,
+    finName,
+    finItemCode,
+    finItemName,
+    transRemark,
+    itemKind,
+    itemTypeName,
+    currentAmount,
+    defaultDate,
+    amount,
+  } = req.body;
+  try {
+    const asset = await assetModel.findOneAndUpdate(
+      { _id },
+      {
+        user,
+        userId,
+        corpNum,
+        corpName,
+        finName,
+        finItemCode,
+        finItemName,
+        transRemark,
+        itemKind,
+        itemTypeName,
+        currentAmount,
+        defaultDate,
+        amount,
+      },
+      { upsert: true, new: true }
+    );
+    return asset;
+  } catch (error) {
+    console.log({ error });
+    return { error };
+  }
 }

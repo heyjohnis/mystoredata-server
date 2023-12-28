@@ -260,8 +260,8 @@ async function isTax(log) {
         tradeCorpName: tradeCorpInfo.tradeCorpName,
         category: log.tradeType === "C" ? "550" : "540",
         categoryName: log.tradeType === "C" ? "매출채권" : "미지급금",
-        finClassCode: log.tradeType === "C" ? "OUT3" : "IN3",
-        finClassName: log.tradeType === "C" ? "나머지(자산-)" : "나머지(자산+)",
+        finClassCode: log.tradeType === "C" ? "OUT3" : "OUT2",
+        finClassName: log.tradeType === "C" ? "나머지(자산-)" : "빌린것(부채-)",
       },
     }
   );
