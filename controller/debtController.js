@@ -44,3 +44,12 @@ export async function deleteAssetNotUse(req, res) {
     res.sendStatus(500);
   }
 }
+
+export async function saveAssetInfo(req, res) {
+  try {
+    const item = await debtData.saveDebtInfo(req);
+  } catch (error) {
+    console.error(error);
+    res.sendStatus(500);
+  }
+}

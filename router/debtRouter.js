@@ -10,4 +10,6 @@ router.post("/list", isAuth, controller.getDebtList);
 
 router.post("/auto-delete", isAuth, controller.deleteAssetNotUse);
 
+router.post("/save", isAuth, controller.saveAssetInfo);
+
 export default router;

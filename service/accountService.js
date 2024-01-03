@@ -162,6 +162,7 @@ export async function regAccountLog(req) {
   }
   const { bankAccountNum, baseMonth, corpNum, userId, opsKind } = req.body;
   const baroSvc = new BaroService(baroServiceName, opsKind);
+  console.log("baroSvc: ", baroSvc);
   const client = await baroSvc.client();
   const reqBaro = {
     CERTKEY: baroSvc.certKey,
@@ -177,6 +178,7 @@ export async function regAccountLog(req) {
   let cntLog = 0;
   while (is100p) {
     reqBaro.CurrentPage = currentPage++;
+    console.log("reqBaro: ", reqBaro);
     const response = await client.GetMonthlyBankAccountLogExAsync(reqBaro);
     const result = response[0].GetMonthlyBankAccountLogExResult;
     if (result.CurrentPage < 0) {
@@ -216,7 +218,7 @@ export async function regAccountLog(req) {
           keyword,
         });
         cntLog++;
-        console.log("cntLog: ", cntLog);
+        console.log("cntLog: ", cntLog, log);
       }
     }
   }

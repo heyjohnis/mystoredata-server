@@ -27,6 +27,7 @@ export async function regDebtInfo(req) {
       finItemName,
       finName,
       transRemark,
+      itemName: finName,
     }).save();
     return debt;
   } catch (error) {
@@ -72,4 +73,46 @@ export async function deleteDebtNotUse(req) {
 
   const ids = notUseData.map((item) => item._id);
   return debtModel.deleteMany({ _id: { $in: ids } });
+}
+
+export async function saveDebtInfo(req) {
+  const {
+    _id,
+    user,
+    userId,
+    corpNum,
+    corpName,
+    finName,
+    finItemCode,
+    finItemName,
+    transRemark,
+    itemKind,
+    itemTypeName,
+    currentAmount,
+    defaultDate,
+    amount,
+  } = req.body;
+  try {
+    const asset = await debtModel.findOneAndUpdate(
+      { _id },
+      {
+        user,
+        userId,
+        corpNum,
+        corpName,
+        finName,
+        finItemCode,
+        finItemName,
+        transRemark,
+        itemKind,
+        itemTypeName,
+        currentAmount,
+        defaultDate,
+        amount,
+      }
+    );
+  } catch (error) {
+    console.log({ error });
+    return { error };
+  }
 }
