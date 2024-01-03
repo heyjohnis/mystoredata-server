@@ -2,7 +2,6 @@ import * as service from "../service/accountService.js";
 import errorCase from "../middleware/baroError.js";
 import * as accountLogData from "../data/accountLogData.js";
 import * as accountData from "../data/accountData.js";
-import * as finItemData from "../data/finItemData.js";
 
 export async function getAccounts(req, res) {
   try {

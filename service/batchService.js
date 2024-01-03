@@ -16,25 +16,25 @@ export async function syncBaroAccount(req) {
     console.log("cancelStopAccount: ", bankAccountNum, errorCase(code));
     code = await accountService.reRegAccount(req);
     console.log("reRegAccount: ", bankAccountNum, errorCase(code));
+    // 충전잔액 문제로 해지된 경우, 운영계정으로 재등록
     if (code === -26006) {
       req.body.opsKind = "OPS";
       req.body.useKind = useKind;
       const result = await accountData.updateAccount(req);
       console.log("updateAccount: ", result?.n);
     }
-
     let baseMonth = new Date();
     if (baseMonth.getDate() === 1) {
       baseMonth = baseMonth.setMonth(baseMonth.getMonth() - 1);
     }
     baseMonth = new Date(baseMonth).toISOString().slice(0, 7).replace("-", "");
-
     console.log(
       "batch baseMonth: ",
       baseMonth,
       bankAccountNum,
       corpNum,
-      userId
+      userId,
+      opsKind
     );
     await accountService.regAccountLog({
       body: {
@@ -42,6 +42,7 @@ export async function syncBaroAccount(req) {
         corpNum,
         userId,
         baseMonth,
+        opsKind,
       },
     });
     await accountData.updateAccountAmount({ body: { bankAccountNum } });
@@ -77,7 +78,7 @@ export async function syncBaroCard(req) {
     }
     baseMonth = new Date(baseMonth).toISOString().slice(0, 7).replace("-", "");
 
-    console.log("baseMonth: ", baseMonth, cardNum, corpNum, userId);
+    console.log("baseMonth: ", baseMonth, cardNum, corpNum, userId, opsKind);
     await cardService.regCardLog({
       body: {
         cardNum,
