@@ -6,6 +6,8 @@ const router = express.Router();
 
 router.post("/sum", isAuth, controller.getCategorySum);
 
+router.post("/year", isAuth, controller.getAnnualYearData);
+
 router.post("/save", isAuth, controller.saveAnnualSum);
 
 export default router;

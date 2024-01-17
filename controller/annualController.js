@@ -9,6 +9,17 @@ export async function getCategorySum(req, res) {
     res.status(500).json({ error });
   }
 }
+
+export async function getAnnualYearData(req, res) {
+  try {
+    const data = await annualData.getAnnualYearData(req);
+    res.status(200).json(data);
+  } catch (error) {
+    console.log({ error });
+    res.status(500).json({ error });
+  }
+}
+
 export async function saveAnnualSum(req, res) {
   try {
     const data = await annualData.saveAnnualSum(req);

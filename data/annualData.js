@@ -37,6 +37,17 @@ export async function getCategorySum(req) {
   }
 }
 
+export async function getAnnualYearData(req) {
+  try {
+    const { userId, year } = req.body;
+    console.log({ userId, year });
+    return await AnnualModel.findOne({ userId, year });
+  } catch (error) {
+    console.log({ error });
+    return { error };
+  }
+}
+
 export async function saveAnnualSum(req) {
   const { userId, year } = req.body;
   const data = await getCategorySum(req);
