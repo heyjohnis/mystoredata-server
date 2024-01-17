@@ -1,0 +1,31 @@
+@baseUrl = http://localhost:8089
+@jwt = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NGQxZDhiNGEyY2RhODg4MWU5NzkzNTYiLCJpYXQiOjE3MDI4NTY0MjEsImV4cCI6MTcwNTQ0ODQyMX0.87HWSHrC-hX7Z1WCmkEir1Bya-bzB2rrTCumlv0BVPQ
+
+### 로그인
+POST {{baseUrl}}/auth/login HTTP/1.1
+Content-Type: application/json; charset=UTF-8
+
+{
+    "userId": "bethelean", 
+    "password": "12345678"
+}
+
+### 카테고리별 연간 합산
+POST {{baseUrl}}/annual/sum HTTP/1.1
+Content-Type: application/json; charset=UTF-8
+Authorization: Bearer {{jwt}}
+
+{
+    "userId": "bethelean",
+    "year": 2023
+}
+
+### 카테고리별 연간 합산결과 저장
+POST {{baseUrl}}/annual/save HTTP/1.1
+Content-Type: application/json; charset=UTF-8
+Authorization: Bearer {{jwt}}
+
+{
+    "userId": "bethelean",
+    "year": 2023
+}

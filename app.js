@@ -26,6 +26,7 @@ import tradeCorpRouter from "./router/tradeCorpRouter.js";
 import empRouter from "./router/empRouter.js";
 import debtRouter from "./router/debtRouter.js";
 import assetRouter from "./router/assetRouter.js";
+import annualRouter from "./router/annualRouter.js";
 import creditCardRouter from "./router/creditCardRouter.js";
 import { syncBaroData } from "./controller/batchController.js";
 import { config } from "./config.js";
@@ -66,6 +67,7 @@ app.use("/emp", empRouter);
 app.use("/debt", debtRouter);
 app.use("/asset", assetRouter);
 app.use("/credit-card", creditCardRouter);
+app.use("/annual", annualRouter);
 
 syncBaroData();
 
