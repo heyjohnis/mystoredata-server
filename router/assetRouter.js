@@ -12,4 +12,6 @@ router.post("/auto-delete", isAuth, controller.deleteAssetNotUse);
 
 router.post("/save", isAuth, controller.saveAssetInfo);
 
+router.post("/delete", isAuth, controller.deleteAssetInfo);
+
 export default router;

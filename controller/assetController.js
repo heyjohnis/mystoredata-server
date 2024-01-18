@@ -53,3 +53,12 @@ export async function saveAssetInfo(req, res) {
     res.sendStatus(500);
   }
 }
+
+export async function deleteAssetInfo(req, res) {
+  try {
+    const item = await assetData.deleteAssetInfo(req);
+  } catch (error) {
+    console.error(error);
+    res.sendStatus(500);
+  }
+}

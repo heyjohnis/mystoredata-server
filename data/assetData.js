@@ -116,3 +116,13 @@ export async function saveAssetInfo(req) {
     return { error };
   }
 }
+
+export async function deleteAssetInfo(req) {
+  const { _id } = req.body;
+  try {
+    return await assetModel.deleteOne({ _id });
+  } catch (error) {
+    console.log({ error });
+    return { error };
+  }
+}
