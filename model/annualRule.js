@@ -11,8 +11,11 @@ export const schema = new Mongoose.Schema(
     IN2: { type: Array, required: false },
     IN3: { type: Array, required: false },
     OUT1: { type: Array, required: false },
+    OUT1_PERSONAL: { type: Array, required: false },
     OUT2: { type: Array, required: false },
     OUT3: { type: Array, required: false },
+    IN_OUT2: { type: Array, required: false },
+    IN_OUT3: { type: Array, required: false },
   },
   { timestamps: true }
 );

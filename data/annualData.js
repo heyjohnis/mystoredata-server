@@ -51,16 +51,91 @@ export async function getAnnualYearData(req) {
 export async function saveAnnualSum(req) {
   const { userId, year } = req.body;
   const data = await getCategorySum(req);
-  console.log({ data });
   const IN1 = data.filter((item) => item.finClassCode === "IN1");
   const IN2 = data.filter((item) => item.finClassCode === "IN2");
   const IN3 = data.filter((item) => item.finClassCode === "IN3");
   const OUT1 = data.filter((item) => item.finClassCode === "OUT1");
+  const OUT1_PERSONAL = sumPersonalLog(OUT1);
   const OUT2 = data.filter((item) => item.finClassCode === "OUT2");
   const OUT3 = data.filter((item) => item.finClassCode === "OUT3");
+  const IN_OUT2 = setInOutKeyArray(
+    [...IN2, ...setNagativeNumber(OUT2)],
+    "IN_OUT2"
+  );
+  const IN_OUT3 = setInOutKeyArray(
+    [...IN3, ...setNagativeNumber(OUT3)],
+    "IN_OUT3"
+  );
   return await AnnualModel.updateOne(
     { userId, year },
-    { category: data, IN1, IN2, IN3, OUT1, OUT2, OUT3 },
+    {
+      category: data,
+      IN1,
+      IN2,
+      IN3,
+      OUT1,
+      OUT1_PERSONAL,
+      OUT2,
+      OUT3,
+      IN_OUT2,
+      IN_OUT3,
+    },
     { upsert: true }
   );
+}
+
+function setNagativeNumber(arr) {
+  return arr.map((c) => {
+    c.total = c.total * -1;
+    return c;
+  });
+}
+
+const setInOutKeyArray = (arr, finClassCode) => {
+  if (!arr.length) return [];
+  const { user, userId, year, userKind } = arr[0];
+  return arr.reduce((acc, cur) => {
+    const hasEl = acc.find((c) => {
+      return c.category === cur.category;
+    });
+    if (hasEl) {
+      hasEl.total += cur.total;
+    } else {
+      acc.push({
+        finClassCode,
+        category: cur.category,
+        categoryName: cur.categoryName,
+        total: cur.total,
+        userKind,
+        user,
+        userId,
+        year,
+      });
+    }
+    return acc;
+  }, []);
+};
+
+function sumPersonalLog(OUT1Arr) {
+  if (!OUT1Arr.length) return [];
+  console.log({ OUT1Arr });
+  const { user, userId, year, userKind } = OUT1Arr[0];
+  const personalLogs = OUT1Arr.filter((item) => item?.useKind === "PERSONAL");
+  const sumPersonal = personalLogs.reduce((sum, cur) => {
+    return sum + cur.total;
+  }, 0);
+  const bizArr = OUT1Arr.filter((log) => log?.useKind === "BIZ");
+  return [
+    ...bizArr,
+    {
+      category: "-99999999",
+      categoryName: "가계비",
+      finClassCode: "OUT1",
+      total: sumPersonal,
+      userKind,
+      user,
+      userId,
+      year,
+    },
+  ];
 }
