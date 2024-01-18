@@ -19,6 +19,7 @@ export async function getCategorySum(req) {
           _id: {
             category: "$category",
             useKind: "$useKind",
+            finClassCode: "$finClassCode",
           },
           year: { $first: year },
           category: { $first: "$category" },
@@ -51,6 +52,20 @@ export async function getAnnualYearData(req) {
 export async function saveAnnualSum(req) {
   const { userId, year } = req.body;
   const data = await getCategorySum(req);
+  const finClass = setFinClassData(data);
+  const finClassAmount = setFinClassAmount(finClass);
+  return await AnnualModel.updateOne(
+    { userId, year },
+    {
+      category: data,
+      finClass,
+      finClassAmount,
+    },
+    { upsert: true }
+  );
+}
+
+function setFinClassData(data) {
   const IN1 = data.filter((item) => item.finClassCode === "IN1");
   const IN2 = data.filter((item) => item.finClassCode === "IN2");
   const IN3 = data.filter((item) => item.finClassCode === "IN3");
@@ -66,22 +81,29 @@ export async function saveAnnualSum(req) {
     [...IN3, ...setNagativeNumber(OUT3)],
     "IN_OUT3"
   );
-  return await AnnualModel.updateOne(
-    { userId, year },
-    {
-      category: data,
-      IN1,
-      IN2,
-      IN3,
-      OUT1,
-      OUT1_PERSONAL,
-      OUT2,
-      OUT3,
-      IN_OUT2,
-      IN_OUT3,
-    },
-    { upsert: true }
-  );
+  return {
+    IN1,
+    IN2,
+    IN3,
+    OUT1,
+    OUT1_PERSONAL,
+    OUT2,
+    OUT3,
+    IN_OUT2,
+    IN_OUT3,
+  };
+}
+
+function setFinClassAmount(data) {
+  const amount = {};
+  Object.keys(data).forEach((key) => {
+    if (Array.isArray(data[key])) {
+      amount[key] = data[key].reduce((sum, cur) => {
+        return sum + cur.total;
+      }, 0);
+    }
+  });
+  return amount;
 }
 
 function setNagativeNumber(arr) {
