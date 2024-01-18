@@ -7,6 +7,12 @@ export const schema = new Mongoose.Schema(
     userId: { type: String, required: true },
     year: { type: Number, required: true },
     category: { type: Object, required: true },
+    IN1: { type: Array, required: false },
+    IN2: { type: Array, required: false },
+    IN3: { type: Array, required: false },
+    OUT1: { type: Array, required: false },
+    OUT2: { type: Array, required: false },
+    OUT3: { type: Array, required: false },
   },
   { timestamps: true }
 );

@@ -27,7 +27,7 @@ export async function getCategorySum(req) {
           userId: { $last: "$userId" },
           user: { $last: "$user" },
           useKind: { $last: "$useKind" },
-          finClass: { $last: "$finClassCode" },
+          finClassCode: { $last: "$finClassCode" },
         },
       },
     ]);
@@ -51,9 +51,16 @@ export async function getAnnualYearData(req) {
 export async function saveAnnualSum(req) {
   const { userId, year } = req.body;
   const data = await getCategorySum(req);
+  console.log({ data });
+  const IN1 = data.filter((item) => item.finClassCode === "IN1");
+  const IN2 = data.filter((item) => item.finClassCode === "IN2");
+  const IN3 = data.filter((item) => item.finClassCode === "IN3");
+  const OUT1 = data.filter((item) => item.finClassCode === "OUT1");
+  const OUT2 = data.filter((item) => item.finClassCode === "OUT2");
+  const OUT3 = data.filter((item) => item.finClassCode === "OUT3");
   return await AnnualModel.updateOne(
     { userId, year },
-    { category: data },
+    { category: data, IN1, IN2, IN3, OUT1, OUT2, OUT3 },
     { upsert: true }
   );
 }
